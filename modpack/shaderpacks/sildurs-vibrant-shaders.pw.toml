@@ -1,0 +1,13 @@
+name = "Sildur's Vibrant Shaders"
+filename = "Sildur's Vibrant Shaders v1.56 Extreme.zip"
+side = "client"
+
+[download]
+url = "https://cdn.modrinth.com/data/z8EjLYqN/versions/7Bij7xAf/Sildur%27s%20Vibrant%20Shaders%20v1.56%20Extreme.zip"
+hash-format = "sha512"
+hash = "dcec6e58436beb19c08c8ccca8db351e9ba374c77eb2b8d3d6c9b9c2bbaeacbae85ca46c8585e23433402a42eca29bfe85720e64d94a73d68598879c8e89fdcf"
+
+[update]
+[update.modrinth]
+mod-id = "z8EjLYqN"
+version = "7Bij7xAf"

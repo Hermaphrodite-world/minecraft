@@ -180,6 +180,11 @@ hash = "d5060b22fa47d5d56e0f4617904731e9d397d1ba104320b7ec8e59f7ca0700a7"
 metafile = true
 
 [[files]]
+file = "mods/lambdabettergrass.pw.toml"
+hash = "78d6b48a474a33a1a089b81ca847a5ee5ff98773e9ed434bad8f797e36eb59cc"
+metafile = true
+
+[[files]]
 file = "mods/lambdynamiclights.pw.toml"
 hash = "0e5168a4f2934ca0aaaeab725b5b0f1dd3207e9f606eedf30c564888bd330377"
 metafile = true
@@ -250,6 +255,11 @@ hash = "d20369e5848ca31ecbb49bae22e953439173bd4617ca239b23335366b2a6a0e9"
 metafile = true
 
 [[files]]
+file = "mods/polymer.pw.toml"
+hash = "82444cf678a1f7302d1fb0c6b6f0e45882e8d264fcfcee63c0e31f238d665ccf"
+metafile = true
+
+[[files]]
 file = "mods/presence-footsteps.pw.toml"
 hash = "b06a45aed1a138c178d3aca3ec47f5af2d56d5c7ad03403b3530826bd95c49d3"
 metafile = true
@@ -305,6 +315,11 @@ hash = "a2e9d2e08cb39c159b50ab8a0a2c38896700f7ab66a7682d691dd91628b4b34d"
 metafile = true
 
 [[files]]
+file = "mods/simpletpa.pw.toml"
+hash = "4ed6693c4aed3ebcb72b14fab1190251288d969b0b8109d587146c9b7f42982c"
+metafile = true
+
+[[files]]
 file = "mods/sodium-extra.pw.toml"
 hash = "546965f1ab52fc464c51e36c52305fef231837c22454d22447b8423e379502cd"
 metafile = true
@@ -335,6 +350,11 @@ hash = "67003f88d20810aaf55d3585adbdd19f0c0731aa4247ff0fdf3fa1f9431355bc"
 metafile = true
 
 [[files]]
+file = "mods/structory.pw.toml"
+hash = "e2ab46d275b5037d19198f4cff55fe3e4672c3f5c8ca60e91d3b3e57ab13810c"
+metafile = true
+
+[[files]]
 file = "mods/styled-chat.pw.toml"
 hash = "7ebdb6a20d095943eee7346de94c6ba20a5eb2c5e9257c72331b0229862d866d"
 metafile = true
@@ -345,8 +365,18 @@ hash = "fcea36ce95b9afc2e5ae86d2b83487be535b6375aecf56eb395b3b91719d606b"
 metafile = true
 
 [[files]]
+file = "mods/universal-graves.pw.toml"
+hash = "27e83db4ce5d610b8e79dfc7914922e3ba3fa6737d476425ee7c62562a4fad3d"
+metafile = true
+
+[[files]]
 file = "mods/visible-traders.pw.toml"
 hash = "99579ac3da7d59a4c4d941f12816e6df1f0938c2ea34edc6fcb8c8247d62df9b"
+metafile = true
+
+[[files]]
+file = "mods/visuality.pw.toml"
+hash = "70810061d41b8eb952f99ef365ba26d04ae6e08875da2adfe66d9a6b337128f2"
 metafile = true
 
 [[files]]
@@ -375,6 +405,16 @@ hash = "f27f5b486c792c796e451515c85b39b48c10840cfbec7f8632ed6c2643edde1e"
 metafile = true
 
 [[files]]
+file = "resourcepacks/better-leaves.pw.toml"
+hash = "610e5e08a034d7fdda17d17f37853c1abf19f94425e0a831ced52fccb6ccb063"
+metafile = true
+
+[[files]]
+file = "resourcepacks/default-dark-mode.pw.toml"
+hash = "fa36f35382e8f72c198a779e7e0d3997b963aa98f8184488ed860f2655d6a968"
+metafile = true
+
+[[files]]
 file = "resourcepacks/fresh-animations-extensions.pw.toml"
 hash = "349ae25c50b11d4df553eb394d97367c550b06d14eb6bb717a99e2fa3e26867e"
 metafile = true
@@ -385,6 +425,31 @@ hash = "213428b7676adfaa1c59fcfe93e6e7f3d0257e236f32a5a245eb0fc966e1b218"
 metafile = true
 
 [[files]]
+file = "resourcepacks/nautilus3d.pw.toml"
+hash = "64aa699699bdff85703de4c9081f1496f881a3435b85d9f9e677cc2c7e86d591"
+metafile = true
+
+[[files]]
+file = "resourcepacks/vanilla-connected-glass.pw.toml"
+hash = "3dc082275e5944f0b198495db392e6ba462ecc48a0a9bfd45550f15b23dc73e0"
+metafile = true
+
+[[files]]
+file = "shaderpacks/bsl-shaders.pw.toml"
+hash = "f91c2ec79366b4607d93928a07c223cbaa4a2e18fe0c110e68a3fc064e69b65a"
+metafile = true
+
+[[files]]
 file = "shaderpacks/complementary-reimagined.pw.toml"
 hash = "ea258ed5bf495d9017eeadc3cbf9bd67b1e672d843826bc077135548b5bc699e"
+metafile = true
+
+[[files]]
+file = "shaderpacks/complementary-unbound.pw.toml"
+hash = "608b87f75b2387a9fbd340cb18a8238bbbe5a0afc54202634b34f3000246b6e7"
+metafile = true
+
+[[files]]
+file = "shaderpacks/sildurs-vibrant-shaders.pw.toml"
+hash = "e08f089d7a8ee5556cefb2f672789d2d91b6b8566ed8d61ce4e61fa638817dec"
 metafile = true

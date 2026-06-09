@@ -1,0 +1,13 @@
+name = "Nautilus 3D"
+filename = "Nautlus3D-V2.6.1.zip"
+side = "client"
+
+[download]
+url = "https://cdn.modrinth.com/data/1MyOrwfu/versions/eJtiM59o/Nautlus3D-V2.6.1.zip"
+hash-format = "sha512"
+hash = "c0d196de675148890da3b6374715b3467bf1e9a91ddb727bac826f003bc5a6716c88f2c05613a9e54228e38138386f3ae36352febeecdc16b629adb60aa9a21b"
+
+[update]
+[update.modrinth]
+mod-id = "1MyOrwfu"
+version = "eJtiM59o"

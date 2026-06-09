@@ -1,0 +1,13 @@
+name = "Vanilla Connected Glass"
+filename = "vanilla-connected-glass-0.9.zip"
+side = "client"
+
+[download]
+url = "https://cdn.modrinth.com/data/CUC4h0GP/versions/QaYI4QIc/vanilla-connected-glass-0.9.zip"
+hash-format = "sha512"
+hash = "9043be8b7130c8cf5f34c414574a1264b0167c1c278b5115a3db276bfd774df0bdca18238539e3a8216d0862ed2f33b7a0aaaa9320872b4a78ac1917a68187ae"
+
+[update]
+[update.modrinth]
+mod-id = "CUC4h0GP"
+version = "QaYI4QIc"
