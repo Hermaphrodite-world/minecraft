@@ -147,9 +147,13 @@ public sealed class CmlLibMinecraftService : IMinecraftService
         {
             Session = ToMSession(session),
             MaximumRamMb = LauncherConfig.DefaultMaxRamMb,
-            ServerIp = LauncherConfig.ServerIp,     // 1-클릭 자동 접속
-            ServerPort = LauncherConfig.ServerPort,
             DockName = isOSX ? LauncherConfig.MacDockName : null, // macOS 창 포커스 필수
+            // ★ MC 26.1 은 구형 --server/--port 인자를 제거함 → 모던 quickPlayMultiplayer 로 1-클릭 자동 접속.
+            ExtraGameArguments = new[]
+            {
+                new MArgument("--quickPlayMultiplayer"),
+                new MArgument($"{LauncherConfig.ServerIp}:{LauncherConfig.ServerPort}"),
+            },
         };
 
         // 이미 EnsureJavaAsync 에서 설치 완료 → build only.
