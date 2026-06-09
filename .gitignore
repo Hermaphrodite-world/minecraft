@@ -1,0 +1,42 @@
+# ── .NET / launcher ──
+[Bb]in/
+[Oo]bj/
+*.user
+*.suo
+.vs/
+launcher/**/bin/
+launcher/**/obj/
+
+# ── Velopack / 빌드 산출물 ──
+Releases/
+publish/
+*.nupkg
+
+# ── packwiz 모드팩: 메타데이터(.pw.toml/pack.toml/index.toml)는 커밋, 캐시/다운로드는 무시 ──
+.packwiz-cache/
+modpack/.index-cache/
+
+# ── 서버 런타임 데이터(설정 스크립트는 커밋, 실행 산출물은 무시) ──
+server/world/
+server/world_nether/
+server/world_the_end/
+server/logs/
+server/crash-reports/
+server/cache/
+server/config/
+server/mods/
+server/libraries/
+server/versions/
+server/*.jar
+server/eula.txt
+server/usercache.json
+server/whitelist.json
+server/ops.json
+server/banned-*.json
+server/.fabric/
+
+# ── 기타 ──
+.DS_Store
+Thumbs.db
+*.log
+/tmp/

@@ -1,0 +1,13 @@
+name = "Hermaphrodite World"
+author = "Hermaphrodite-world"
+version = "0.1.0"
+pack-format = "packwiz:1.1.0"
+
+[index]
+file = "index.toml"
+hash-format = "sha256"
+hash = "b1116efbd20cc28974d6becc96c6752862f7da0f44811b5c112bad180cc9e7b3"
+
+[versions]
+fabric = "0.19.3"
+minecraft = "26.1.2"

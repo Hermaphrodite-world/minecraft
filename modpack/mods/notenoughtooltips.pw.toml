@@ -1,0 +1,13 @@
+name = "Not Enough Tooltips (NET)"
+filename = "net-1.1-release+26.1.jar"
+side = "client"
+
+[download]
+url = "https://cdn.modrinth.com/data/u1IrnrsC/versions/cxG3thaG/net-1.1-release%2B26.1.jar"
+hash-format = "sha512"
+hash = "e7a71ded7a5df338f6dece13b559dc3ef20db6bfcfa7662a7dd1ea732212ec363ceee85914745e91fb65634ee63906e04da1d792931904507cbe28047ae32e95"
+
+[update]
+[update.modrinth]
+mod-id = "u1IrnrsC"
+version = "cxG3thaG"

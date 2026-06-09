@@ -1,0 +1,13 @@
+name = "Recall Coords"
+filename = "Recall-Coords-1.0.14+26.1.2.jar"
+side = "client"
+
+[download]
+url = "https://cdn.modrinth.com/data/Q8VjWzbc/versions/83SFzKm8/Recall-Coords-1.0.14%2B26.1.2.jar"
+hash-format = "sha512"
+hash = "ac1635f387b326a19c965c5788c79731da234494921bc7ad465d9c9e02a76b5fce0583ed701e875b73d85015d38296d81d68e9e789f8efaa913d699e013cbad6"
+
+[update]
+[update.modrinth]
+mod-id = "Q8VjWzbc"
+version = "83SFzKm8"

@@ -1,0 +1,13 @@
+name = "Ultimate Map Atlases"
+filename = "ultimate_map_atlases-26.1.jar"
+side = "both"
+
+[download]
+url = "https://cdn.modrinth.com/data/sMGE68Dq/versions/xzTh2dEU/ultimate_map_atlases-26.1.jar"
+hash-format = "sha512"
+hash = "2df565e7468bda53f0025649824d32fb68dafde35902c1517846f67fa06b3bee63187bb04e569575ff02c8d265462d245f61acf53ce1cc9dc6664266dd791f95"
+
+[update]
+[update.modrinth]
+mod-id = "sMGE68Dq"
+version = "xzTh2dEU"

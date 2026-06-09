@@ -1,0 +1,54 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="using:HermaLauncher.ViewModels"
+        mc:Ignorable="d" d:DesignWidth="520" d:DesignHeight="360"
+        x:Class="HermaLauncher.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Width="520" Height="360"
+        CanResize="False"
+        WindowStartupLocation="CenterScreen"
+        Title="Herma Launcher">
+
+    <Design.DataContext>
+        <vm:MainWindowViewModel />
+    </Design.DataContext>
+
+    <Border Padding="28">
+        <Grid RowDefinitions="Auto,*,Auto,Auto">
+
+            <StackPanel Grid.Row="0" Spacing="2">
+                <TextBlock Text="{Binding Title}" FontSize="24" FontWeight="Bold" />
+                <TextBlock Text="{Binding ServerLabel}" Opacity="0.6" FontSize="13" />
+            </StackPanel>
+
+            <Border Grid.Row="1" VerticalAlignment="Center">
+                <SelectableTextBlock Text="{Binding StatusMessage}"
+                                     TextWrapping="Wrap"
+                                     FontSize="14"
+                                     Foreground="#D0D0D0" />
+            </Border>
+
+            <ProgressBar Grid.Row="2" Margin="0,0,0,16"
+                         Minimum="0" Maximum="100"
+                         Value="{Binding Progress}"
+                         IsIndeterminate="{Binding IsIndeterminate}" />
+
+            <Grid Grid.Row="3" ColumnDefinitions="*,Auto">
+                <Button Grid.Column="0"
+                        Content="Play"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Center"
+                        FontSize="16" FontWeight="SemiBold"
+                        Padding="0,12"
+                        Command="{Binding PlayCommand}" />
+                <Button Grid.Column="1"
+                        Content="취소"
+                        Margin="12,0,0,0"
+                        Padding="16,12"
+                        Command="{Binding CancelCommand}" />
+            </Grid>
+        </Grid>
+    </Border>
+</Window>

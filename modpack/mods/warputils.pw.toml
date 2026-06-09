@@ -1,0 +1,13 @@
+name = "WarpUtils"
+filename = "warputils-fabric-26.1.2-0.5.3.jar"
+side = "server"
+
+[download]
+url = "https://cdn.modrinth.com/data/E7tP6wsR/versions/TdtpiqPp/warputils-fabric-26.1.2-0.5.3.jar"
+hash-format = "sha512"
+hash = "ce0bda81d226f7264d3397ec4b4afe43b2dc99fc1b65aa4b9def316b85deab2454638ce25062a5c6f76e0db12a27bfb07121c20f7b1f0549910e642f694704a3"
+
+[update]
+[update.modrinth]
+mod-id = "E7tP6wsR"
+version = "TdtpiqPp"

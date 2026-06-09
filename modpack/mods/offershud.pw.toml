@@ -1,0 +1,13 @@
+name = "OffersHUD"
+filename = "offers-hud-2.4.1+26.1-fabric.jar"
+side = "client"
+
+[download]
+url = "https://cdn.modrinth.com/data/Z35dS3OT/versions/4CwqA0rx/offers-hud-2.4.1%2B26.1-fabric.jar"
+hash-format = "sha512"
+hash = "b0e1be1a2d48d55faa8c9e31791d671ab59f3987913cf791c6860679a708f925c44159696bc298f2e9786528ed7b59c686c30e11f6ad063b896e0eb21dfbad57"
+
+[update]
+[update.modrinth]
+mod-id = "Z35dS3OT"
+version = "4CwqA0rx"
