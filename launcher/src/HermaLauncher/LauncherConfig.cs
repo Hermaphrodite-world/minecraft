@@ -1,3 +1,5 @@
+using System;
+
 namespace HermaLauncher;
 
 // 런처 고정 설정. 기획서/모드구성 확정값과 정렬.
@@ -13,12 +15,16 @@ public static class LauncherConfig
     // GitHub Pages(modpack-pages.yml 이 modpack/ 를 배포) 기준. Pages 활성화 필요(공개 레포 또는 유료).
     public const string PackTomlUrl = "https://hermaphrodite-world.github.io/minecraft/pack.toml";
 
-    // 서버 자동 접속 (모드구성: ServerIp 1차 경로)
-    public const string ServerIp = "play.example.com";
-    public const int ServerPort = 25565;
+    // 서버 자동 접속 (모드구성: ServerIp 1차 경로).
+    // 재빌드 없이 환경변수로 덮어쓰기 가능: HERMA_SERVER_IP (로컬 테스트=127.0.0.1).
+    public static readonly string ServerIp =
+        Environment.GetEnvironmentVariable("HERMA_SERVER_IP") ?? "play.example.com";
+    public static readonly int ServerPort =
+        int.TryParse(Environment.GetEnvironmentVariable("HERMA_SERVER_PORT"), out var p) ? p : 25565;
 
-    // Azure 앱 client ID (public client). MS 승인 필요. placeholder 면 로그인 비활성.
-    public const string AzureClientId = "00000000-0000-0000-0000-000000000000";
+    // Azure 앱 client ID (public client, online 모드 device-code). 환경변수 HERMA_AZURE_CLIENT_ID 로 덮어쓰기 가능.
+    public static readonly string AzureClientId =
+        Environment.GetEnvironmentVariable("HERMA_AZURE_CLIENT_ID") ?? "00000000-0000-0000-0000-000000000000";
 
     // 기본 RAM (MB). 추후 호스트 RAM 감지로 동적화(구현계획 M3-3).
     public const int DefaultMaxRamMb = 4096;
