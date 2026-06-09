@@ -9,9 +9,9 @@ public static class LauncherConfig
     public const string MinecraftVersion = "26.1.2";
     public const string FabricLoaderVersion = "";   // "" = Fabric Meta 최신 stable 자동 해석
 
-    // packwiz 팩 URL — 정확히 pack.toml 로 끝나는 전체 URL (구현계획 Codex M3)
-    // GitHub Pages 호스팅 예시. 실제 배포 URL 로 교체.
-    public const string PackTomlUrl = "https://hermaphrodite-world.github.io/modpack/pack.toml";
+    // packwiz 팩 URL — 정확히 pack.toml 로 끝나는 전체 URL (구현계획 Codex M3).
+    // GitHub Pages(modpack-pages.yml 이 modpack/ 를 배포) 기준. Pages 활성화 필요(공개 레포 또는 유료).
+    public const string PackTomlUrl = "https://hermaphrodite-world.github.io/minecraft/pack.toml";
 
     // 서버 자동 접속 (모드구성: ServerIp 1차 경로)
     public const string ServerIp = "play.example.com";

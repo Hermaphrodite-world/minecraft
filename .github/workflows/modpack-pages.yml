@@ -1,0 +1,39 @@
+name: Deploy Modpack (Pages)
+
+# modpack/ 폴더를 GitHub Pages 로 배포 → pack.toml 이 웹에서 접근 가능.
+# 결과 URL: https://<org>.github.io/<repo>/pack.toml
+#
+# ⚠️ 활성화 전제 (결정 E):
+#   1) 레포 Settings → Pages → Source: "GitHub Actions"
+#   2) Pages 는 공개 레포에서 무료. 비공개 레포는 GitHub Pro/Team 필요.
+#      모드리스트 비공개가 중요하면 정적 호스트(Cloudflare/Netlify Pages)로 대체.
+
+on:
+  push:
+    branches: [main]
+    paths: ['modpack/**', '.github/workflows/modpack-pages.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: modpack
+      - id: deployment
+        uses: actions/deploy-pages@v4

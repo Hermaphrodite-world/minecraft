@@ -6,7 +6,7 @@ set -euo pipefail
 cd "$(dirname "$0")"
 
 JAVA="${JAVA:-java}"
-PACK_TOML_URL="${PACK_TOML_URL:-https://hermaphrodite-world.github.io/modpack/pack.toml}"
+PACK_TOML_URL="${PACK_TOML_URL:-https://hermaphrodite-world.github.io/minecraft/pack.toml}"
 BOOTSTRAP="${BOOTSTRAP:-packwiz-installer-bootstrap.jar}"
 
 if [ ! -f "$BOOTSTRAP" ]; then
