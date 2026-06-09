@@ -32,6 +32,10 @@ public static class LauncherConfig
     // macOS Dock 표시명 (CmlLib gotcha: 미설정 시 창 포커스 불가)
     public const string MacDockName = "Herma Launcher";
 
+    // 기본 적용 쉐이더(Iris). packwiz 가 shaderpacks/ 에 받은 zip 중 이 prefix 로 시작하는 것을
+    // 첫 설치 시 자동 활성화(config/iris.properties). 일치 없으면 첫 zip. 모드구성: Complementary Reimagined.
+    public const string DefaultShaderPackPrefix = "ComplementaryReimagined";
+
     // Velopack 자체 업데이트 소스 (GitHub Releases)
     public const string UpdateRepoUrl = "https://github.com/Hermaphrodite-world/minecraft";
 

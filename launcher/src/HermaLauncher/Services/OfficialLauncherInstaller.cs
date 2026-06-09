@@ -112,6 +112,9 @@ public sealed class OfficialLauncherInstaller
                       .ConfigureAwait(false);
         ct.ThrowIfCancellationRequested();
 
+        // (4b) 첫 설치 기본 쉐이더 적용(Iris) → 공식 런처가 이 herma gameDir 로 실행 시 첫 화면부터 적용.
+        ClientDefaults.EnsureDefaultShader(gameDir, progress);
+
         // (5) 프로필 머지 — 스탠드얼론 + MS Store 런처 프로필 파일 모두에 반영(Codex#7 P0).
         progress.Report(StageUpdate.Of(LaunchStage.Launch, "공식 런처 프로필 등록 중…"));
         WriteProfile(mcDir, gameDir, versionId);
