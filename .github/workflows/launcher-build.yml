@@ -11,6 +11,11 @@ on:
   release:
     types: [created]
 
+# release 자산 업로드(softprops/action-gh-release)에 contents:write 필요.
+# 없으면 "Resource not accessible by integration" 으로 Attach 단계 실패.
+permissions:
+  contents: write
+
 jobs:
   windows:
     runs-on: windows-latest
