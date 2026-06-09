@@ -22,9 +22,10 @@
 cd modpack
 # 모드 추가/수정 후
 packwiz refresh && git add . && git commit -m "modpack: ..." && git push
-# 호스팅: GitHub Pages → https://<org>.github.io/modpack/pack.toml
 ```
-재현 빌드: `PACKWIZ=packwiz bash modpack/build-pack.sh`
+- **라이브 호스팅(Pages)**: https://hermaphrodite-world.github.io/minecraft/pack.toml ✅
+- push → `modpack-pages.yml` 가 자동 재배포 (런처·서버는 다음 동기화 시 변경분 반영).
+- 재현 빌드: `PACKWIZ=packwiz bash modpack/build-pack.sh`
 
 ### 런처 (개발 / 배포)
 ```bash
@@ -42,12 +43,12 @@ pwsh launcher/publish-win.ps1    # → publish/win-x64/HermaLauncher.exe (self-c
 
 | 영역 | 상태 |
 |------|------|
-| packwiz 모드팩 (26.1.2, 64 모드 + side 분류) | ✅ 완료 (`packwiz refresh` 통과) |
+| packwiz 모드팩 (26.1.2, 64 모드 + side 분류) | ✅ 완료 — **Pages 라이브 + e2e 동기화 검증**(실 모드 40개 다운로드, side 필터 정상) |
 | 런처 골격 (UI · 실행 순서 · 실패 게이트 · packwiz 자동 동기화) | ✅ 빌드 0/0 + 런타임 스모크 통과 (net10.0) |
 | 런처 CmlLib 인증/Java/Fabric/실행 통합 | ✅ **구현 완료** — 어셈블리 검증 API. Windows 인증은 CmlLib 기본 OAuth(자체 Azure 앱 불요). 실 게임 런타임은 사용자 PC 검증 |
 | Velopack 자체 업데이트 | ✅ **구현 완료** (Program.Main 첫 줄 + GithubSource) |
-| Windows 배포 (미서명 단일 exe) | ✅ **완료** — `publish/win-x64/HermaLauncher.exe` 96MB self-contained (결정 D: 미서명) |
-| CI (GitHub Actions, Windows) | ✅ 완료 ([.github/workflows/launcher-build.yml](.github/workflows/launcher-build.yml)) |
+| Windows 배포 (미서명 단일 exe) | ✅ **완료** — self-contained 96MB (결정 D: 미서명) |
+| CI (GitHub Actions) | ✅ Launcher Build **통과**(windows-latest) + Modpack Pages 배포 **성공** |
 | 서버 구성 (스크립트·보안·동기화) | ✅ 완료 |
 | macOS 빌드 / Apple 공증 | 🕓 **최종 단계 보류** (결정 C) — CI에 job 골격 준비됨 |
 
