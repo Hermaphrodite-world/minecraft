@@ -15,6 +15,7 @@ using CmlLib.Core.ModLoaders.FabricMC;
 using CmlLib.Core.ProcessBuilder;
 using Velopack;
 using Velopack.Sources;
+using XboxAuthNet.Game.Accounts;
 using XboxAuthNet.Game.Authenticators;
 using XboxAuthNet.Game.Msal;
 
@@ -35,6 +36,8 @@ internal sealed class NullProgress<T> : IProgress<T>
 //  Offline=false : device-code MS 로그인 (online-mode=true 서버 — Azure 앱 client ID 필요, WebView 불필요).
 public sealed class CmlLibAuthService : IAuthService
 {
+    private static readonly HttpClient _authHttp = new();
+
     public async Task<AuthSession> AuthenticateAsync(LaunchOptions options, IProgress<StageUpdate> progress, CancellationToken ct)
     {
         // ── 오프라인: username 만으로 진행 ──
@@ -62,12 +65,22 @@ public sealed class CmlLibAuthService : IAuthService
                 .WithRedirectUri("http://localhost") // 시스템 브라우저 loopback (random port)
                 .Build();
 
-            var authenticator = new NestedAuthenticator();
+            // 계정 매니저(생성 시 파일에서 자동 로드) → 계정의 SessionStorage 로 AuthenticateContext 구성
+            // (없으면 "Context not set" 에러). AuthenticateContext 는 생성자로만 구성(속성 read-only).
+            var accountManager = new JsonXboxGameAccountManager(AppPaths.AccountsJson);
+            var account = accountManager.GetDefaultAccount() ?? accountManager.NewAccount();
+
+            var authenticator = new NestedAuthenticator
+            {
+                Context = new AuthenticateContext(account.SessionStorage, _authHttp, ct,
+                    Microsoft.Extensions.Logging.Abstractions.NullLogger.Instance),
+            };
             authenticator.AddMsalOAuth(app, msal => msal.Interactive()); // 시스템 브라우저
             authenticator.AddXboxAuthForJE(xbox => xbox.Basic());
             authenticator.AddJEAuthenticator();
 
             MSession session = await authenticator.ExecuteForLauncherAsync().ConfigureAwait(false);
+            try { accountManager.SaveAccounts(); } catch { /* 캐시 저장 실패 무시 */ }
             return new AuthSession(session.Username ?? string.Empty, session.UUID ?? string.Empty,
                                    session.AccessToken ?? string.Empty, IsOffline: false,
                                    Xuid: session.Xuid ?? string.Empty);
