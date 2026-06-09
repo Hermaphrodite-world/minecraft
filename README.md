@@ -34,7 +34,11 @@ dotnet build -c Release          # 0 경고·0 오류 (실 CmlLib+Velopack 통�
 dotnet run                       # UI 기동 (런타임 스모크 통과)
 # Windows 미서명 단일 exe 게시:
 pwsh launcher/publish-win.ps1    # → publish/win-x64/HermaLauncher.exe (self-contained)
+# macOS .app (ad-hoc 서명 — macOS 또는 CI macos-14 러너에서):
+dotnet publish src/HermaLauncher/HermaLauncher.csproj -c Release -r osx-arm64 --self-contained -o publish/osx-arm64
+bash build-mac-app.sh publish/osx-arm64 publish/mac   # → HermaLauncher-macos-arm64.zip
 ```
+> macOS `.app` 은 **CI(`launcher-build.yml` macos job)가 자동 생성** — Actions 아티팩트 `HermaLauncher-macos-arm64` 다운로드해 전달. Windows 에선 크로스빌드(osx-arm64 publish)까지 가능하나 ad-hoc 서명(`codesign`)은 macOS 필요.
 
 ### 서버
 [`server/setup.md`](server/setup.md) 참조 — Fabric 설치 → EULA → `./sync-mods.sh` → `./start.sh`.
@@ -54,10 +58,10 @@ pwsh launcher/publish-win.ps1    # → publish/win-x64/HermaLauncher.exe (self-c
 | Windows 배포 (미서명 단일 exe) | ✅ 완료 — self-contained 96MB (결정 D: 미서명) |
 | 서버 스택 (Fabric 26.1.2 + 40 모드 + Java 25) | ✅ **실증** — Done(2.3s), Blastproof·LuckPerms·SVC 로드, 포트 바인딩 |
 | CI (GitHub Actions) | ✅ Launcher Build 통과 + Modpack Pages 배포 성공 |
-| macOS 빌드/공증 | 🕓 최종 단계 보류 (결정 C) |
-| macOS 빌드 / Apple 공증 | 🕓 **최종 단계 보류** (결정 C) — CI에 job 골격 준비됨 |
+| macOS 빌드 (ad-hoc 서명, 미공증) | ✅ **CI 활성** — macos-14 러너가 osx-arm64 `.app` 빌드+ad-hoc 서명+zip 아티팩트. [친구용 설치 가이드](docs/macos-setup.md) |
+| macOS Apple 공증 | 🕓 최종 단계 보류 (결정 C) — Developer ID($99/년) 확보 후 서명 단계만 교체 |
 
-> 미검증(외부 게이트): 실 MS 로그인(WebView2/MS 계정), 실 게임 실행/서버 접속(Java 25 서버·온라인 인증)은 사용자 PC에서 검증. macOS 공증은 최종 단계.
+> 미검증(외부 게이트): 실 온라인 MS 로그인(Azure 앱 Mojang 승인 대기 — 승인 후 자동 동작), macOS `.app` 실행은 친구 Mac 에서 검증(코드는 크로스플랫폼, Windows 에서 osx-arm64 크로스빌드까지 확인). Apple 공증은 최종 단계.
 
 ## 라이선스
 [MIT](LICENSE) (런처 소스·스크립트·문서). 서드파티 모드는 각자 라이선스를 따르며 바이너리는 미포함(packwiz 메타데이터만).

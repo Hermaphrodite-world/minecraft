@@ -42,19 +42,40 @@ jobs:
         with:
           files: publish/win-x64/HermaLauncher.exe
 
-  # ── macOS (최종 단계 — 결정 C 확정 후 활성화) ──────────────────────────────
-  # macos:
-  #   runs-on: macos-14            # Apple Silicon 러너
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - uses: actions/setup-dotnet@v4
-  #       with: { dotnet-version: '10.0.x' }
-  #     - run: dotnet publish ... -r osx-arm64 --self-contained
-  #             -p:IncludeNativeLibrariesForSelfExtract=false   # dylib 개별 서명 위해
-  #     - run: |   # Velopack vpk pack: .app 생성 + Developer ID 서명 + notarytool 공증 + staple
-  #         dotnet tool install -g vpk
-  #         vpk pack --packId io.hermaphroditeworld.launcher --packVersion ${VER} \
-  #           --packDir publish/osx-arm64 --mainExe HermaLauncher --icon app.icns \
-  #           --signAppIdentity "Developer ID Application: ..." \
-  #           --signInstallIdentity "Developer ID Installer: ..." --notaryProfile AC_PASSWORD
-  #   # 전제: APPLE_* secrets(Developer ID .p12 + notarytool app-specific password).
+  # ── macOS (ad-hoc 서명, 미공증 — 결정 C "인증 나중, 앱 전달만") ──────────────
+  # Apple Silicon(.app)이 실행되려면 ad-hoc 서명이 필수(공증과 별개). codesign 은 macOS 전용이라
+  # macos-14 러너에서 빌드+서명. 친구 Mac 에선 처음 1회 우클릭→열기(미공증 경고 통과).
+  # 공증(notarytool, Developer ID $99/년)은 최종 단계 — 아래 주석 참고.
+  macos:
+    runs-on: macos-14            # Apple Silicon 러너
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Publish (osx-arm64, self-contained, .app 용 dylib 분리)
+        run: >
+          dotnet publish launcher/src/HermaLauncher/HermaLauncher.csproj
+          -c Release -r osx-arm64 --self-contained true
+          -p:PublishSingleFile=false
+          -o publish/osx-arm64
+
+      - name: Bundle .app + ad-hoc sign
+        run: bash launcher/build-mac-app.sh publish/osx-arm64 publish/mac
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: HermaLauncher-macos-arm64
+          path: publish/mac/HermaLauncher-macos-arm64.zip
+
+      - name: Attach to release
+        if: github.event_name == 'release'
+        uses: softprops/action-gh-release@v2
+        with:
+          files: publish/mac/HermaLauncher-macos-arm64.zip
+
+  # ── (최종 단계) 공증 — Apple Developer($99/년) 확보 후 위 job 의 서명 단계를 교체 ──
+  #   vpk pack --signAppIdentity "Developer ID Application: ..." --notaryProfile AC_PASSWORD
+  #   전제: APPLE_* secrets(Developer ID .p12 + notarytool app-specific password).
