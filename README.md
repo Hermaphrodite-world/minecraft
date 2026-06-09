@@ -53,7 +53,7 @@ bash build-mac-app.sh publish/osx-arm64 publish/mac   # → HermaLauncher-macos-
 | 런처 풀 파이프라인 (UI·인증·Java·packwiz·Fabric·실행·자동접속) | ✅ **실 게임 실증** — 26.1.2 월드 접속 확인 (net10.0, 빌드 0/0) |
 | 오프라인 로그인 (친구 서버) | ✅ **실증** — 닉네임만, MS 로그인 0 |
 | 온라인 로그인 (정품 계정) | ✅ **시스템 브라우저**(요즘 공식 런처 방식, 크로스플랫폼) — [셋업 가이드](docs/online-login-setup.md). Azure 앱 1개(메인테이너) 공유. Mojang 앱 승인 후 동작 |
-| **공식 런처 설치 (대체 경로)** | ✅ 구현 — "공식 런처에 설치" 버튼이 Fabric+모드팩 프로필을 공식 `.minecraft`에 등록 → **정품 로그인 즉시(승인 대기 0)**. 프로필 머지 fixture 검증(기존 프로필 보존). [가이드](docs/installer-setup.md) |
+| **공식 런처 설치 (대체 경로)** | ✅ **실증** — 실기기에서 공식 런처에 'Hermaphrodite World' 프로필 정상 추가 확인. "공식 런처에 설치" 버튼이 Fabric+모드팩을 공식 `.minecraft`에 등록 → **정품 로그인 즉시(Mojang 승인 대기 0)**. 머지 로직 fixture + 실기기 검증(기존 프로필 보존, MS Store/standalone 양쪽). [가이드](docs/installer-setup.md) |
 | 자동 접속 (quickPlayMultiplayer) | ✅ **실증** — MC 26.1 구형 --server 제거 대응 |
 | Velopack 자체 업데이트 | ✅ 구현 완료 |
 | Windows 배포 (미서명 단일 exe) | ✅ 완료 — self-contained 96MB (결정 D: 미서명) |
