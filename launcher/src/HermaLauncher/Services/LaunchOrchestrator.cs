@@ -56,8 +56,8 @@ public sealed class LaunchOrchestrator
             await _packwiz.RunAsync(javaPath, LauncherConfig.PackTomlUrl, progress, ct).ConfigureAwait(false);
             ct.ThrowIfCancellationRequested();
 
-            // (4b) 첫 실행 기본 쉐이더 적용(Iris). 이미 설정돼 있으면 보존 — best-effort.
-            ClientDefaults.EnsureDefaultShader(AppPaths.GameDir, progress);
+            // (4b) 첫 실행 기본 쉐이더/리소스팩 적용. 이미 설정돼 있으면 보존 — best-effort.
+            ClientDefaults.ApplyAll(AppPaths.GameDir, progress);
 
             // (5)+(6) Fabric 설치 + ServerIp 주입 실행 (토큰은 직전 인증에서 확보)
             await _minecraft.LaunchAsync(session, progress, ct).ConfigureAwait(false);
