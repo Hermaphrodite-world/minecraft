@@ -48,7 +48,7 @@ pwsh launcher/publish-win.ps1    # → publish/win-x64/HermaLauncher.exe (self-c
 | packwiz 모드팩 (26.1.2, 64 모드 + side 분류) | ✅ 완료 — Pages 라이브 + e2e 동기화 검증(실 모드 40개) |
 | 런처 풀 파이프라인 (UI·인증·Java·packwiz·Fabric·실행·자동접속) | ✅ **실 게임 실증** — 26.1.2 월드 접속 확인 (net10.0, 빌드 0/0) |
 | 오프라인 로그인 (친구 서버) | ✅ **실증** — 닉네임만, MS 로그인 0 |
-| 온라인 로그인 (device-code) | ✅ 구현(빌드검증) — Azure 앱 client ID 필요. 미실증 |
+| 온라인 로그인 (device-code, 정품 계정) | ✅ 구현(빌드검증) — [셋업 가이드](docs/online-login-setup.md)로 Azure 앱 등록 후 활성화 |
 | 자동 접속 (quickPlayMultiplayer) | ✅ **실증** — MC 26.1 구형 --server 제거 대응 |
 | Velopack 자체 업데이트 | ✅ 구현 완료 |
 | Windows 배포 (미서명 단일 exe) | ✅ 완료 — self-contained 96MB (결정 D: 미서명) |
