@@ -58,7 +58,7 @@ bash build-mac-app.sh publish/osx-arm64 publish/mac   # → HermaLauncher-macos-
 | Windows 배포 (미서명 단일 exe) | ✅ 완료 — self-contained 96MB (결정 D: 미서명) |
 | 서버 스택 (Fabric 26.1.2 + 40 모드 + Java 25) | ✅ **실증** — Done(2.3s), Blastproof·LuckPerms·SVC 로드, 포트 바인딩 |
 | CI (GitHub Actions) | ✅ Launcher Build 통과 + Modpack Pages 배포 성공 |
-| macOS 빌드 (ad-hoc 서명, 미공증) | ✅ **CI 활성** — macos-14 러너가 osx-arm64 `.app` 빌드+ad-hoc 서명+zip 아티팩트. [친구용 설치 가이드](docs/macos-setup.md) |
+| macOS 빌드 (ad-hoc 서명, 미공증) | ✅ **CI 실증** — macos-14 러너가 osx-arm64 `.app` 빌드+`--deep` ad-hoc 서명+서명/zip 왕복 검증 통과, 아티팩트 `HermaLauncher-macos-arm64`(45MB) 생성. [친구용 설치 가이드](docs/macos-setup.md) |
 | macOS Apple 공증 | 🕓 최종 단계 보류 (결정 C) — Developer ID($99/년) 확보 후 서명 단계만 교체 |
 
 > 미검증(외부 게이트): 실 온라인 MS 로그인(Azure 앱 Mojang 승인 대기 — 승인 후 자동 동작), macOS `.app` 실행은 친구 Mac 에서 검증(코드는 크로스플랫폼, Windows 에서 osx-arm64 크로스빌드까지 확인). Apple 공증은 최종 단계.
