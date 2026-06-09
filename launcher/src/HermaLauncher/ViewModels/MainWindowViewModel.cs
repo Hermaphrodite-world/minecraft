@@ -34,9 +34,10 @@ public partial class MainWindowViewModel : ViewModelBase
     [ObservableProperty]
     private string _username = Environment.UserName;
 
-    // 오프라인 모드 = MS 로그인 없이 닉네임만 (online-mode=false 친구 서버). 기본 ON.
+    // 기본: Azure client ID 설정됨(배포본) → 온라인(직접 로그인) 기본 / 미설정(테스트) → 오프라인 기본.
+    // UX 원칙: 공식 런처처럼 직접 로그인을 default 로(단 Azure 미설정 시 에러 방지 위해 오프라인).
     [ObservableProperty]
-    private bool _isOffline = true;
+    private bool _isOffline = !LauncherConfig.IsAzureClientConfigured;
 
     public string Title => "Herma Launcher";
     public string ServerLabel => $"{LauncherConfig.ServerIp}:{LauncherConfig.ServerPort}";

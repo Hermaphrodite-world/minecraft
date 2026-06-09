@@ -45,28 +45,25 @@ public sealed class CmlLibAuthService : IAuthService
             return new AuthSession(name, string.Empty, "0", IsOffline: true);
         }
 
-        // ── 온라인: device-code (브라우저에 코드 입력, WebView 불필요) ──
+        // ── 온라인: 시스템 브라우저 로그인 (요즘 공식 런처와 동일 방식, 크로스플랫폼) ──
+        //   클릭 → 기본 브라우저에서 MS 로그인 → loopback 으로 자동 복귀. WebView 불필요.
         if (!LauncherConfig.IsAzureClientConfigured)
             throw new LaunchStageException(LaunchStage.Auth,
-                "온라인 로그인은 Azure 앱 client ID 설정이 필요해요(LauncherConfig.AzureClientId).\n" +
+                "온라인 로그인은 Azure 앱 client ID 설정이 필요해요(LauncherConfig.AzureClientId 또는 HERMA_AZURE_CLIENT_ID).\n" +
                 "지금 테스트하려면 '오프라인 모드'를 켜고 서버를 online-mode=false 로 두세요.");
 
-        progress.Report(StageUpdate.Of(LaunchStage.Auth, "Microsoft 로그인 준비 중…"));
+        progress.Report(StageUpdate.Of(LaunchStage.Auth,
+            "기본 브라우저에서 Microsoft 로그인을 진행해 주세요. 완료되면 자동으로 이어집니다."));
         try
         {
             var app = Microsoft.Identity.Client.PublicClientApplicationBuilder
                 .Create(LauncherConfig.AzureClientId)
                 .WithAuthority("https://login.microsoftonline.com/consumers")
-                .WithRedirectUri("https://login.microsoftonline.com/common/oauth2/nativeclient")
+                .WithRedirectUri("http://localhost") // 시스템 브라우저 loopback (random port)
                 .Build();
 
             var authenticator = new NestedAuthenticator();
-            authenticator.AddMsalOAuth(app, msal => msal.DeviceCode(dc =>
-            {
-                progress.Report(StageUpdate.Of(LaunchStage.Auth,
-                    $"브라우저에서 {dc.VerificationUrl} 접속 후 코드 입력:  {dc.UserCode}"));
-                return Task.CompletedTask;
-            }));
+            authenticator.AddMsalOAuth(app, msal => msal.Interactive()); // 시스템 브라우저
             authenticator.AddXboxAuthForJE(xbox => xbox.Basic());
             authenticator.AddJEAuthenticator();
 
