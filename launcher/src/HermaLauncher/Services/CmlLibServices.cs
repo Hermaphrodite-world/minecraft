@@ -1,4 +1,7 @@
 using System;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.IO;
 using System.Net.Http;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -13,6 +16,13 @@ using Velopack;
 using Velopack.Sources;
 
 namespace HermaLauncher.Services;
+
+// SynchronizationContext 마샬링 없이 무시하는 진행률 싱크(고빈도 byte progress UI flood 방지 — Codex).
+internal sealed class NullProgress<T> : IProgress<T>
+{
+    public static readonly NullProgress<T> Instance = new();
+    public void Report(T value) { }
+}
 
 // CmlLib.Core 4.0.6 / Auth.Microsoft 3.3.1 / Velopack 1.2.0 실제 통합.
 // 모든 API 는 복원된 어셈블리 리플렉션으로 시그니처 검증함(docs/launcher-integration-notes.md).
@@ -58,9 +68,20 @@ public sealed class CmlLibAuthService : IAuthService
             // 설치 동안 만료됐을 수 있는 토큰을 silent refresh.
             var handler = JELoginHandlerBuilder.BuildDefault();
             var session = await handler.AuthenticateSilently(ct).ConfigureAwait(false);
-            return new AuthSession(session.Username ?? string.Empty, session.UUID ?? string.Empty,
-                                   session.AccessToken ?? string.Empty, IsOffline: false,
-                                   Xuid: session.Xuid ?? string.Empty);
+
+            // 다중 캐시 계정 환경에서 silent 가 '다른 계정'을 반환할 수 있음(Codex) →
+            // 원래 로그인한 계정(UUID)과 일치할 때만 갱신 세션 채택, 아니면 기존 유지.
+            if (!string.IsNullOrEmpty(session.UUID) &&
+                !string.Equals(session.UUID, current.Uuid, StringComparison.OrdinalIgnoreCase))
+                return current;
+
+            return new AuthSession(session.Username ?? current.Username, session.UUID ?? current.Uuid,
+                                   session.AccessToken ?? current.AccessToken, IsOffline: false,
+                                   Xuid: session.Xuid ?? current.Xuid);
+        }
+        catch (OperationCanceledException) when (ct.IsCancellationRequested)
+        {
+            throw;
         }
         catch
         {
@@ -75,6 +96,9 @@ public sealed class CmlLibMinecraftService : IMinecraftService
 {
     private readonly HttpClient _http = new();
     private readonly MinecraftLauncher _launcher;
+
+    // EnsureJavaAsync 가 쓰고 LaunchAsync 가 읽는다. 단일 Play 흐름 내에서 순차(await)이고,
+    // 동시 Play 는 VM 의 PlayCommand CanExecute=!IsBusy 로 차단되므로 single-flight 보장(Codex #2).
     private string? _fabricVersionId;
 
     public CmlLibMinecraftService()
@@ -93,17 +117,17 @@ public sealed class CmlLibMinecraftService : IMinecraftService
         var fileProgress = new Progress<InstallerProgressChangedEventArgs>(e =>
             progress.Report(StageUpdate.Of(LaunchStage.Java, e.Name ?? "설치 중",
                 e.TotalTasks > 0 ? (double)e.ProgressedTasks / e.TotalTasks : (double?)null)));
-        var byteProgress = new Progress<ByteProgress>(_ => { });
-
-        // 게임 + 해당 버전 Java(26.1=Java25, arm64 자동) 설치.
-        await _launcher.InstallAsync(_fabricVersionId, fileProgress, byteProgress, ct).ConfigureAwait(false);
+        // byte 진행률은 고빈도라 UI 마샬링 없이 무시(NullProgress) — flood 방지.
+        await _launcher.InstallAsync(_fabricVersionId, fileProgress, NullProgress<ByteProgress>.Instance, ct)
+                       .ConfigureAwait(false);
 
         var version = await _launcher.GetVersionAsync(_fabricVersionId, ct).ConfigureAwait(false);
         var javaPath = _launcher.GetJavaPath(version);
-        if (string.IsNullOrEmpty(javaPath))
+        if (string.IsNullOrEmpty(javaPath) || !File.Exists(javaPath))
             javaPath = _launcher.GetDefaultJavaPath();
-        if (string.IsNullOrEmpty(javaPath))
-            throw new LaunchStageException(LaunchStage.Java, "Java 런타임 경로를 확인하지 못했어요.");
+        if (string.IsNullOrEmpty(javaPath) || !File.Exists(javaPath))
+            throw new LaunchStageException(LaunchStage.Java,
+                "Java 런타임을 찾지 못했어요. 잠시 후 다시 시도해 주세요.");
         return javaPath!;
     }
 
@@ -126,7 +150,15 @@ public sealed class CmlLibMinecraftService : IMinecraftService
 
         // 이미 EnsureJavaAsync 에서 설치 완료 → build only.
         var proc = await _launcher.BuildProcessAsync(_fabricVersionId, option, ct).ConfigureAwait(false);
-        proc.Start();
+        try
+        {
+            if (!proc.Start())
+                throw new LaunchStageException(LaunchStage.Launch, "게임 프로세스를 시작하지 못했어요.");
+        }
+        catch (Exception ex) when (ex is Win32Exception or InvalidOperationException or ObjectDisposedException)
+        {
+            throw new LaunchStageException(LaunchStage.Launch, "게임 실행에 실패했어요. 다시 시도해 주세요.", ex);
+        }
     }
 
     private static MSession ToMSession(AuthSession s)
@@ -174,6 +206,10 @@ public sealed class VelopackUpdateService : IUpdateService
 
             mgr.ApplyUpdatesAndRestart(info.TargetFullRelease, null);
             return true; // 재시작 예정
+        }
+        catch (OperationCanceledException) when (ct.IsCancellationRequested)
+        {
+            throw; // 사용자 취소는 graceful-skip 으로 삼키지 않음(Codex) — 실행으로 진행 금지.
         }
         catch (Exception ex)
         {
