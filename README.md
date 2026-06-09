@@ -41,15 +41,20 @@ pwsh launcher/publish-win.ps1    # → publish/win-x64/HermaLauncher.exe (self-c
 
 ## 구현 상태
 
+> **🎉 end-to-end 실증 완료** — 로컬 26.1.2 서버 + 런처로 실제 검증: 클릭 한 번 → 오프라인 인증 → Java 25 설치 → 모드 동기화 → Fabric → quickPlayMultiplayer 자동 접속 → **월드 스폰**. 공식 런처·MS 로그인 없음. Xaero Minimap·Simple Voice Chat·Jade·Sodium 등 인게임 작동 확인.
+
 | 영역 | 상태 |
 |------|------|
-| packwiz 모드팩 (26.1.2, 64 모드 + side 분류) | ✅ 완료 — **Pages 라이브 + e2e 동기화 검증**(실 모드 40개 다운로드, side 필터 정상) |
-| 런처 골격 (UI · 실행 순서 · 실패 게이트 · packwiz 자동 동기화) | ✅ 빌드 0/0 + 런타임 스모크 통과 (net10.0) |
-| 런처 CmlLib 인증/Java/Fabric/실행 통합 | ✅ **구현 완료** — 어셈블리 검증 API. Windows 인증은 CmlLib 기본 OAuth(자체 Azure 앱 불요). 실 게임 런타임은 사용자 PC 검증 |
-| Velopack 자체 업데이트 | ✅ **구현 완료** (Program.Main 첫 줄 + GithubSource) |
-| Windows 배포 (미서명 단일 exe) | ✅ **완료** — self-contained 96MB (결정 D: 미서명) |
-| CI (GitHub Actions) | ✅ Launcher Build **통과**(windows-latest) + Modpack Pages 배포 **성공** |
-| 서버 구성 (스크립트·보안·동기화) | ✅ 완료 |
+| packwiz 모드팩 (26.1.2, 64 모드 + side 분류) | ✅ 완료 — Pages 라이브 + e2e 동기화 검증(실 모드 40개) |
+| 런처 풀 파이프라인 (UI·인증·Java·packwiz·Fabric·실행·자동접속) | ✅ **실 게임 실증** — 26.1.2 월드 접속 확인 (net10.0, 빌드 0/0) |
+| 오프라인 로그인 (친구 서버) | ✅ **실증** — 닉네임만, MS 로그인 0 |
+| 온라인 로그인 (device-code) | ✅ 구현(빌드검증) — Azure 앱 client ID 필요. 미실증 |
+| 자동 접속 (quickPlayMultiplayer) | ✅ **실증** — MC 26.1 구형 --server 제거 대응 |
+| Velopack 자체 업데이트 | ✅ 구현 완료 |
+| Windows 배포 (미서명 단일 exe) | ✅ 완료 — self-contained 96MB (결정 D: 미서명) |
+| 서버 스택 (Fabric 26.1.2 + 40 모드 + Java 25) | ✅ **실증** — Done(2.3s), Blastproof·LuckPerms·SVC 로드, 포트 바인딩 |
+| CI (GitHub Actions) | ✅ Launcher Build 통과 + Modpack Pages 배포 성공 |
+| macOS 빌드/공증 | 🕓 최종 단계 보류 (결정 C) |
 | macOS 빌드 / Apple 공증 | 🕓 **최종 단계 보류** (결정 C) — CI에 job 골격 준비됨 |
 
 > 미검증(외부 게이트): 실 MS 로그인(WebView2/MS 계정), 실 게임 실행/서버 접속(Java 25 서버·온라인 인증)은 사용자 PC에서 검증. macOS 공증은 최종 단계.
