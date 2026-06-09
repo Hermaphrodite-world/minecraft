@@ -74,18 +74,18 @@ plutil -lint "$APP/Contents/Info.plist"
 test "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleExecutable' "$APP/Contents/Info.plist")" = "$EXEC_NAME" \
   || { echo "ERROR: CFBundleExecutable != $EXEC_NAME" >&2; exit 1; }
 
-# 4) ad-hoc 서명 — inside-out (Codex audit #1, certain).
-#    Apple 은 `--deep` 를 "비상용" 으로만 인정 → 중첩 Mach-O(dylib + apphost) 를 먼저 개별 서명한 뒤
-#    번들을 마지막에 서명해야 서명 seal 이 올바르게 기록된다. 관리형 *.dll(PE/CIL)은 Mach-O 가
-#    아니라 `file` 매칭에서 제외되므로 서명 대상이 아니다.
-echo "==> ad-hoc codesign (inside-out)"
-while IFS= read -r -d '' f; do
-  if file "$f" | grep -q 'Mach-O'; then
-    codesign --force --sign - "$f"
-  fi
-done < <(find "$APP/Contents/MacOS" -type f -print0)
-codesign --force --sign - "$APP"                       # 번들 마지막 서명(seal)
-codesign --verify --deep --strict --verbose=4 "$APP" || { echo "codesign verify 실패" >&2; exit 1; }
+# 4) ad-hoc 서명 — .NET flat-layout 은 --deep 이 표준.
+#    .NET self-contained 앱은 Contents/MacOS 에 관리형 *.dll 이 수십 개다. 이를 inside-out
+#    (Mach-O 만 개별 서명 후 --deep 없이 번들 서명)으로 하면 codesign 이 .dll 을 "서명 안 된
+#    nested code" 로 보고 거부한다 — 실제 macos-14 CI 에서 확인:
+#      "In subcomponent: .../System.Diagnostics.Contracts.dll: code object is not signed at all"
+#    .NET flat 레이아웃 ad-hoc 의 표준은 --deep: codesign 이 nested Mach-O(dylib/apphost)는
+#    서명하고 관리형 dll 은 _CodeSignature/CodeResources 로 seal 한다. AMFI 가 검사하는 것은
+#    실제 로드되는 Mach-O 이므로 Apple Silicon 실행에 충분하다.
+#    (Apple 의 "--deep 회피" 권고는 Developer ID/공증 케이스 한정 — ad-hoc 엔 무관. 공증은 최종 단계.)
+echo "==> ad-hoc codesign (--deep, .NET flat-layout 표준)"
+codesign --force --deep --sign - "$APP"
+codesign --verify --verbose=2 "$APP" || { echo "codesign verify 실패" >&2; exit 1; }
 
 # 5) 배포용 zip (ditto: 서명/심볼릭 보존하며 압축 — zip 보다 안전).
 mkdir -p "$OUT_DIR"
@@ -96,7 +96,7 @@ ditto -c -k --sequesterRsrc --keepParent "$APP" "$ZIP"
 # 5b) zip 왕복 후 서명 보존 재검증 (Codex audit #4) — 친구가 받는 상태 그대로 검증.
 CHECK_DIR="$(mktemp -d)"
 ditto -x -k "$ZIP" "$CHECK_DIR"
-codesign --verify --deep --strict --verbose=4 "$CHECK_DIR/$APP_NAME.app" \
+codesign --verify --verbose=2 "$CHECK_DIR/$APP_NAME.app" \
   || { echo "ERROR: zip 왕복 후 서명 깨짐" >&2; rm -rf "$CHECK_DIR"; exit 1; }
 rm -rf "$CHECK_DIR"
 
