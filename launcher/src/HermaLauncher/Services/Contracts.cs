@@ -7,6 +7,11 @@ namespace HermaLauncher.Services;
 // 인증 세션(런처 내부 표현). Xuid 는 online-mode 서버 접속에 필요(MSession 라운드트립 손실 방지).
 public sealed record AuthSession(string Username, string Uuid, string AccessToken, bool IsOffline, string Xuid = "");
 
+// Play 시 사용자가 고른 로그인 옵션.
+//  Offline=true  : MS 로그인 없이 username 만 (online-mode=false 친구 서버용 — 가장 단순).
+//  Offline=false : device-code MS 로그인 (online-mode=true 서버용 — Azure 앱 client ID 필요).
+public sealed record LaunchOptions(string Username, bool Offline);
+
 public interface IUpdateService
 {
     // (1) 자체 업데이트. true = 업데이트 적용 위해 재시작 예정.
@@ -15,11 +20,8 @@ public interface IUpdateService
 
 public interface IAuthService
 {
-    // (2) silent -> device-code fallback + 소유권 검증.
-    Task<AuthSession> AuthenticateAsync(IProgress<StageUpdate> progress, CancellationToken ct);
-
-    // (5.5) proc.Start 직전 세션 재검증/refresh.
-    Task<AuthSession> RevalidateAsync(AuthSession current, CancellationToken ct);
+    // (2) offline(username) 또는 online(device-code) 로그인.
+    Task<AuthSession> AuthenticateAsync(LaunchOptions options, IProgress<StageUpdate> progress, CancellationToken ct);
 }
 
 public interface IMinecraftService

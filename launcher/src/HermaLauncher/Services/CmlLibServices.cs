@@ -2,6 +2,7 @@ using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -14,6 +15,8 @@ using CmlLib.Core.ModLoaders.FabricMC;
 using CmlLib.Core.ProcessBuilder;
 using Velopack;
 using Velopack.Sources;
+using XboxAuthNet.Game.Authenticators;
+using XboxAuthNet.Game.Msal;
 
 namespace HermaLauncher.Services;
 
@@ -27,65 +30,66 @@ internal sealed class NullProgress<T> : IProgress<T>
 // CmlLib.Core 4.0.6 / Auth.Microsoft 3.3.1 / Velopack 1.2.0 실제 통합.
 // 모든 API 는 복원된 어셈블리 리플렉션으로 시그니처 검증함(docs/launcher-integration-notes.md).
 
-// (2) 인증 — Windows 는 CmlLib 기본 OAuth(자체 Azure 앱 불필요). macOS device-code 는 최종 단계.
+// (2) 인증.
+//  Offline=true  : MS 로그인 없이 username (online-mode=false 친구 서버 — WebView/Azure 불필요, 즉시 동작).
+//  Offline=false : device-code MS 로그인 (online-mode=true 서버 — Azure 앱 client ID 필요, WebView 불필요).
 public sealed class CmlLibAuthService : IAuthService
 {
-    public async Task<AuthSession> AuthenticateAsync(IProgress<StageUpdate> progress, CancellationToken ct)
+    public async Task<AuthSession> AuthenticateAsync(LaunchOptions options, IProgress<StageUpdate> progress, CancellationToken ct)
     {
-        progress.Report(StageUpdate.Of(LaunchStage.Auth, "Microsoft 로그인 중…"));
+        // ── 오프라인: username 만으로 진행 ──
+        if (options.Offline)
+        {
+            var name = string.IsNullOrWhiteSpace(options.Username) ? "Player" : options.Username.Trim();
+            progress.Report(StageUpdate.Of(LaunchStage.Auth, $"오프라인 모드: {name}", 1.0));
+            return new AuthSession(name, string.Empty, "0", IsOffline: true);
+        }
 
-        // 오프라인 모드(LAN/개발): 실제 MS 인증 없이 진행.
-        if (LauncherConfig.OfflineMode)
-            return new AuthSession(LauncherConfig.OfflineUsername, Guid.Empty.ToString("N"), "0", IsOffline: true);
+        // ── 온라인: device-code (브라우저에 코드 입력, WebView 불필요) ──
+        if (!LauncherConfig.IsAzureClientConfigured)
+            throw new LaunchStageException(LaunchStage.Auth,
+                "온라인 로그인은 Azure 앱 client ID 설정이 필요해요(LauncherConfig.AzureClientId).\n" +
+                "지금 테스트하려면 '오프라인 모드'를 켜고 서버를 online-mode=false 로 두세요.");
 
+        progress.Report(StageUpdate.Of(LaunchStage.Auth, "Microsoft 로그인 준비 중…"));
         try
         {
-            // BuildDefault() 는 static — 기본 OAuth/Xbox 프로바이더 + 기본 토큰 캐시(로그인 1회 유지).
-            var handler = JELoginHandlerBuilder.BuildDefault();
+            var app = Microsoft.Identity.Client.PublicClientApplicationBuilder
+                .Create(LauncherConfig.AzureClientId)
+                .WithAuthority("https://login.microsoftonline.com/consumers")
+                .WithRedirectUri("https://login.microsoftonline.com/common/oauth2/nativeclient")
+                .Build();
 
-            // silent(캐시) 우선 → 실패 시 interactive. Windows 기본 OAuth 는 CmlLib client ID 사용.
-            MSession session = await handler.Authenticate(ct).ConfigureAwait(false);
+            var authenticator = new NestedAuthenticator();
+            authenticator.AddMsalOAuth(app, msal => msal.DeviceCode(dc =>
+            {
+                progress.Report(StageUpdate.Of(LaunchStage.Auth,
+                    $"브라우저에서 {dc.VerificationUrl} 접속 후 코드 입력:  {dc.UserCode}"));
+                return Task.CompletedTask;
+            }));
+            authenticator.AddXboxAuthForJE(xbox => xbox.Basic());
+            authenticator.AddJEAuthenticator();
+
+            MSession session = await authenticator.ExecuteForLauncherAsync().ConfigureAwait(false);
             return new AuthSession(session.Username ?? string.Empty, session.UUID ?? string.Empty,
                                    session.AccessToken ?? string.Empty, IsOffline: false,
                                    Xuid: session.Xuid ?? string.Empty);
         }
+        catch (OperationCanceledException) when (ct.IsCancellationRequested) { throw; }
         catch (JEAuthException ex)
         {
-            // 소유권/프로필 오류 분기 (404 = Java Edition 미보유)
             var msg = ex.StatusCode == 404
                 ? "이 계정은 Minecraft: Java Edition 을 소유하고 있지 않아요. 구매 또는 계정을 확인해 주세요."
-                : $"로그인에 실패했어요: {ex.ErrorMessage ?? ex.Message}";
+                : $"로그인 실패: {ex.ErrorMessage ?? ex.Message}";
             throw new LaunchStageException(LaunchStage.Auth, msg, ex);
         }
-    }
-
-    public async Task<AuthSession> RevalidateAsync(AuthSession current, CancellationToken ct)
-    {
-        if (current.IsOffline)
-            return current;
-        try
+        catch (Exception ex)
         {
-            // 설치 동안 만료됐을 수 있는 토큰을 silent refresh.
-            var handler = JELoginHandlerBuilder.BuildDefault();
-            var session = await handler.AuthenticateSilently(ct).ConfigureAwait(false);
-
-            // 다중 캐시 계정 환경에서 silent 가 '다른 계정'을 반환할 수 있음(Codex) →
-            // 원래 로그인한 계정(UUID)과 일치할 때만 갱신 세션 채택, 아니면 기존 유지.
-            if (!string.IsNullOrEmpty(session.UUID) &&
-                !string.Equals(session.UUID, current.Uuid, StringComparison.OrdinalIgnoreCase))
-                return current;
-
-            return new AuthSession(session.Username ?? current.Username, session.UUID ?? current.Uuid,
-                                   session.AccessToken ?? current.AccessToken, IsOffline: false,
-                                   Xuid: session.Xuid ?? current.Xuid);
-        }
-        catch (OperationCanceledException) when (ct.IsCancellationRequested)
-        {
-            throw;
-        }
-        catch
-        {
-            return current; // refresh 실패 시 기존 세션으로 시도(실패하면 실행 단계에서 보고)
+            // AggregateException 등 내부 메시지를 펼쳐서 표시(이전 '알 수 없는 오류' 개선).
+            var detail = ex is AggregateException agg
+                ? string.Join(" / ", agg.Flatten().InnerExceptions.Select(e => e.Message))
+                : ex.Message;
+            throw new LaunchStageException(LaunchStage.Auth, "로그인에 실패했어요.\n" + detail, ex);
         }
     }
 }

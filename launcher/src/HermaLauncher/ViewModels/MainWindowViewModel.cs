@@ -30,6 +30,14 @@ public partial class MainWindowViewModel : ViewModelBase
     [NotifyCanExecuteChangedFor(nameof(CancelCommand))]
     private bool _isBusy;
 
+    // 닉네임 (오프라인 모드에서 사용). 기본값 = OS 사용자명.
+    [ObservableProperty]
+    private string _username = Environment.UserName;
+
+    // 오프라인 모드 = MS 로그인 없이 닉네임만 (online-mode=false 친구 서버). 기본 ON.
+    [ObservableProperty]
+    private bool _isOffline = true;
+
     public string Title => "Herma Launcher";
     public string ServerLabel => $"{LauncherConfig.ServerIp}:{LauncherConfig.ServerPort}";
 
@@ -45,9 +53,10 @@ public partial class MainWindowViewModel : ViewModelBase
         _cts = new CancellationTokenSource();
 
         var progress = new Progress<StageUpdate>(OnStageUpdate);
+        var options = new LaunchOptions(Username, IsOffline);
         try
         {
-            await _orchestrator.RunAsync(progress, _cts.Token).ConfigureAwait(true);
+            await _orchestrator.RunAsync(options, progress, _cts.Token).ConfigureAwait(true);
         }
         finally
         {

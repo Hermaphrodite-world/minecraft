@@ -6,7 +6,7 @@
         mc:Ignorable="d" d:DesignWidth="520" d:DesignHeight="360"
         x:Class="HermaLauncher.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
-        Width="520" Height="360"
+        Width="520" Height="410"
         CanResize="False"
         WindowStartupLocation="CenterScreen"
         Title="Herma Launcher">
@@ -16,7 +16,7 @@
     </Design.DataContext>
 
     <Border Padding="28">
-        <Grid RowDefinitions="Auto,*,Auto,Auto">
+        <Grid RowDefinitions="Auto,*,Auto,Auto,Auto">
 
             <StackPanel Grid.Row="0" Spacing="2">
                 <TextBlock Text="{Binding Title}" FontSize="24" FontWeight="Bold" />
@@ -30,12 +30,18 @@
                                      Foreground="#D0D0D0" />
             </Border>
 
-            <ProgressBar Grid.Row="2" Margin="0,0,0,16"
+            <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="10" Margin="0,0,0,12">
+                <TextBlock Text="닉네임" VerticalAlignment="Center" Opacity="0.7" />
+                <TextBox Text="{Binding Username}" Width="160" Watermark="Player" />
+                <CheckBox Content="오프라인 모드(친구 서버)" IsChecked="{Binding IsOffline}" VerticalAlignment="Center" />
+            </StackPanel>
+
+            <ProgressBar Grid.Row="3" Margin="0,0,0,16"
                          Minimum="0" Maximum="100"
                          Value="{Binding Progress}"
                          IsIndeterminate="{Binding IsIndeterminate}" />
 
-            <Grid Grid.Row="3" ColumnDefinitions="*,Auto">
+            <Grid Grid.Row="4" ColumnDefinitions="*,Auto">
                 <Button Grid.Column="0"
                         Content="Play"
                         HorizontalAlignment="Stretch"

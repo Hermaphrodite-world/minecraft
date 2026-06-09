@@ -33,7 +33,7 @@ public sealed class LaunchOrchestrator
     }
 
     // 성공 시 true. 실패 시 progress 로 Error 보고 후 false.
-    public async Task<bool> RunAsync(IProgress<StageUpdate> progress, CancellationToken ct)
+    public async Task<bool> RunAsync(LaunchOptions options, IProgress<StageUpdate> progress, CancellationToken ct)
     {
         try
         {
@@ -44,8 +44,8 @@ public sealed class LaunchOrchestrator
 
             ct.ThrowIfCancellationRequested();
 
-            // (2) 인증 (silent -> device-code) + 소유권 검증
-            var session = await _auth.AuthenticateAsync(progress, ct).ConfigureAwait(false);
+            // (2) 인증 (offline username 또는 online device-code)
+            var session = await _auth.AuthenticateAsync(options, progress, ct).ConfigureAwait(false);
             ct.ThrowIfCancellationRequested();
 
             // (3) Java 설치/검증 -> 경로 캐싱  ★ (4)보다 먼저 (닭/달걀 불변식)
@@ -56,10 +56,7 @@ public sealed class LaunchOrchestrator
             await _packwiz.RunAsync(javaPath, LauncherConfig.PackTomlUrl, progress, ct).ConfigureAwait(false);
             ct.ThrowIfCancellationRequested();
 
-            // (5.5) 세션 재검증 (설치 동안 토큰 만료 가능)
-            session = await _auth.RevalidateAsync(session, ct).ConfigureAwait(false);
-
-            // (5)+(6) Fabric 설치 + ServerIp 주입 실행
+            // (5)+(6) Fabric 설치 + ServerIp 주입 실행 (토큰은 직전 인증에서 확보)
             await _minecraft.LaunchAsync(session, progress, ct).ConfigureAwait(false);
 
             progress.Report(StageUpdate.Of(LaunchStage.Running, "게임을 실행했어요. 즐겜!", 1.0));
