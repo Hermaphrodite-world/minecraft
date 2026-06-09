@@ -6,7 +6,7 @@
         mc:Ignorable="d" d:DesignWidth="520" d:DesignHeight="360"
         x:Class="HermaLauncher.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
-        Width="520" Height="410"
+        Width="520" Height="486"
         CanResize="False"
         WindowStartupLocation="CenterScreen"
         Title="Herma Launcher">
@@ -16,7 +16,7 @@
     </Design.DataContext>
 
     <Border Padding="28">
-        <Grid RowDefinitions="Auto,*,Auto,Auto,Auto">
+        <Grid RowDefinitions="Auto,*,Auto,Auto,Auto,Auto">
 
             <StackPanel Grid.Row="0" Spacing="2">
                 <TextBlock Text="{Binding Title}" FontSize="24" FontWeight="Bold" />
@@ -55,6 +55,19 @@
                         Padding="16,12"
                         Command="{Binding CancelCommand}" />
             </Grid>
+
+            <StackPanel Grid.Row="5" Spacing="5" Margin="0,14,0,0">
+                <Button Content="공식 마인크래프트 런처에 설치  (정품 로그인 · 승인 대기 없이)"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Center"
+                        Padding="0,9"
+                        Command="{Binding InstallToOfficialCommand}" />
+                <TextBlock Text="공식 런처를 닫은 뒤 눌러주세요. 끝나면 공식 런처에서 'Hermaphrodite World' 프로필을 선택해 플레이합니다."
+                           FontSize="11" Opacity="0.55"
+                           TextWrapping="Wrap"
+                           HorizontalAlignment="Center"
+                           TextAlignment="Center" />
+            </StackPanel>
         </Grid>
     </Border>
 </Window>

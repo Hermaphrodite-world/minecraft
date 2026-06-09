@@ -14,15 +14,21 @@ namespace HermaLauncher.Services;
 //    -g(GUI off) -s client 고정, --pack-folder = 외부 데이터 디렉토리.
 public sealed class PackwizService
 {
+    // packFolder = mods 를 받을 게임 디렉토리(--pack-folder). null = AppPaths.GameDir(커스텀 런처 기본).
+    //   공식 런처 installer 는 공식 .minecraft 안의 전용 폴더(예: <.minecraft>/herma)를 넘긴다.
     public async Task RunAsync(
         string javaExecutable,
         string packTomlUrl,
         IProgress<StageUpdate> progress,
-        CancellationToken ct)
+        CancellationToken ct,
+        string? packFolder = null)
     {
         if (string.IsNullOrWhiteSpace(javaExecutable) || !File.Exists(javaExecutable))
             throw new LaunchStageException(LaunchStage.Packwiz,
                 "Java 실행 파일을 찾지 못해 모드 동기화를 진행할 수 없어요. 잠시 후 다시 시도해 주세요.");
+
+        var folder = string.IsNullOrWhiteSpace(packFolder) ? AppPaths.GameDir : packFolder;
+        Directory.CreateDirectory(folder);
 
         // 첫 실행 시 packwiz-installer-bootstrap.jar 자동 내려받기(없으면).
         await EnsureBootstrapAsync(progress, ct).ConfigureAwait(false);
@@ -35,7 +41,7 @@ public sealed class PackwizService
         var psi = new ProcessStartInfo
         {
             FileName = java,
-            WorkingDirectory = AppPaths.GameDir,
+            WorkingDirectory = folder,
             RedirectStandardOutput = true,
             RedirectStandardError = true,
             UseShellExecute = false,
@@ -47,7 +53,7 @@ public sealed class PackwizService
         psi.ArgumentList.Add("-s");
         psi.ArgumentList.Add("client");
         psi.ArgumentList.Add("--pack-folder");
-        psi.ArgumentList.Add(AppPaths.GameDir);
+        psi.ArgumentList.Add(folder);
         // 첫 실행 네트워크/rate-limit 내성: 번들 installer.jar 있으면 self-update 생략 가능
         // psi.ArgumentList.Add("--bootstrap-no-update");
         psi.ArgumentList.Add(packTomlUrl);

@@ -11,6 +11,7 @@ namespace HermaLauncher.ViewModels;
 public partial class MainWindowViewModel : ViewModelBase
 {
     private readonly LaunchOrchestrator _orchestrator = new();
+    private readonly OfficialLauncherInstaller _installer = new();
     private CancellationTokenSource? _cts;
 
     [ObservableProperty]
@@ -27,6 +28,7 @@ public partial class MainWindowViewModel : ViewModelBase
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(PlayCommand))]
+    [NotifyCanExecuteChangedFor(nameof(InstallToOfficialCommand))]
     [NotifyCanExecuteChangedFor(nameof(CancelCommand))]
     private bool _isBusy;
 
@@ -58,6 +60,30 @@ public partial class MainWindowViewModel : ViewModelBase
         try
         {
             await _orchestrator.RunAsync(options, progress, _cts.Token).ConfigureAwait(true);
+        }
+        finally
+        {
+            IsBusy = false;
+            IsIndeterminate = false;
+            _cts.Dispose();
+            _cts = null;
+        }
+    }
+
+    // 대체 경로: 공식 마인크래프트 런처에 모드팩 프로필 설치(정품 로그인, Mojang 승인 대기 없음).
+    [RelayCommand(CanExecute = nameof(CanPlay))]
+    private async Task InstallToOfficialAsync()
+    {
+        IsBusy = true;
+        HasError = false;
+        Progress = 0;
+        IsIndeterminate = true;
+        _cts = new CancellationTokenSource();
+
+        var progress = new Progress<StageUpdate>(OnStageUpdate);
+        try
+        {
+            await _installer.InstallAsync(progress, _cts.Token).ConfigureAwait(true);
         }
         finally
         {
