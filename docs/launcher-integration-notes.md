@@ -1,12 +1,21 @@
 # 런처 CmlLib / Velopack 통합 노트
 
-`launcher/src/HermaLauncher/Services/CmlLibServices.cs` 의 스텁이 참조하는 **실제 구현 코드**.
-CmlLib.Core 4.x 의 정확한 API 시그니처를 **설치된 어셈블리에서 확인(IntelliSense/디컴파일)한 뒤** 아래 코드를 스텁 위치에 채워 활성화한다. research가 명시한 must-verify 2종(FabricInstaller v4 시그니처 · device-code 콜백 속성명) 때문에 빌드 검증 단계에서는 의도적으로 스텁으로 두었다(fabricated 동작 방지 — CLAUDE.md § Fabrication Honesty).
+> **상태: ✅ 구현 완료.** `launcher/src/HermaLauncher/Services/CmlLibServices.cs` 는 더 이상 스텁이 아니다 — 아래 API는 모두 **복원된 어셈블리 리플렉션으로 검증**(`MetadataLoadContext`)한 실제 시그니처로 구현했고 `dotnet build` 0/0 + 런타임 스모크 통과. 본 문서는 (1) 검증된 API 레퍼런스 (2) **macOS device-code 경로(최종 단계 잔여 작업)** 로 유지한다.
 
-추가 패키지(통합 시):
+**검증된 핵심 시그니처 (CmlLib.Core 4.0.6):**
+- `new MinecraftLauncher(MinecraftPath)`; `event EventHandler<InstallerProgressChangedEventArgs> FileProgressChanged`(`TotalTasks/ProgressedTasks/Name/EventType`); `event EventHandler<ByteProgress> ByteProgressChanged`.
+- `ValueTask InstallAsync(string, IProgress<InstallerProgressChangedEventArgs>, IProgress<ByteProgress>, CancellationToken)`; `ValueTask<IVersion> GetVersionAsync(string, CancellationToken)`; `string GetJavaPath(IVersion)`; `ValueTask<Process> BuildProcessAsync(string, MLaunchOption, CancellationToken)`.
+- `FabricInstaller`(네임스페이스 **`CmlLib.Core.ModLoaders.FabricMC`**, in-assembly): `Task<string> Install(string gameVersion, MinecraftPath)`.
+- `MLaunchOption`(`CmlLib.Core.ProcessBuilder`): `Session/MaximumRamMb/ServerIp/ServerPort/JavaPath/DockName`.
+- `MSession`(`CmlLib.Core.Auth`): `Username/UUID/AccessToken`, static `CreateOfflineSession(string)`.
+- 인증: `JELoginHandlerBuilder.BuildDefault()`(**static**) → `JELoginHandler.Authenticate(ct)`/`AuthenticateSilently(ct)`; `JEAuthException.StatusCode`(404=미보유).
+- Velopack 1.2.0: `VelopackApp.Build().Run()`; `new UpdateManager(new GithubSource(url,null,false,null), null, null)`; `CheckForUpdatesAsync()`; `DownloadUpdatesAsync(info, Action<int>, ct)`; `ApplyUpdatesAndRestart(info.TargetFullRelease, null)`.
+
+**Windows 인증**: `BuildDefault()` 가 CmlLib 기본 OAuth(자체 Azure 앱 불요)를 사용 → **Windows 는 Azure 앱 등록 없이 로그인 가능**. 아래 §Auth-macOS 의 device-code(자체 Azure 앱)는 **macOS(최종 단계)** 에서만 필요.
+
+추가 패키지(macOS device-code 단계에서만):
 ```
-dotnet add package XboxAuthNet.Game.Msal     # device-code MSAL 확장 (필수)
-dotnet add package Velopack                    # 자체 업데이트(R7)
+dotnet add package XboxAuthNet.Game.Msal     # device-code MSAL 확장 (macOS 전용 경로)
 ```
 
 ---

@@ -26,6 +26,14 @@ public static class LauncherConfig
     // macOS Dock 표시명 (CmlLib gotcha: 미설정 시 창 포커스 불가)
     public const string MacDockName = "Herma Launcher";
 
+    // Velopack 자체 업데이트 소스 (GitHub Releases)
+    public const string UpdateRepoUrl = "https://github.com/Hermaphrodite-world/minecraft";
+
+    // 오프라인 모드 — LAN/개발 테스트용(online-mode=false 서버/싱글). 기본 false.
+    // static readonly (const 아님) — 분기를 compile-time 상수화하지 않아 unreachable 경고 방지.
+    public static readonly bool OfflineMode = false;
+    public const string OfflineUsername = "Player";
+
     public static bool IsAzureClientConfigured =>
         !string.IsNullOrWhiteSpace(AzureClientId) &&
         AzureClientId != "00000000-0000-0000-0000-000000000000";

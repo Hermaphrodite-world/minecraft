@@ -4,9 +4,8 @@ using System.Threading.Tasks;
 
 namespace HermaLauncher.Services;
 
-// 인증 세션(런처 내부 표현). CmlLib MSession 으로의 매핑은 통합 시 수행
-// (docs/launcher-integration-notes.md 참조).
-public sealed record AuthSession(string Username, string Uuid, string AccessToken, bool IsOffline);
+// 인증 세션(런처 내부 표현). Xuid 는 online-mode 서버 접속에 필요(MSession 라운드트립 손실 방지).
+public sealed record AuthSession(string Username, string Uuid, string AccessToken, bool IsOffline, string Xuid = "");
 
 public interface IUpdateService
 {

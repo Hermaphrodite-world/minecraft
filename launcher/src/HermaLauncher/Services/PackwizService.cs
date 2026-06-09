@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Net.Http;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
@@ -23,9 +24,8 @@ public sealed class PackwizService
             throw new LaunchStageException(LaunchStage.Packwiz,
                 "Java 실행 파일을 찾지 못해 모드 동기화를 진행할 수 없어요. 잠시 후 다시 시도해 주세요.");
 
-        if (!File.Exists(AppPaths.BootstrapJar))
-            throw new LaunchStageException(LaunchStage.Packwiz,
-                "packwiz-installer-bootstrap.jar 가 없어요. 런처 재설치가 필요할 수 있어요.");
+        // 첫 실행 시 packwiz-installer-bootstrap.jar 자동 내려받기(없으면).
+        await EnsureBootstrapAsync(progress, ct).ConfigureAwait(false);
 
         progress.Report(StageUpdate.Of(LaunchStage.Packwiz, "모드팩 동기화 중…"));
 
@@ -90,6 +90,35 @@ public sealed class PackwizService
                 $"모드 동기화에 실패했어요(코드 {proc.ExitCode}). 네트워크를 확인하고 다시 시도해 주세요.\n{Trim(stderr)}");
 
         progress.Report(StageUpdate.Of(LaunchStage.Packwiz, "모드팩 동기화 완료", 1.0));
+    }
+
+    private const string BootstrapUrl =
+        "https://github.com/packwiz/packwiz-installer-bootstrap/releases/latest/download/packwiz-installer-bootstrap.jar";
+
+    // 번들/캐시에 bootstrap jar 가 없으면 GitHub 릴리스에서 받아 둔다(원자적 저장).
+    private static async Task EnsureBootstrapAsync(IProgress<StageUpdate> progress, CancellationToken ct)
+    {
+        if (File.Exists(AppPaths.BootstrapJar))
+            return;
+
+        progress.Report(StageUpdate.Of(LaunchStage.Packwiz, "모드 동기화 도구 내려받는 중…"));
+        try
+        {
+            using var http = new HttpClient();
+            using var resp = await http.GetAsync(BootstrapUrl, HttpCompletionOption.ResponseHeadersRead, ct)
+                                       .ConfigureAwait(false);
+            resp.EnsureSuccessStatusCode();
+
+            var tmp = AppPaths.BootstrapJar + ".tmp";
+            await using (var fs = File.Create(tmp))
+                await resp.Content.CopyToAsync(fs, ct).ConfigureAwait(false);
+            File.Move(tmp, AppPaths.BootstrapJar, overwrite: true);
+        }
+        catch (Exception ex) when (ex is not OperationCanceledException)
+        {
+            throw new LaunchStageException(LaunchStage.Packwiz,
+                "모드 동기화 도구를 내려받지 못했어요. 네트워크를 확인하고 다시 시도해 주세요.", ex);
+        }
     }
 
     private static string NormalizeToConsoleJava(string javaExe)

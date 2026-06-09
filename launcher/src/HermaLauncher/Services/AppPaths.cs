@@ -21,6 +21,9 @@ public static class AppPaths
     // packwiz-installer-bootstrap.jar 위치 (런처가 동봉/캐시)
     public static string BootstrapJar => Path.Combine(DataRoot, "packwiz-installer-bootstrap.jar");
 
+    // MS 계정/토큰 캐시 (JELoginHandler.WithAccountManager) — 번들 밖
+    public static string AccountsJson => Path.Combine(DataRoot, "accounts.json");
+
     // 로그
     public static string LogDir => EnsureDir(Path.Combine(DataRoot, "logs"));
 

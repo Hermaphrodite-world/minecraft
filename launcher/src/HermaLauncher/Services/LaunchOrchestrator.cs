@@ -52,16 +52,8 @@ public sealed class LaunchOrchestrator
             var javaPath = await _minecraft.EnsureJavaAsync(progress, ct).ConfigureAwait(false);
             ct.ThrowIfCancellationRequested();
 
-            // (4) packwiz 동기화 — (3)에서 얻은 java 재사용
-            if (File.Exists(AppPaths.BootstrapJar))
-            {
-                await _packwiz.RunAsync(javaPath, LauncherConfig.PackTomlUrl, progress, ct).ConfigureAwait(false);
-            }
-            else
-            {
-                progress.Report(StageUpdate.Of(LaunchStage.Packwiz,
-                    "packwiz bootstrap 미동봉 — 모드 동기화 건너뜀(개발 빌드)"));
-            }
+            // (4) packwiz 동기화 — (3)에서 얻은 java 재사용. bootstrap jar 는 PackwizService 가 자동 확보.
+            await _packwiz.RunAsync(javaPath, LauncherConfig.PackTomlUrl, progress, ct).ConfigureAwait(false);
             ct.ThrowIfCancellationRequested();
 
             // (5.5) 세션 재검증 (설치 동안 토큰 만료 가능)
