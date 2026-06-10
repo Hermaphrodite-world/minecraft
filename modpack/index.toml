@@ -250,11 +250,6 @@ hash = "d20369e5848ca31ecbb49bae22e953439173bd4617ca239b23335366b2a6a0e9"
 metafile = true
 
 [[files]]
-file = "mods/polymer.pw.toml"
-hash = "82444cf678a1f7302d1fb0c6b6f0e45882e8d264fcfcee63c0e31f238d665ccf"
-metafile = true
-
-[[files]]
 file = "mods/presence-footsteps.pw.toml"
 hash = "b06a45aed1a138c178d3aca3ec47f5af2d56d5c7ad03403b3530826bd95c49d3"
 metafile = true
@@ -315,11 +310,6 @@ hash = "a2e9d2e08cb39c159b50ab8a0a2c38896700f7ab66a7682d691dd91628b4b34d"
 metafile = true
 
 [[files]]
-file = "mods/simpletpa.pw.toml"
-hash = "4ed6693c4aed3ebcb72b14fab1190251288d969b0b8109d587146c9b7f42982c"
-metafile = true
-
-[[files]]
 file = "mods/sodium-extra.pw.toml"
 hash = "546965f1ab52fc464c51e36c52305fef231837c22454d22447b8423e379502cd"
 metafile = true
@@ -350,11 +340,6 @@ hash = "67003f88d20810aaf55d3585adbdd19f0c0731aa4247ff0fdf3fa1f9431355bc"
 metafile = true
 
 [[files]]
-file = "mods/structory.pw.toml"
-hash = "e2ab46d275b5037d19198f4cff55fe3e4672c3f5c8ca60e91d3b3e57ab13810c"
-metafile = true
-
-[[files]]
 file = "mods/styled-chat.pw.toml"
 hash = "7ebdb6a20d095943eee7346de94c6ba20a5eb2c5e9257c72331b0229862d866d"
 metafile = true
@@ -362,11 +347,6 @@ metafile = true
 [[files]]
 file = "mods/ultimate_map_atlases.pw.toml"
 hash = "fcea36ce95b9afc2e5ae86d2b83487be535b6375aecf56eb395b3b91719d606b"
-metafile = true
-
-[[files]]
-file = "mods/universal-graves.pw.toml"
-hash = "27e83db4ce5d610b8e79dfc7914922e3ba3fa6737d476425ee7c62562a4fad3d"
 metafile = true
 
 [[files]]

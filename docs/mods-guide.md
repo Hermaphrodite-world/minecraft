@@ -65,7 +65,6 @@
 ## ⛏ 게임플레이 (바닐라+)
 
 - **Animal Feeding Trough** — 동물에게 자동으로 먹이를 주는 블록(번식 편의).
-- **Structory** 🆕 — 바닐라풍 분위기 탐험 구조물(폐허·야영지 등). **새로 생성되는 청크**에 등장, 새 블록/아이템 없음.
 - **Starter Kit** — 새 플레이어 첫 접속 시 시작 아이템 지급(서버 설정).
 
 ---
@@ -94,8 +93,6 @@
 - **LuckPerms** — 권한 관리.
 - **Open Parties and Claims** — 청크 보호 + 파티(Xaero 지도 연동).
 - **Blastproof** — 폭발이 블록을 부수지 않음(크리퍼·TNT 보호).
-- **Universal Graves** 🆕 — 죽으면 아이템이 **무덤**에 보관됨(아이템 분실 방지).
-- **SimpleTPA** 🆕 — `/tpa` 로 서로 순간이동 요청.
 - **WarpUtils** — `/home`·`/warp` 등 순간이동.
 - **Ledger** — 서버 행동 로그(누가 무엇을 했는지 추적).
 - **Fast Backups** — Git 기반 증분 월드 백업.
