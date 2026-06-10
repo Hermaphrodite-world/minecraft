@@ -26,6 +26,17 @@ jobs:
         with:
           dotnet-version: '10.0.x'
 
+      # 릴리즈 빌드에만 실서버 IP 주입(공개 소스엔 placeholder 유지 — secret 으로 치환).
+      - name: Bake server IP (release only)
+        if: github.event_name == 'release'
+        shell: pwsh
+        run: |
+          $ip = '${{ secrets.HERMA_SERVER_IP }}'
+          if (-not $ip) { Write-Error 'HERMA_SERVER_IP secret not set'; exit 1 }
+          $f = 'launcher/src/HermaLauncher/LauncherConfig.cs'
+          (Get-Content $f) -replace 'play\.example\.com', $ip | Set-Content $f
+          if (Select-String -Path $f -Pattern 'play\.example\.com' -Quiet) { Write-Error 'bake failed'; exit 1 }
+
       - name: Build
         run: dotnet build launcher/src/HermaLauncher/HermaLauncher.csproj -c Release
 
@@ -60,6 +71,17 @@ jobs:
         with:
           dotnet-version: '10.0.x'
 
+      # 릴리즈 빌드에만 실서버 IP 주입(공개 소스엔 placeholder 유지 — secret 으로 치환).
+      - name: Bake server IP (release only)
+        if: github.event_name == 'release'
+        shell: bash
+        run: |
+          IP='${{ secrets.HERMA_SERVER_IP }}'
+          [ -z "$IP" ] && { echo 'HERMA_SERVER_IP not set'; exit 1; }
+          f=launcher/src/HermaLauncher/LauncherConfig.cs
+          perl -pi -e "s/play\\.example\\.com/$IP/" "$f"
+          grep -q 'play.example.com' "$f" && { echo 'bake failed'; exit 1; } || echo 'baked'
+
       - name: Publish (osx-arm64, self-contained, .app 용 dylib 분리)
         run: >
           dotnet publish launcher/src/HermaLauncher/HermaLauncher.csproj
@@ -68,7 +90,10 @@ jobs:
           -o publish/osx-arm64
 
       - name: Bundle .app + ad-hoc sign
-        run: bash launcher/build-mac-app.sh publish/osx-arm64 publish/mac
+        shell: bash
+        run: VERSION="${TAG#v}" bash launcher/build-mac-app.sh publish/osx-arm64 publish/mac
+        env:
+          TAG: ${{ github.event.release.tag_name }}
 
       - uses: actions/upload-artifact@v4
         with:
