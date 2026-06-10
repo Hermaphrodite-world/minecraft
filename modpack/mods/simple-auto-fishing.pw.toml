@@ -1,0 +1,13 @@
+name = "Simple Auto Fishing"
+filename = "simpleautofishing-1.7.1.jar"
+side = "client"
+
+[download]
+url = "https://cdn.modrinth.com/data/1QiuaW2I/versions/aq9INoMb/simpleautofishing-1.7.1.jar"
+hash-format = "sha512"
+hash = "66294807f3bdfb9e4a617656966e61687190ef3f27c82293b725004dfa7284cdc92932fb92719bb667823818fc81ed355d1820939368824554205a573c6eade1"
+
+[update]
+[update.modrinth]
+mod-id = "1QiuaW2I"
+version = "aq9INoMb"

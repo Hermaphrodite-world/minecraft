@@ -11,9 +11,9 @@
 | 폴더 | 내용 |
 |------|------|
 | [`launcher/`](launcher/) | Avalonia(.NET 10) 크로스플랫폼 런처 — Windows/macOS(arm64). 실행: 자체 업데이트 → MS 로그인 → Java → packwiz 동기화 → Fabric → ServerIp 자동 접속 |
-| [`modpack/`](modpack/) | packwiz 팩 (`pack.toml` + `mods/` + `resourcepacks/` + `shaderpacks/`). 79 모드 + 4 쉐이더팩 + 6 리소스팩, side(client/server/both) 분류 완료 |
+| [`modpack/`](modpack/) | packwiz 팩 (`pack.toml` + `mods/` + `resourcepacks/` + `shaderpacks/`). 80 모드 + 4 쉐이더팩 + 6 리소스팩, side(client/server/both) 분류 완료 |
 | [`server/`](server/) | Fabric 서버 구성 — 기동 스크립트(Aikar flags), `server.properties`(화이트리스트/online-mode), 모드 동기화, 셋업 가이드 |
-| [`docs/`](docs/) | 기획서 · 구현계획 · 모드구성 · 서버스택 · 런처 통합 노트 |
+| [`docs/`](docs/) | 기획서 · 구현계획 · 모드구성 · 서버스택 · 런처 통합 노트 · [모드 가이드](docs/mods-guide.md)(친구용) |
 
 ## 빠른 시작
 
@@ -49,7 +49,7 @@ bash build-mac-app.sh publish/osx-arm64 publish/mac   # → HermaLauncher-macos-
 
 | 영역 | 상태 |
 |------|------|
-| packwiz 모드팩 (26.1.2, 79 모드 + 4 쉐이더팩 + 6 리소스팩 + side 분류) | ✅ 완료 — Pages 라이브 + e2e 동기화 검증 |
+| packwiz 모드팩 (26.1.2, 80 모드 + 4 쉐이더팩 + 6 리소스팩 + side 분류) | ✅ 완료 — Pages 라이브 + e2e 동기화 검증 + [모드 가이드](docs/mods-guide.md) |
 | 런처 풀 파이프라인 (UI·인증·Java·packwiz·Fabric·실행·자동접속) | ✅ **실 게임 실증** — 26.1.2 월드 접속 확인 (net10.0, 빌드 0/0) |
 | 오프라인 로그인 (친구 서버) | ✅ **실증** — 닉네임만, MS 로그인 0 |
 | 온라인 로그인 (정품 계정) | ✅ **시스템 브라우저**(요즘 공식 런처 방식, 크로스플랫폼) — [셋업 가이드](docs/online-login-setup.md). Azure 앱 1개(메인테이너) 공유. Mojang 앱 승인 후 동작 |

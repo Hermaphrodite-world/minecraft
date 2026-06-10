@@ -2,7 +2,7 @@ hash-format = "sha256"
 
 [[files]]
 file = "build-pack.sh"
-hash = "ba0c32c8abf0e198b53ce60438744a1b08940883e6fe8c7fbfd187268c6c8612"
+hash = "596f1afd97c89f36171ed99f98c896bac17faeee8cdf179ac2bd8e829720c171"
 
 [[files]]
 file = "mods/3dskinlayers.pw.toml"
@@ -302,6 +302,11 @@ metafile = true
 [[files]]
 file = "mods/servercore.pw.toml"
 hash = "74b9be2bf4e2ba3b1c621cea436e14a0cd1a35423e8e02ea9eac51b340f8f299"
+metafile = true
+
+[[files]]
+file = "mods/simple-auto-fishing.pw.toml"
+hash = "6d90447aec564ed618fa8c42202bc947165b5d9c01c7cfb350e4a6d7200ca714"
 metafile = true
 
 [[files]]

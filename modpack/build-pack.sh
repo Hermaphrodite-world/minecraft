@@ -13,7 +13,7 @@ modmenu appleskin jade mouse-tweaks controlling zoomify"
 ADD="fallingleaves make_bubbles_pop ambientsounds presence-footsteps rrv inventory-profiles-next \
 dynamic-fps screencopy autoreconnectrf natures-compass explorers-compass ultimate_map_atlases \
 offershud visible-traders betterf3 not-enough-animations 3dskinlayers chat-heads \
-better-clouds bobby recall-coords capes"
+better-clouds bobby recall-coords capes simple-auto-fishing"
 
 # 서버
 SERVER="luckperms warputils styled-chat starter-kit blastproof open-parties-and-claims ledger fastback \
