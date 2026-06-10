@@ -12,7 +12,7 @@ modmenu appleskin jade mouse-tweaks controlling zoomify"
 # 추가 바닐라+(추가모드_서버스택.md client)
 ADD="fallingleaves make_bubbles_pop ambientsounds presence-footsteps rrv inventory-profiles-next \
 dynamic-fps screencopy autoreconnectrf natures-compass explorers-compass ultimate_map_atlases \
-notenoughtooltips offershud visible-traders betterf3 not-enough-animations 3dskinlayers chat-heads \
+offershud visible-traders betterf3 not-enough-animations 3dskinlayers chat-heads \
 better-clouds bobby recall-coords capes"
 
 # 서버

@@ -235,11 +235,6 @@ hash = "0f1192a7e40192261310314d9fc2d584c701245dd29698ea1a674b3b676e9abd"
 metafile = true
 
 [[files]]
-file = "mods/notenoughtooltips.pw.toml"
-hash = "ea618d9398fcad32e04678e97391a6dc380a06450cea93a9e61b01064220ddc6"
-metafile = true
-
-[[files]]
 file = "mods/offershud.pw.toml"
 hash = "7b05ce520036a6994fe42d404b8e2f706ff2566aee29906b7c50e852edab263f"
 metafile = true
