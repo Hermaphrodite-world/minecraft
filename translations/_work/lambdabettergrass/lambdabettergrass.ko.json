@@ -1,0 +1,15 @@
+{
+  "lambdabettergrass": "LambdaBetterGrass",
+  "lambdabettergrass.menu.info.1": "이 모드는 리소스팩 파일로 어떤 블록이 적용될지 결정합니다.",
+  "lambdabettergrass.menu.info.2": "즉 블록의 개선된 잔디/눈 기능을 켜거나 끄려면",
+  "lambdabettergrass.menu.info.3": "리소스팩으로 수정해야 합니다.",
+  "lambdabettergrass.menu.info.read_more": "자세히 보기: %s",
+  "lambdabettergrass.menu.sodium.tab": "%s",
+  "lambdabettergrass.menu.title": "%s 설정",
+  "lambdabettergrass.menu.title.info": "이 모드는 어떻게 작동하나요?",
+  "lambdabettergrass.option.better_snow": "개선된 눈",
+  "lambdabettergrass.option.mode": "개선된 잔디",
+  "lambdabettergrass.resourcepack.default": "%s - 기본값",
+  "lambdabettergrass.tooltip.better_snow": "개선된 눈 기능을 켭니다.\n켜면 근처에 눈이 있을 때 일부 블록이 눈 덮인 형태로 바뀌거나 눈층이 추가될 수 있습니다.\n참고: 올바른 파일이 있으면 층을 가진 다른 눈 계열 블록에도 적용됩니다.",
+  "lambdabettergrass.tooltip.mode": "개선된 잔디 기능을 켭니다.\n - %s 개선된 잔디 기능을 완전히 끕니다.\n - %s 잔디 블록의 윗면 텍스처를 모든 옆면에 복사합니다. OptiFine의 Fast 옵션과 비슷합니다.\n - %s OptiFine의 Fancy 옵션처럼 잔디 블록 텍스처를 이어 줍니다.\n - %s 잔디 블록 텍스처를 잇고 근처 잔디 블록의 옆면 텍스처를 부드럽게 만듭니다."
+}

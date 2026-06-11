@@ -410,6 +410,10 @@ hash = "213428b7676adfaa1c59fcfe93e6e7f3d0257e236f32a5a245eb0fc966e1b218"
 metafile = true
 
 [[files]]
+file = "resourcepacks/herma-korean.zip"
+hash = "26aa1f49759cdc6fbc609cce45cc0408f6c9ea088c5d534efb0dd1727131432c"
+
+[[files]]
 file = "resourcepacks/nautilus3d.pw.toml"
 hash = "64aa699699bdff85703de4c9081f1496f881a3435b85d9f9e677cc2c7e86d591"
 metafile = true

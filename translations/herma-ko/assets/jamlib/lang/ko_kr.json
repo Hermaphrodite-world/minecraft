@@ -1,0 +1,20 @@
+{
+  "config.jamlib.edit_manually": "수동 편집",
+  "config.jamlib.matches_regex_tooltip": "값은 다음 정규식과 일치해야 합니다: %s",
+  "config.jamlib.open": "열기",
+  "config.jamlib.requires_restart_tooltip": "이 변경 사항을 적용하려면 다시 시작해야 합니다",
+  "config.jamlib.reset": "초기화",
+  "config.jamlib.reset_tooltip": "기본값으로 초기화",
+  "config.jamlib.selection_screen_title": "%s의 설정 선택",
+  "config.jamlib.within_range_tooltip": "값은 %d에서 %d 사이여야 합니다",
+  "text.jamlib.renamed_1": "다음 모드 파일의 이름이 변경되었습니다. 이는 종종 모드가 %s되었음을 나타냅니다.",
+  "text.jamlib.renamed_1.1": "허가 없이 재배포",
+  "text.jamlib.renamed_2": "%s 같은 사이트는 %s 수 있으며 %s에 악용될 수 있습니다. 모드는 공식적으로 %s 및 %s에서 찾을 수 있습니다.",
+  "text.jamlib.renamed_2.1": "9minecraft",
+  "text.jamlib.renamed_2.2": "모드 제작자에게 피해를 줄",
+  "text.jamlib.renamed_2.3": "멀웨어 배포",
+  "text.jamlib.renamed_2.4": "CurseForge",
+  "text.jamlib.renamed_2.5": "Modrinth",
+  "text.jamlib.renamed_3": "이 메시지는 한 번만 표시됩니다. %s.",
+  "text.jamlib.renamed_3.1": "오탐이라고 생각되면 모드 제작자에게 문의하세요"
+}

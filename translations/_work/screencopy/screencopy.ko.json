@@ -1,0 +1,12 @@
+{
+  "fml.menu.mods.info.description.screencopy": "스크린샷을 클립보드에 저장할 수 있게 해줍니다",
+  "text.autoconfig.screencopy.option.copyScreenshot": "모드 켜기",
+  "text.autoconfig.screencopy.option.copyScreenshot.@Tooltip": "스크린샷을 클립보드로 복사합니다",
+  "text.autoconfig.screencopy.option.messageOnCopy": "복사 시 메시지 표시",
+  "text.autoconfig.screencopy.option.messageOnCopy.@Tooltip": "스크린샷이 클립보드로 복사될 때마다 메시지를 표시합니다. 일부 명백한 경우에는 이 설정이 무시됩니다",
+  "text.autoconfig.screencopy.option.saveScreenshot": "스크린샷 파일 저장",
+  "text.autoconfig.screencopy.option.saveScreenshot.@Tooltip": "클립보드 복사와 별도로 스크린샷을 파일로도 저장합니다",
+  "text.autoconfig.screencopy.title": "Screencopy",
+  "text.screencopy.failure": "스크린샷을 클립보드에 저장하지 못했습니다: %s",
+  "text.screencopy.success": "스크린샷을 클립보드에 저장했습니다"
+}

@@ -1,0 +1,20 @@
+{
+  "config.visuality.general": "일반",
+  "config.visuality.option.charge": "충전 입자 켜기",
+  "config.visuality.option.hitParticles": "타격 입자 켜기",
+  "config.visuality.option.hitParticles.entries": "타격 입자 목록",
+  "config.visuality.option.shinyArmor": "반짝이는 갑옷 켜기",
+  "config.visuality.option.shinyArmor.entries": "반짝이는 갑옷 목록",
+  "config.visuality.option.shinyBlocks": "반짝이는 블록 켜기",
+  "config.visuality.option.shinyBlocks.entries": "반짝이는 블록 목록",
+  "config.visuality.option.slime": "슬라임 방울 켜기",
+  "config.visuality.option.slime.color": "슬라임 방울 색상",
+  "config.visuality.option.soul": "영혼 입자 켜기",
+  "config.visuality.option.sparkle": "반짝임 입자 켜기",
+  "config.visuality.option.waterCircle": "물결 켜기",
+  "config.visuality.option.waterCircle.colored": "물결 색상 적용",
+  "config.visuality.option.waterCircle.density": "물결 밀도",
+  "config.visuality.option.waterCircle.radius": "물결 반경",
+  "config.visuality.title": "Visuality 설정",
+  "modmenu.descriptionTranslation.visuality": "여러 새 입자를 추가하는 소소한 시각 개선입니다."
+}
