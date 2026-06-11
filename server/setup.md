@@ -24,7 +24,8 @@ chmod +x sync-mods.sh
 ```
 
 ## 4. 보안 설정 (추가모드_서버스택.md §6)
-- `server.properties` 는 이미 `online-mode=true` + `white-list=true` + `enforce-whitelist=true`.
+- `server.properties` 는 이미 `online-mode=false`(지인 서버 — MS 로그인 없이 닉네임 기반) + `white-list=true` + `enforce-whitelist=true`.
+  - offline 이라 화이트리스트는 **닉네임 매칭** — 친구 런처 닉네임을 정확히 등록해야 접속.
 - 친구 추가: 서버 콘솔에서 `whitelist add <닉네임>` → `whitelist reload`.
 - 운영자: `op <본인닉>` (OP는 최소화).
 

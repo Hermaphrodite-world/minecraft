@@ -13,14 +13,17 @@ modmenu appleskin jade mouse-tweaks controlling zoomify"
 ADD="fallingleaves make_bubbles_pop ambientsounds presence-footsteps rrv inventory-profiles-next \
 dynamic-fps screencopy autoreconnectrf natures-compass explorers-compass ultimate_map_atlases \
 offershud visible-traders betterf3 not-enough-animations 3dskinlayers chat-heads \
-better-clouds bobby recall-coords capes simple-auto-fishing"
+better-clouds bobby recall-coords capes simple-auto-fishing \
+visuality lambdabettergrass"
 
 # 서버
 SERVER="luckperms warputils styled-chat starter-kit blastproof open-parties-and-claims ledger fastback \
 chunky krypton servercore scalablelux spark squaremap"
 
 # 리소스/셰이더팩
-RES="fresh-animations fresh-animations-extensions complementary-reimagined"
+RES="fresh-animations fresh-animations-extensions complementary-reimagined \
+complementary-unbound bsl-shaders sildurs-vibrant-shaders \
+better-leaves default-dark-mode nautilus3d vanilla-connected-glass"
 
 ok=0; fail=0; failed=""
 add() {
