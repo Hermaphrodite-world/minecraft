@@ -30,7 +30,10 @@ chmod +x sync-mods.sh
 - 운영자: `op <본인닉>` (OP는 최소화).
 
 ## 5. 권한/보호 모드 초기 설정
-- **LuckPerms**: `lp group default permission set warputils.command.home true` 식으로 친구 명령 허용.
+- **WarpUtils (텔레포트 — 밸런스 정책)**: 밸런스 보존을 위해 **home 계열만 남기고 나머지 텔레포트 비활성**. OP 로 인게임/콘솔에서 `/warputils config <카테고리>` (카테고리: `homes`/`warps`/`tpas`/`back`/`tpr`/`general` — 탭 자동완성):
+  - `warps` · `tpas` · `back` · `tpr` → 각 기능 **disabled = true** → `/warp`·`/setwarp`·`/tpa`·`/back`·`/tpr` 전부 제거(전원). 남는 건 home 계열뿐: `/home`·`/sethome`·`/delhome`·`/homes`.
+  - `homes` → **delay = 3** (초) → `/home` 입력 후 **3초 워밍업, 그동안 움직이면 취소**(WarpUtils 기본: `common.delay.moved`). 설정은 `config/warputils/`(첫 서버 실행 시 생성)에 저장. delay 단위가 틱이면 `60`(=3초)으로.
+  - ⚠️ **WarpUtils 는 LuckPerms 권한 노드를 지원하지 않는다**(권한 레벨 하드코딩 + 위 feature config 가 SoT). 과거 `warputils.command.home` LuckPerms 안내는 동작하지 않으므로 폐기.
 - **Blastproof**: 첫 실행 후 `config/blastproof.json` — 크리퍼·TNT 블록피해 OFF, 엔드크리스탈·위더 ON 권장.
 - **OPAC**: `config/openpartiesandclaims/` 에서 클레임 한도·보호 토글. 친구에게 `/claim`·`/trust <닉>` 안내.
 - **Simple Voice Chat**: 방화벽 **UDP 24454** 인바운드 개방.
