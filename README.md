@@ -11,7 +11,7 @@
 | 폴더 | 내용 |
 |------|------|
 | [`launcher/`](launcher/) | Avalonia(.NET 10) 크로스플랫폼 런처 — Windows/macOS(arm64). 실행: 자체 업데이트 → MS 로그인 → Java → packwiz 동기화 → Fabric → ServerIp 자동 접속 |
-| [`modpack/`](modpack/) | packwiz 팩 (`pack.toml` + `mods/` + `resourcepacks/` + `shaderpacks/`). 76 모드 + 4 쉐이더팩 + 6 리소스팩, side(client/server/both) 분류 완료 |
+| [`modpack/`](modpack/) | packwiz 팩 (`pack.toml` + `mods/` + `resourcepacks/` + `shaderpacks/`). 77 모드 + 4 쉐이더팩 + 6 리소스팩 + 한국어 번역 리소스팩(미번역 모드 100% 커버), side(client/server/both) 분류 완료 |
 | [`server/`](server/) | Fabric 서버 구성 — 기동 스크립트(Aikar flags), `server.properties`(화이트리스트/online-mode), 모드 동기화, 셋업 가이드 |
 | [`docs/`](docs/) | 기획서 · 구현계획 · 모드구성 · 서버스택 · 런처 통합 노트 · [모드 가이드](docs/mods-guide.md)(친구용) |
 
@@ -49,14 +49,14 @@ bash build-mac-app.sh publish/osx-arm64 publish/mac   # → HermaLauncher-macos-
 
 | 영역 | 상태 |
 |------|------|
-| packwiz 모드팩 (26.1.2, 76 모드 + 4 쉐이더팩 + 6 리소스팩 + side 분류) | ✅ 완료 — Pages 라이브 + e2e 동기화 검증 + [모드 가이드](docs/mods-guide.md) |
+| packwiz 모드팩 (26.1.2, 77 모드 + 4 쉐이더팩 + 6 리소스팩 + 한국어 번역팩 + side 분류) | ✅ 완료 — Pages 라이브 + e2e 동기화 검증 + [모드 가이드](docs/mods-guide.md) |
 | 런처 풀 파이프라인 (UI·인증·Java·packwiz·Fabric·실행·자동접속) | ✅ **실 게임 실증** — 26.1.2 월드 접속 확인 (net10.0, 빌드 0/0) |
 | 오프라인 로그인 (친구 서버) | ✅ **실증** — 닉네임만, MS 로그인 0 |
 | 온라인 로그인 (정품 계정) | ✅ **시스템 브라우저**(요즘 공식 런처 방식, 크로스플랫폼) — [셋업 가이드](docs/online-login-setup.md). Azure 앱 1개(메인테이너) 공유. Mojang 앱 승인 후 동작 |
 | **공식 런처 설치 (대체 경로)** | ✅ **실증** — 실기기에서 공식 런처에 'Hermaphrodite World' 프로필 정상 추가 확인. "공식 런처에 설치" 버튼이 Fabric+모드팩을 공식 `.minecraft`에 등록 → **정품 로그인 즉시(Mojang 승인 대기 0)**. 머지 로직 fixture + 실기기 검증(기존 프로필 보존, MS Store/standalone 양쪽). [가이드](docs/installer-setup.md) |
 | 자동 접속 (quickPlayMultiplayer) | ✅ **실증** — MC 26.1 구형 --server 제거 대응 |
-| Velopack 자체 업데이트 | ✅ 구현 완료 |
-| Windows 배포 (미서명 단일 exe) | ✅ 완료 — self-contained 96MB (결정 D: 미서명) |
+| Velopack 자동 업데이트 | ✅ **실증 완료** — 실설치 e2e(설치→감지→다운로드→0.1.3 swap) 검증(Windows). macOS 는 Developer ID 서명 후 활성(scaffold 완료) |
+| Windows 배포 (Setup.exe + 자동 업데이트) | ✅ — Velopack `Setup.exe` 1회 설치 → 이후 자동 업데이트(미서명, 결정 D). 기존 portable exe 사용자는 1회 재설치 |
 | 서버 스택 (Fabric 26.1.2 + 40 모드 + Java 25) | ✅ **실증** — Done(2.3s), Blastproof·LuckPerms·SVC 로드, 포트 바인딩 |
 | CI (GitHub Actions) | ✅ Launcher Build 통과 + Modpack Pages 배포 성공 |
 | macOS 빌드 (ad-hoc 서명, 미공증) | ✅ **CI 실증** — macos-14 러너가 osx-arm64 `.app` 빌드+`--deep` ad-hoc 서명+서명/zip 왕복 검증 통과, 아티팩트 `HermaLauncher-macos-arm64`(45MB) 생성. [친구용 설치 가이드](docs/macos-setup.md) |
