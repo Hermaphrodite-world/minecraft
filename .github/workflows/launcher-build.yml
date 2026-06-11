@@ -121,12 +121,51 @@ jobs:
           name: HermaLauncher-macos-arm64
           path: publish/mac/HermaLauncher-macos-arm64.zip
 
-      - name: Attach to release
+      - name: Attach to release (ad-hoc .app — 수동 배포용 interim)
         if: github.event_name == 'release'
         uses: softprops/action-gh-release@v2
         with:
           files: publish/mac/HermaLauncher-macos-arm64.zip
 
-  # ── (최종 단계) 공증 — Apple Developer($99/년) 확보 후 위 job 의 서명 단계를 교체 ──
-  #   vpk pack --signAppIdentity "Developer ID Application: ..." --notaryProfile AC_PASSWORD
-  #   전제: APPLE_* secrets(Developer ID .p12 + notarytool app-specific password).
+      # ── macOS 자동 업데이트(Velopack) — Developer ID 서명 시크릿이 있을 때만 활성 ──
+      # macOS 의 Velopack 자동 업데이트는 코드 서명이 사실상 필수다: Gatekeeper 가 미서명 .app 의
+      # in-place 업데이트 교체를 거부하고, vpk 도 ad-hoc/미서명 macOS 경로를 공식 지원하지 않는다.
+      # 따라서 APPLE_SIGN_IDENTITY secret 이 설정된 경우에만 vpk 로 패키징/업로드한다.
+      # 그 전까지는 위의 ad-hoc .app(우클릭→열기) 수동 배포 유지. 서명 자산(Developer ID $99/년) 확보 후
+      # secret 만 추가하면 코드 변경 없이 Windows 와 동일하게 macOS 자동 업데이트가 켜진다.
+      - name: 서명 시크릿 존재 확인
+        id: signcheck
+        shell: bash
+        run: |
+          if [ -n "${{ secrets.APPLE_SIGN_IDENTITY }}" ]; then
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "Developer ID 미설정 — macOS 자동 업데이트 비활성(ad-hoc 배포 유지)"
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Velopack 패키징 + 업로드 (osx, 서명 설정 시에만)
+        if: github.event_name == 'release' && steps.signcheck.outputs.enabled == 'true'
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO_URL: ${{ github.server_url }}/${{ github.repository }}
+          TAG: ${{ github.event.release.tag_name }}
+          SIGN_ID: ${{ secrets.APPLE_SIGN_IDENTITY }}
+          NOTARY: ${{ secrets.APPLE_NOTARY_PROFILE }}
+        run: |
+          ver="${TAG#v}"
+          [ -z "$ver" ] && { echo 'release tag 비어있음'; exit 1; }
+          dotnet tool install -g vpk --version 1.2.0
+          export PATH="$PATH:$HOME/.dotnet/tools"
+          mkdir -p Releases
+          ICON=""; [ -f launcher/assets/app.icns ] && ICON="--icon launcher/assets/app.icns"
+          NOTARYARG=""; [ -n "$NOTARY" ] && NOTARYARG="--notaryProfile $NOTARY"
+          # 이전 릴리스 받아 델타 베이스(첫 릴리스면 비어도 계속).
+          vpk download github --repoUrl "$REPO_URL" --channel osx --token "$GH_TOKEN" --outputDir Releases || true
+          vpk pack --packId HermaLauncher --packVersion "$ver" --packTitle "Herma Launcher" \
+            --packDir publish/osx-arm64 --mainExe HermaLauncher \
+            --channel osx --runtime osx-arm64 $ICON \
+            --signAppIdentity "$SIGN_ID" $NOTARYARG --outputDir Releases
+          vpk upload github --channel osx --repoUrl "$REPO_URL" --token "$GH_TOKEN" \
+            --tag "$TAG" --releaseName "Herma Launcher $ver" --merge --outputDir Releases
