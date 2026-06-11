@@ -2,7 +2,7 @@ hash-format = "sha256"
 
 [[files]]
 file = "build-pack.sh"
-hash = "596f1afd97c89f36171ed99f98c896bac17faeee8cdf179ac2bd8e829720c171"
+hash = "e57f0e68386271213cbf4eb015d395d31dda5302f76112ddbbd216733060fc51"
 
 [[files]]
 file = "mods/3dskinlayers.pw.toml"
@@ -245,6 +245,11 @@ hash = "f8754925da30a56fa5c1a42e5ead7b5c4aa405bf142d2dcedaf04a92ece7a35f"
 metafile = true
 
 [[files]]
+file = "mods/ping-wheel.pw.toml"
+hash = "acd4944530ae545d7c2250b87d40b3f11978905d127b08005d238d451861e3a6"
+metafile = true
+
+[[files]]
 file = "mods/placeholder-api.pw.toml"
 hash = "d20369e5848ca31ecbb49bae22e953439173bd4617ca239b23335366b2a6a0e9"
 metafile = true
@@ -403,6 +408,10 @@ metafile = true
 file = "resourcepacks/fresh-animations.pw.toml"
 hash = "213428b7676adfaa1c59fcfe93e6e7f3d0257e236f32a5a245eb0fc966e1b218"
 metafile = true
+
+[[files]]
+file = "resourcepacks/herma-korean.zip"
+hash = "26aa1f49759cdc6fbc609cce45cc0408f6c9ea088c5d534efb0dd1727131432c"
 
 [[files]]
 file = "resourcepacks/nautilus3d.pw.toml"

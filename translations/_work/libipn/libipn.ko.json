@@ -1,0 +1,15 @@
+{
+  "libipn.common.gui.config.advanced_keybind_settings.alt_key_description": "같은 기능에 보조 키 설정을 추가할 수 있습니다",
+  "libipn.common.gui.config.advanced_keybind_settings.alt_key_label": "대체 %d",
+  "libipn.common.gui.config.advanced_keybind_settings.alt_key_title": "키 설정 대체 항목.",
+  "libipn.common.gui.config.color_picker_dialog": "색상 선택",
+  "libipn.common.gui.config.colorpicker.alpha": "알파",
+  "libipn.common.gui.config.colorpicker.blue": "파랑",
+  "libipn.common.gui.config.colorpicker.green": "초록",
+  "libipn.common.gui.config.colorpicker.red": "빨강",
+  "libipn.common.gui.config.description.settings_screen.search-box": "검색창에 입력한 검색어와 일치하는 옵션만 표시합니다.",
+  "libipn.common.gui.config.off": "꺼짐",
+  "libipn.common.gui.config.on": "켜짐",
+  "libipn.common.gui.config.settings_screen.search-box": "검색",
+  "modmenu.descriptionTranslation.libipn": "Inventory Profiles Next GUI 라이브러리"
+}

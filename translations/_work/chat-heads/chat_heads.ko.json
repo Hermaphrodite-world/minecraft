@@ -1,0 +1,10 @@
+{
+  "text.autoconfig.chat_heads.option.detectNameAliases": "이름 별칭 자동 감지",
+  "text.autoconfig.chat_heads.option.detectNameAliases.@Tooltip": "EssentialsX 서버에서 /realname 명령의 응답을 찾아\n자동으로 별칭을 추가합니다.",
+  "text.autoconfig.chat_heads.option.drawShadow": "그림자 렌더링",
+  "text.autoconfig.chat_heads.option.renderPosition": "렌더 위치",
+  "text.autoconfig.chat_heads.option.renderPosition.BEFORE_LINE": "줄 앞",
+  "text.autoconfig.chat_heads.option.renderPosition.BEFORE_NAME": "이름 앞",
+  "text.autoconfig.chat_heads.option.threeDeeNess": "입체감",
+  "text.autoconfig.chat_heads.option.threeDeeNess.@Tooltip": "모자 레이어를 약간 크게 렌더링해\n채팅 머리가 덜 납작해 보이게 합니다.\n일부 렌더링 문제가 생길 수 있습니다."
+}

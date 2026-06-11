@@ -1,0 +1,15 @@
+{
+  "libipn.common.gui.config.advanced_keybind_settings.alt_key_description": "You can add secondary key-bind for the same function",
+  "libipn.common.gui.config.advanced_keybind_settings.alt_key_label": "Alternative %d",
+  "libipn.common.gui.config.advanced_keybind_settings.alt_key_title": "Key bind alternatives.",
+  "libipn.common.gui.config.color_picker_dialog": "Pick a Color",
+  "libipn.common.gui.config.colorpicker.alpha": "Alpha",
+  "libipn.common.gui.config.colorpicker.blue": "Blue",
+  "libipn.common.gui.config.colorpicker.green": "Green",
+  "libipn.common.gui.config.colorpicker.red": "Red",
+  "libipn.common.gui.config.description.settings_screen.search-box": "Shows only options that match the search term in the box.",
+  "libipn.common.gui.config.off": "off",
+  "libipn.common.gui.config.on": "on",
+  "libipn.common.gui.config.settings_screen.search-box": "Search",
+  "modmenu.descriptionTranslation.libipn": "Inventory Profiles Next GUI Library"
+}

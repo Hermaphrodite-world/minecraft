@@ -1,0 +1,10 @@
+{
+  "text.autoconfig.chat_heads.option.detectNameAliases": "Auto-detect Name Aliases",
+  "text.autoconfig.chat_heads.option.detectNameAliases.@Tooltip": "This will look for responses to /realname commands on\nEssentialsX servers and automatically add an alias for it.",
+  "text.autoconfig.chat_heads.option.drawShadow": "Render Shadow",
+  "text.autoconfig.chat_heads.option.renderPosition": "Render Position",
+  "text.autoconfig.chat_heads.option.renderPosition.BEFORE_LINE": "Before Line",
+  "text.autoconfig.chat_heads.option.renderPosition.BEFORE_NAME": "Before Name",
+  "text.autoconfig.chat_heads.option.threeDeeNess": "3Dness",
+  "text.autoconfig.chat_heads.option.threeDeeNess.@Tooltip": "Renders the hat layer slightly bigger\nto make chat heads appear less flat.\nThis can cause some rendering issues."
+}

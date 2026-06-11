@@ -1,0 +1,12 @@
+{
+  "modmenu.descriptionTranslation.capes": "OptiFine, LabyMod, Cosmetica, Wynntils, Capes++, MinecraftCapes 모드의 망토를 사용할 수 있게 해주는 모드입니다.",
+  "options.capes.capetype": "망토 종류: %s",
+  "options.capes.elytra": "겉날개에 망토 텍스처 적용",
+  "options.capes.optifineeditor": "OptiFine 망토 편집기",
+  "options.capes.other": "기타",
+  "options.capes.selector": "망토 선택기",
+  "options.capes.selector.elytra": "겉날개 전환",
+  "options.capes.selector.player": "플레이어 전환",
+  "options.capes.title": "망토 설정",
+  "options.capes.toggle": "전환"
+}

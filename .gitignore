@@ -35,6 +35,9 @@ server/ops.json
 server/banned-*.json
 server/.fabric/
 
+# ── 번역 작업: 소스(_work)·도구·결과(herma-ko)는 커밋, jar 캐시만 무시 ──
+translations/_jars/
+
 # ── 기타 ──
 .DS_Store
 Thumbs.db

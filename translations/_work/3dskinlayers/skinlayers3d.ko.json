@@ -1,0 +1,12 @@
+{
+  "modmenu.descriptionTranslation.skinlayers3d": "플레이어 스킨 레이어를 입체로 렌더링합니다",
+  "text.skinlayers.applySodiumWorkaround.enable": "Sodium 호환 처리",
+  "text.skinlayers.applySodiumWorkaround.enable.tooltip": "일부 버전에서 Sodium이 큐브 면을 뒤집는 문제(?)에 대한 우회 처리입니다. Sodium 사용 중 스킨 레이어 측면이 사라지는 문제가 보일 때만 켜세요.",
+  "text.skinlayers.compatibilityMode.enable": "호환 모드",
+  "text.skinlayers.compatibilityMode.enable.tooltip": "레이어를 렌더링하는 다른 방식으로, 다른 모드와의 일부 호환 문제를 해결할 수 있습니다",
+  "text.skinlayers.irisCompatibilityMode.enable": "Iris 호환 모드",
+  "text.skinlayers.irisCompatibilityMode.enable.tooltip": "레이어를 렌더링하는 다른 방식으로, Iris 셰이더 사용 시 이상한 그림자/색을 해결합니다. 필요할 때만 켜세요. 모서리 연결이 깨집니다.",
+  "text.skinlayers.tab.heads": "플레이어 머리",
+  "text.skinlayers.tab.other": "기타 설정",
+  "text.skinlayers.tab.player": "플레이어"
+}

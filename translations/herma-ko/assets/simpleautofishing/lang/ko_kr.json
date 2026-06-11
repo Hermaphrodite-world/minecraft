@@ -1,0 +1,9 @@
+{
+  "text.simpleautofishing.cmd.disabled": "SAF: 꺼짐",
+  "text.simpleautofishing.cmd.enabled": "SAF: 켜짐",
+  "text.simpleautofishing.cmd.recastDelayTicks": "재투척 딜레이 설정: %d",
+  "text.simpleautofishing.safMode.all_in_hotbar": "단축바의 모든 낚싯대 사용",
+  "text.simpleautofishing.safMode.all_in_hotbar_protected": "단축바의 모든 낚싯대 사용 (내구도 보호)",
+  "text.simpleautofishing.safMode.fishing_rod_protected": "낚싯대 사용 (내구도 보호)",
+  "text.simpleautofishing.safMode.fishing_rod_unprotected": "낚싯대 사용"
+}

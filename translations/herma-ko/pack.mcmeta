@@ -1,0 +1,9 @@
+{
+  "pack": {
+    "pack_format": 15,
+    "supported_formats": [15, 255],
+    "min_format": 15,
+    "max_format": 255,
+    "description": "§aHerma World §f한국어 번역 보충팩\n§7미번역 모드 한국어화"
+  }
+}
