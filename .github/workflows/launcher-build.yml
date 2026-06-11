@@ -73,6 +73,7 @@ jobs:
           New-Item -ItemType Directory -Force -Path Releases | Out-Null
           # 이전 릴리스를 받아 델타 베이스로 사용(첫 릴리스면 비어도 계속 진행).
           vpk download github --repoUrl $env:REPO_URL --token $env:GH_TOKEN --outputDir Releases
+          if ($LASTEXITCODE -ne 0) { Write-Host "이전 릴리스 다운로드 스킵(첫 릴리스 등) — 계속"; $global:LASTEXITCODE = 0 }
           vpk pack --packId HermaLauncher --packVersion $ver --packTitle "Herma Launcher" `
             --packDir publish/win-x64 --mainExe HermaLauncher.exe --outputDir Releases
           # --merge: release:created 로 이미 존재하는 릴리스에 자산을 합쳐 올림.
@@ -127,24 +128,26 @@ jobs:
         with:
           files: publish/mac/HermaLauncher-macos-arm64.zip
 
-      # ── macOS 자동 업데이트(Velopack) — Developer ID 서명 시크릿이 있을 때만 활성 ──
+      # ── macOS 자동 업데이트(Velopack) — Developer ID 인증서(.p12)가 있을 때만 활성 ──
       # macOS 의 Velopack 자동 업데이트는 코드 서명이 사실상 필수다: Gatekeeper 가 미서명 .app 의
       # in-place 업데이트 교체를 거부하고, vpk 도 ad-hoc/미서명 macOS 경로를 공식 지원하지 않는다.
-      # 따라서 APPLE_SIGN_IDENTITY secret 이 설정된 경우에만 vpk 로 패키징/업로드한다.
-      # 그 전까지는 위의 ad-hoc .app(우클릭→열기) 수동 배포 유지. 서명 자산(Developer ID $99/년) 확보 후
-      # secret 만 추가하면 코드 변경 없이 Windows 와 동일하게 macOS 자동 업데이트가 켜진다.
-      - name: 서명 시크릿 존재 확인
+      # 식별자 이름(APPLE_SIGN_IDENTITY)만으론 부족 — runner keychain 에 실제 .p12 인증서가 import 돼야
+      # codesign 이 식별자를 찾는다(Codex 지적). 그래서 .p12(APPLE_CERT_P12_BASE64) 가 있을 때만 동작한다.
+      # 그 전까지는 위의 ad-hoc .app(우클릭→열기) 수동 배포 유지. 필요 secret:
+      #   APPLE_CERT_P12_BASE64(.p12 base64), APPLE_CERT_PASSWORD, APPLE_SIGN_IDENTITY, (선택) APPLE_NOTARY_PROFILE.
+      - name: 서명 자산 존재 확인
         id: signcheck
         shell: bash
         run: |
-          if [ -n "${{ secrets.APPLE_SIGN_IDENTITY }}" ]; then
+          # 식별자 이름만이 아니라 실제 인증서(.p12) material 존재로 게이트.
+          if [ -n "${{ secrets.APPLE_CERT_P12_BASE64 }}" ] && [ -n "${{ secrets.APPLE_SIGN_IDENTITY }}" ]; then
             echo "enabled=true" >> "$GITHUB_OUTPUT"
           else
-            echo "Developer ID 미설정 — macOS 자동 업데이트 비활성(ad-hoc 배포 유지)"
+            echo "Developer ID 인증서 미설정 — macOS 자동 업데이트 비활성(ad-hoc 배포 유지)"
             echo "enabled=false" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Velopack 패키징 + 업로드 (osx, 서명 설정 시에만)
+      - name: Velopack 패키징 + 업로드 (osx, Developer ID 인증서 있을 때만)
         if: github.event_name == 'release' && steps.signcheck.outputs.enabled == 'true'
         shell: bash
         env:
@@ -153,14 +156,29 @@ jobs:
           TAG: ${{ github.event.release.tag_name }}
           SIGN_ID: ${{ secrets.APPLE_SIGN_IDENTITY }}
           NOTARY: ${{ secrets.APPLE_NOTARY_PROFILE }}
+          CERT_P12: ${{ secrets.APPLE_CERT_P12_BASE64 }}
+          CERT_PW: ${{ secrets.APPLE_CERT_PASSWORD }}
         run: |
+          set -euo pipefail
           ver="${TAG#v}"
           [ -z "$ver" ] && { echo 'release tag 비어있음'; exit 1; }
+          # (1) Developer ID 인증서를 임시 keychain 에 import — codesign 이 식별자를 찾으려면 필수(Codex MED).
+          KEYCHAIN="$RUNNER_TEMP/herma-sign.keychain-db"
+          KPW="$(openssl rand -base64 24)"
+          security create-keychain -p "$KPW" "$KEYCHAIN"
+          security set-keychain-settings -lut 3600 "$KEYCHAIN"
+          security unlock-keychain -p "$KPW" "$KEYCHAIN"
+          echo "$CERT_P12" | base64 --decode > "$RUNNER_TEMP/cert.p12"
+          security import "$RUNNER_TEMP/cert.p12" -k "$KEYCHAIN" -P "$CERT_PW" -T /usr/bin/codesign
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$KPW" "$KEYCHAIN" >/dev/null
+          security list-keychains -d user -s "$KEYCHAIN" $(security list-keychains -d user | tr -d '"')
+          rm -f "$RUNNER_TEMP/cert.p12"
+          # (2) Velopack 패키징
           dotnet tool install -g vpk --version 1.2.0
           export PATH="$PATH:$HOME/.dotnet/tools"
           mkdir -p Releases
           ICON=""; [ -f launcher/assets/app.icns ] && ICON="--icon launcher/assets/app.icns"
-          NOTARYARG=""; [ -n "$NOTARY" ] && NOTARYARG="--notaryProfile $NOTARY"
+          NOTARYARG=""; [ -n "${NOTARY:-}" ] && NOTARYARG="--notaryProfile $NOTARY"
           # 이전 릴리스 받아 델타 베이스(첫 릴리스면 비어도 계속).
           vpk download github --repoUrl "$REPO_URL" --channel osx --token "$GH_TOKEN" --outputDir Releases || true
           vpk pack --packId HermaLauncher --packVersion "$ver" --packTitle "Herma Launcher" \
