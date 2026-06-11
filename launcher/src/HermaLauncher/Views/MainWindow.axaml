@@ -3,12 +3,13 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="using:HermaLauncher.ViewModels"
-        mc:Ignorable="d" d:DesignWidth="520" d:DesignHeight="360"
+        mc:Ignorable="d" d:DesignWidth="560" d:DesignHeight="600"
         x:Class="HermaLauncher.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
-        Width="520" Height="486"
+        Width="560" Height="600"
         CanResize="False"
         WindowStartupLocation="CenterScreen"
+        Background="{StaticResource WindowBg}"
         Title="Herma Launcher">
 
     <Design.DataContext>
@@ -16,58 +17,147 @@
     </Design.DataContext>
 
     <Border Padding="28">
-        <Grid RowDefinitions="Auto,*,Auto,Auto,Auto,Auto">
+        <Grid RowDefinitions="Auto,*">
 
-            <StackPanel Grid.Row="0" Spacing="2">
-                <TextBlock Text="{Binding Title}" FontSize="24" FontWeight="Bold" />
-                <TextBlock Text="{Binding ServerLabel}" Opacity="0.6" FontSize="13" />
-            </StackPanel>
-
-            <Border Grid.Row="1" VerticalAlignment="Center">
-                <SelectableTextBlock Text="{Binding StatusMessage}"
-                                     TextWrapping="Wrap"
-                                     FontSize="14"
-                                     Foreground="#D0D0D0" />
-            </Border>
-
-            <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="10" Margin="0,0,0,12">
-                <TextBlock Text="닉네임" VerticalAlignment="Center" Opacity="0.7" />
-                <TextBox Text="{Binding Username}" Width="160" Watermark="Player" />
-                <CheckBox Content="오프라인 모드(친구 서버)" IsChecked="{Binding IsOffline}" VerticalAlignment="Center" />
-            </StackPanel>
-
-            <ProgressBar Grid.Row="3" Margin="0,0,0,16"
-                         Minimum="0" Maximum="100"
-                         Value="{Binding Progress}"
-                         IsIndeterminate="{Binding IsIndeterminate}" />
-
-            <Grid Grid.Row="4" ColumnDefinitions="*,Auto">
-                <Button Grid.Column="0"
-                        Content="Play"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Center"
-                        FontSize="16" FontWeight="SemiBold"
-                        Padding="0,12"
-                        Command="{Binding PlayCommand}" />
-                <Button Grid.Column="1"
-                        Content="취소"
-                        Margin="12,0,0,0"
-                        Padding="16,12"
-                        Command="{Binding CancelCommand}" />
+            <!-- ── Header ── -->
+            <Grid Grid.Row="0" ColumnDefinitions="Auto,*" Margin="0,0,0,20">
+                <Button Grid.Column="0" Classes="ghost" Content="‹ 뒤로"
+                        Padding="13,7" VerticalAlignment="Top"
+                        IsVisible="{Binding ShowBack}"
+                        Command="{Binding BackToMenuCommand}" />
+                <StackPanel Grid.Column="1" Spacing="1" HorizontalAlignment="Right">
+                    <TextBlock Text="HERMA" FontSize="32" FontWeight="Black"
+                               Foreground="{StaticResource AccentBrush}"
+                               HorizontalAlignment="Right" />
+                    <TextBlock Text="{Binding ServerLabel}" FontSize="12"
+                               Foreground="{StaticResource TextMuted}"
+                               HorizontalAlignment="Right" />
+                </StackPanel>
             </Grid>
 
-            <StackPanel Grid.Row="5" Spacing="5" Margin="0,14,0,0">
-                <Button Content="공식 마인크래프트 런처에 설치  (정품 로그인 · 승인 대기 없이)"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Center"
-                        Padding="0,9"
-                        Command="{Binding InstallToOfficialCommand}" />
-                <TextBlock Text="공식 런처를 닫은 뒤 눌러주세요. 끝나면 공식 런처에서 'Hermaphrodite World' 프로필을 선택해 플레이합니다."
-                           FontSize="11" Opacity="0.55"
-                           TextWrapping="Wrap"
-                           HorizontalAlignment="Center"
-                           TextAlignment="Center" />
-            </StackPanel>
+            <!-- ── Content (4 화면 오버레이, IsVisible 분기) ── -->
+            <Panel Grid.Row="1">
+
+                <!-- View 1: 모드 선택 -->
+                <StackPanel IsVisible="{Binding IsModeSelect}" VerticalAlignment="Center" Spacing="14">
+                    <TextBlock Text="어떻게 플레이할까요?" FontSize="18" FontWeight="SemiBold" Margin="2,0,0,4" />
+
+                    <Button Classes="card" Command="{Binding SelectFriendModeCommand}">
+                        <Grid ColumnDefinitions="Auto,*">
+                            <Border Grid.Column="0" Width="46" Height="46" CornerRadius="12"
+                                    Background="{StaticResource AccentBrush}" VerticalAlignment="Center">
+                                <TextBlock Text="▶" FontSize="19" Foreground="White"
+                                           HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
+                            <StackPanel Grid.Column="1" Margin="16,0,0,0" VerticalAlignment="Center" Spacing="3">
+                                <TextBlock Text="친구 서버 바로 플레이" FontSize="16" FontWeight="Bold" />
+                                <TextBlock Text="닉네임만 입력하면 이 런처에서 바로 접속해요" FontSize="12.5"
+                                           Foreground="{StaticResource TextMuted}" TextWrapping="Wrap" />
+                            </StackPanel>
+                        </Grid>
+                    </Button>
+
+                    <Button Classes="card" Command="{Binding SelectOfficialModeCommand}">
+                        <Grid ColumnDefinitions="Auto,*">
+                            <Border Grid.Column="0" Width="46" Height="46" CornerRadius="12"
+                                    Background="#1E3A4D" VerticalAlignment="Center">
+                                <TextBlock Text="↓" FontSize="20" Foreground="{StaticResource AccentCyan}"
+                                           HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
+                            <StackPanel Grid.Column="1" Margin="16,0,0,0" VerticalAlignment="Center" Spacing="3">
+                                <TextBlock Text="공식 런처에 설치" FontSize="16" FontWeight="Bold" />
+                                <TextBlock Text="정품 계정으로 공식 마인크래프트 런처에서 플레이" FontSize="12.5"
+                                           Foreground="{StaticResource TextMuted}" TextWrapping="Wrap" />
+                            </StackPanel>
+                        </Grid>
+                    </Button>
+
+                    <TextBlock Text="Minecraft 26.1.2 · Fabric" FontSize="11"
+                               Foreground="{StaticResource TextMuted}"
+                               HorizontalAlignment="Center" Margin="0,10,0,0" />
+                </StackPanel>
+
+                <!-- View 2: 친구 서버 바로 플레이 -->
+                <Grid IsVisible="{Binding IsFriendPlay}" RowDefinitions="Auto,*,Auto,Auto">
+                    <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="10" Margin="2,2,0,0">
+                        <TextBlock Text="닉네임" VerticalAlignment="Center" Foreground="{StaticResource TextMuted}" />
+                        <TextBox Text="{Binding Username}" Width="180" Watermark="Player" />
+                        <CheckBox Content="오프라인 모드" IsChecked="{Binding IsOffline}" VerticalAlignment="Center" />
+                    </StackPanel>
+
+                    <Border Grid.Row="1" VerticalAlignment="Center" Padding="2,0">
+                        <SelectableTextBlock Text="{Binding StatusMessage}" TextWrapping="Wrap"
+                                             FontSize="13.5" Foreground="#D2D2DE" />
+                    </Border>
+
+                    <ProgressBar Grid.Row="2" Margin="0,0,0,16" Minimum="0" Maximum="100"
+                                 Value="{Binding Progress}" IsIndeterminate="{Binding IsIndeterminate}" />
+
+                    <Grid Grid.Row="3" ColumnDefinitions="*,Auto">
+                        <Button Grid.Column="0" Classes="play" Content="▶  PLAY" Command="{Binding PlayCommand}" />
+                        <Button Grid.Column="1" Classes="ghost" Content="취소" Margin="12,0,0,0" Padding="20,13"
+                                IsVisible="{Binding IsBusy}" Command="{Binding CancelCommand}" />
+                    </Grid>
+                </Grid>
+
+                <!-- View 3: 공식 런처 설치 -->
+                <Grid IsVisible="{Binding IsOfficialInstall}" RowDefinitions="Auto,*,Auto,Auto">
+                    <Border Grid.Row="0" Background="{StaticResource PanelBg}" CornerRadius="12" Padding="16"
+                            BorderBrush="{StaticResource CardBorder}" BorderThickness="1" Margin="0,2,0,0">
+                        <StackPanel Spacing="6">
+                            <TextBlock Text="공식 마인크래프트 런처에 설치" FontWeight="Bold" FontSize="15" />
+                            <TextBlock Text="'Hermaphrodite World' 프로필을 공식 런처에 추가합니다. 정품 계정으로 로그인해 플레이할 수 있어요."
+                                       FontSize="12.5" Foreground="{StaticResource TextMuted}" TextWrapping="Wrap" />
+                            <TextBlock Text="● 설치 전 공식 마인크래프트 런처를 완전히 닫아주세요."
+                                       FontSize="12.5" Foreground="{StaticResource AccentCyan}" TextWrapping="Wrap"
+                                       Margin="0,2,0,0" />
+                        </StackPanel>
+                    </Border>
+
+                    <Border Grid.Row="1" VerticalAlignment="Center" Padding="2,0">
+                        <SelectableTextBlock Text="{Binding StatusMessage}" TextWrapping="Wrap"
+                                             FontSize="13.5" Foreground="#D2D2DE" />
+                    </Border>
+
+                    <ProgressBar Grid.Row="2" Margin="0,0,0,16" Minimum="0" Maximum="100"
+                                 Value="{Binding Progress}" IsIndeterminate="{Binding IsIndeterminate}" />
+
+                    <Grid Grid.Row="3" ColumnDefinitions="*,Auto">
+                        <Button Grid.Column="0" Classes="play" Content="공식 런처에 설치"
+                                Command="{Binding InstallToOfficialCommand}" />
+                        <Button Grid.Column="1" Classes="ghost" Content="취소" Margin="12,0,0,0" Padding="20,13"
+                                IsVisible="{Binding IsBusy}" Command="{Binding CancelCommand}" />
+                    </Grid>
+                </Grid>
+
+                <!-- View 4: 설치 완료 (Play 버튼 없음 → 오클릭 구조적 차단) -->
+                <StackPanel IsVisible="{Binding IsOfficialDone}" VerticalAlignment="Center" Spacing="16">
+                    <Border Width="64" Height="64" CornerRadius="32"
+                            Background="{StaticResource AccentBrush}" HorizontalAlignment="Center">
+                        <TextBlock Text="✓" FontSize="34" FontWeight="Bold" Foreground="White"
+                                   HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <TextBlock Text="설치 완료!" FontSize="22" FontWeight="Bold" HorizontalAlignment="Center" />
+
+                    <Border Background="{StaticResource PanelBg}" CornerRadius="12" Padding="18"
+                            BorderBrush="{StaticResource CardBorder}" BorderThickness="1">
+                        <StackPanel Spacing="9">
+                            <TextBlock Text="이제 공식 런처에서 플레이하세요" FontWeight="SemiBold" FontSize="14"
+                                       Foreground="{StaticResource AccentCyan}" />
+                            <TextBlock Text="1.  공식 마인크래프트 런처를 엽니다" FontSize="13" TextWrapping="Wrap" />
+                            <TextBlock Text="2.  좌하단에서 'Hermaphrodite World' 프로필을 선택" FontSize="13" TextWrapping="Wrap" />
+                            <TextBlock Text="3.  플레이 → 서버에 자동 접속" FontSize="13" TextWrapping="Wrap" />
+                        </StackPanel>
+                    </Border>
+
+                    <TextBlock Text="{Binding ServerLabel}" FontSize="12"
+                               Foreground="{StaticResource TextMuted}" HorizontalAlignment="Center" />
+                    <Button Classes="ghost" Content="메뉴로 돌아가기" Padding="0,12"
+                            HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                            Command="{Binding BackToMenuCommand}" />
+                </StackPanel>
+
+            </Panel>
         </Grid>
     </Border>
 </Window>
