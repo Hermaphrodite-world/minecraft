@@ -40,23 +40,44 @@ jobs:
       - name: Build
         run: dotnet build launcher/src/HermaLauncher/HermaLauncher.csproj -c Release
 
-      - name: Publish (self-contained single-file, unsigned)
+      # Velopack vpk 는 단일파일이 아닌 "폴더" 산출물을 패키징한다(자체 Setup.exe/델타 생성).
+      - name: Publish (self-contained 폴더 — Velopack 용)
         run: >
           dotnet publish launcher/src/HermaLauncher/HermaLauncher.csproj
           -c Release -r win-x64 --self-contained true
-          -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true
+          -p:PublishSingleFile=false
           -o publish/win-x64
 
+      # 비-릴리즈(push/dispatch): 폴더 산출물을 테스트 아티팩트로.
       - uses: actions/upload-artifact@v4
         with:
           name: HermaLauncher-win-x64
-          path: publish/win-x64/HermaLauncher.exe
+          path: publish/win-x64
 
-      - name: Attach to release
+      # ── 릴리즈: Velopack 패키징 + GitHub Releases 업로드(자동 업데이트 피드) ──
+      # 친구는 HermaLauncher-win-Setup.exe 로 1회 설치 → 이후 앱이 GithubSource 로 자동 업데이트.
+      # (앱 측 이미 구현됨: Program.Main 의 VelopackApp.Build().Run() + VelopackUpdateService GithubSource)
+      # ※ vpk 툴 버전은 앱의 Velopack NuGet(1.2.0)과 맞춘다 — 불일치 시 패키지 포맷 mismatch.
+      - name: Velopack 패키징 + 업로드 (release only)
         if: github.event_name == 'release'
-        uses: softprops/action-gh-release@v2
-        with:
-          files: publish/win-x64/HermaLauncher.exe
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO_URL: ${{ github.server_url }}/${{ github.repository }}
+        run: |
+          $tag = '${{ github.event.release.tag_name }}'
+          $ver = $tag.TrimStart('v')
+          if (-not $ver) { Write-Error 'release tag 가 비어있음'; exit 1 }
+          dotnet tool install -g vpk --version 1.2.0
+          $env:PATH = "$env:PATH;$env:USERPROFILE\.dotnet\tools"
+          New-Item -ItemType Directory -Force -Path Releases | Out-Null
+          # 이전 릴리스를 받아 델타 베이스로 사용(첫 릴리스면 비어도 계속 진행).
+          vpk download github --repoUrl $env:REPO_URL --token $env:GH_TOKEN --outputDir Releases
+          vpk pack --packId HermaLauncher --packVersion $ver --packTitle "Herma Launcher" `
+            --packDir publish/win-x64 --mainExe HermaLauncher.exe --outputDir Releases
+          # --merge: release:created 로 이미 존재하는 릴리스에 자산을 합쳐 올림.
+          vpk upload github --repoUrl $env:REPO_URL --token $env:GH_TOKEN `
+            --tag $tag --releaseName "Herma Launcher $ver" --merge --outputDir Releases
 
   # ── macOS (ad-hoc 서명, 미공증 — 결정 C "인증 나중, 앱 전달만") ──────────────
   # Apple Silicon(.app)이 실행되려면 ad-hoc 서명이 필수(공증과 별개). codesign 은 macOS 전용이라
