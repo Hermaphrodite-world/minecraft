@@ -5,32 +5,30 @@ using System.Linq;
 
 namespace HermaLauncher.Services;
 
-// 첫 설치/신규 팩 도착 시 클라이언트 기본값(쉐이더/리소스팩)을 적용한다.
-// 핵심 정책 = "처음 1회만 자동 활성"(사용자 선택):
-//   - 처음 보는(=마커에 없는) 팩/쉐이더만 자동 켠다.
-//   - 한 번 자동 적용한 뒤에는 마커에 기록 → 사용자가 게임 내에서 끈 팩을 다시 켜지 않는다.
-//   - 기존에 활성화된 팩과 그 순서는 보존하고, 새 팩만 additively append 한다.
+// packwiz 동기화 후 클라이언트 기본값을 적용한다. 정책 = "런처 실행 시 모드팩 기본값을 강제"(사용자 요청):
+//   - 리소스팩: resourcepacks/ 의 모든 팩을 매 실행 options.txt 에 활성 보장(빠졌으면 재추가).
+//   - 쉐이더  : iris.properties 의 shaderPack 이 비었거나 없는 팩을 가리키면 기본 쉐이더로 보정.
+//               단 사용자가 고른 "유효한"(현재 존재하는) 쉐이더는 보존(번들 쉐이더 간 전환 허용).
+//   - 서버목록: servers.dat 에 명명된 모드팩 서버 항목 보장(ServerList).
 //   - best-effort — 실패해도 게임 실행/설치를 막지 않는다.
-// 마커: <gameDir>/herma_launcher_applied.txt ("rp:<파일명>" / "shader:<파일명>"). 줄 삭제 시 재적용.
+// ※ 과거의 "1회만 적용(herma_launcher_applied.txt 마커)" 정책은 폐기 — 친구가 게임 내에서 끈 팩이
+//    다음 실행에 다시 켜져야 한다는 요구에 따라 매 실행 강제로 변경.
 public static class ClientDefaults
 {
-    private const string MarkerFile = "herma_launcher_applied.txt";
-
-    // 양 경로(런처 Play / installer)의 단일 진입점 — packwiz 동기화 후 호출.
+    // 런처 Play / 공식 런처 installer 양 경로의 단일 진입점 — packwiz 동기화 후 호출.
     public static void ApplyAll(string gameDir, IProgress<StageUpdate>? progress = null)
     {
-        var applied = LoadMarker(gameDir);
-        var before = applied.Count;
-        EnsureDefaultShader(gameDir, applied, progress);
-        EnsureDefaultResourcePacks(gameDir, applied, progress);
-        if (applied.Count != before)
-            SaveMarker(gameDir, applied);
+        ServerList.Ensure(gameDir, LauncherConfig.ServerListName,
+                          LauncherConfig.ServerIp, LauncherConfig.ServerPort, progress);
+        EnsureDefaultShader(gameDir, progress);
+        EnsureDefaultResourcePacks(gameDir, progress);
     }
 
-    // packwiz 동기화 후 shaderpacks/ 의 쉐이더팩을 Iris 기본 활성으로 설정(처음 1회).
-    //   - 마커에 이미 있으면 skip(사용자 선택 보존).
-    //   - iris.properties 가 이미 있으면 덮지 않되, 마커엔 기록(1회성 보장 — 기존 사용자 쉐이더 보존).
-    private static void EnsureDefaultShader(string gameDir, HashSet<string> applied, IProgress<StageUpdate>? progress)
+    // shaderpacks/ 의 쉐이더팩을 Iris 기본 활성으로 보장.
+    //   - iris.properties 없음 → 기본 쉐이더로 생성.
+    //   - 있음 + shaderPack 비었거나 더 이상 없는 팩 → 기본 쉐이더로 보정(다른 Iris 설정 키는 보존).
+    //   - 있음 + shaderPack 이 현재 존재하는 팩 → 사용자 선택으로 보존.
+    private static void EnsureDefaultShader(string gameDir, IProgress<StageUpdate>? progress)
     {
         try
         {
@@ -42,28 +40,42 @@ public static class ClientDefaults
             if (packs.Length == 0)
                 return;
 
+            var presentNames = packs.Select(Path.GetFileName).Where(n => n is not null)
+                                    .Select(n => n!).ToHashSet(StringComparer.OrdinalIgnoreCase);
             var chosen = packs.FirstOrDefault(p =>
                 Path.GetFileName(p).StartsWith(LauncherConfig.DefaultShaderPackPrefix, StringComparison.OrdinalIgnoreCase))
                 ?? packs[0];
             var name = Path.GetFileName(chosen); // Iris 는 zip 쉐이더팩을 확장자 포함 파일명으로 가리킴
-            var key = "shader:" + name;
-            if (applied.Contains(key))
-                return; // 이미 1회 자동 적용함 — 사용자 선택 보존
 
             var configDir = Path.Combine(gameDir, "config");
             var irisProps = Path.Combine(configDir, "iris.properties");
-            // iris.properties 가 이미 있으면(사용자가 쉐이더 지정) 덮지 않는다 — 마커만 찍어 1회성 보장.
+
             if (!File.Exists(irisProps))
             {
                 Directory.CreateDirectory(configDir);
-                // Java Properties 형식(key=value). 값은 영숫자/언더스코어/점만이라 이스케이프 불필요.
-                File.WriteAllText(irisProps,
+                AtomicWrite(irisProps,
                     "# Herma Launcher 기본 쉐이더 (끄거나 바꾸려면: 게임 내 비디오 설정 > 쉐이더팩)\n" +
                     "enableShaders=true\n" +
                     "shaderPack=" + name + "\n");
                 progress?.Report(StageUpdate.Of(LaunchStage.Packwiz, $"쉐이더 기본 적용: {name}"));
+                return;
             }
-            applied.Add(key);
+
+            // 기존 iris.properties 의 shaderPack 검사 — 유효한 사용자 선택은 보존.
+            var lines = File.ReadAllLines(irisProps).ToList();
+            var spIdx = lines.FindIndex(l => l.StartsWith("shaderPack=", StringComparison.Ordinal));
+            var current = spIdx >= 0 ? lines[spIdx]["shaderPack=".Length..].Trim() : string.Empty;
+            if (current.Length > 0 && presentNames.Contains(current))
+                return; // 사용자가 고른 유효 쉐이더 → 보존
+
+            // 비었거나(또는 없어진 팩) → 기본 쉐이더로 보정. 다른 키(colorSpace 등)는 그대로 둔다.
+            if (spIdx >= 0) lines[spIdx] = "shaderPack=" + name;
+            else lines.Add("shaderPack=" + name);
+            var enIdx = lines.FindIndex(l => l.StartsWith("enableShaders=", StringComparison.Ordinal));
+            if (enIdx >= 0) lines[enIdx] = "enableShaders=true";
+            else lines.Add("enableShaders=true");
+            AtomicWrite(irisProps, string.Join("\n", lines) + "\n");
+            progress?.Report(StageUpdate.Of(LaunchStage.Packwiz, $"쉐이더 기본 적용: {name}"));
         }
         catch
         {
@@ -71,13 +83,10 @@ public static class ClientDefaults
         }
     }
 
-    // packwiz 동기화 후 resourcepacks/ 의 리소스팩을 options.txt 에 기본 활성화(처음 1회, additive).
-    //   - 처음 보는(마커에 없는) zip 만 활성 목록에 append → 새 팩(번역팩 등)이 기존 프로필에도 자동 적용.
-    //   - 기존 활성 팩/순서는 보존, 이미 활성인 팩은 중복 추가하지 않음.
-    //   - 값은 "file/<파일명>"(확장자 포함). 베이스 먼저, 확장(Extension/Addon) 나중(배열 뒤 = 위에서 override).
-    //   - 일부 팩은 최신 MC 에서 "incompatible" 로 떠 resourcePacks 에만 두면 조용히 제거됨 →
-    //     incompatibleResourcePacks 에도 화이트리스트해야 유지된다(Codex#4).
-    private static void EnsureDefaultResourcePacks(string gameDir, HashSet<string> applied, IProgress<StageUpdate>? progress)
+    // resourcepacks/ 의 모든 팩을 options.txt 에 활성 보장(매 실행 강제, additive).
+    //   - 빠진 팩만 추가(이미 활성인 팩/순서/다른 항목은 보존). 베이스 먼저, 확장(Extension/Addon) 나중.
+    //   - 값은 "file/<파일명>". 일부 팩은 "incompatible" 로 떠 조용히 제거되므로 incompatibleResourcePacks 에도 화이트리스트.
+    private static void EnsureDefaultResourcePacks(string gameDir, IProgress<StageUpdate>? progress)
     {
         try
         {
@@ -89,13 +98,6 @@ public static class ClientDefaults
             if (present.Count == 0)
                 return;
 
-            // 처음 보는 팩만 자동 활성 대상. 이번 실행에서 본 모든 팩은 '봤음'으로 마킹(다음부턴 보존).
-            var unseen = present.Where(n => !applied.Contains("rp:" + n)).ToList();
-            foreach (var n in present)
-                applied.Add("rp:" + n);
-            if (unseen.Count == 0)
-                return; // 새 팩 없음 — 사용자 목록 손대지 않음
-
             var optionsPath = Path.Combine(gameDir, "options.txt");
             var nl = Environment.NewLine; // MC 는 Windows=CRLF / Unix=LF
             var lines = File.Exists(optionsPath) ? File.ReadAllLines(optionsPath).ToList() : new List<string>();
@@ -105,23 +107,24 @@ public static class ClientDefaults
             if (active.Count == 0)
                 active.Add("\"vanilla\""); // vanilla 는 항상 최하단
 
-            // 새 팩을 base 먼저 / extension 나중으로 append(없을 때만).
-            var added = 0;
-            foreach (var n in unseen
+            var changed = false;
+            var addedCount = 0;
+            foreach (var n in present
                 .OrderBy(x => IsExtensionPack(x) ? 1 : 0)
                 .ThenBy(x => x, StringComparer.OrdinalIgnoreCase))
             {
                 var entry = "\"file/" + n + "\"";
-                if (!active.Contains(entry)) { active.Add(entry); added++; }
-                if (!incompat.Contains(entry)) incompat.Add(entry);
+                if (!active.Contains(entry)) { active.Add(entry); changed = true; addedCount++; }
+                if (!incompat.Contains(entry)) { incompat.Add(entry); changed = true; }
             }
-            if (added == 0)
-                return; // 새 팩이 이미 전부 활성 — 기록만 갱신(위에서 마킹됨)
+            if (!changed)
+                return; // 모든 팩이 이미 활성 + 화이트리스트됨 — 손대지 않음(불필요한 쓰기 방지)
 
             SetOrAddLine(lines, "resourcePacks:", "resourcePacks:[" + string.Join(",", active) + "]");
             SetOrAddLine(lines, "incompatibleResourcePacks:", "incompatibleResourcePacks:[" + string.Join(",", incompat) + "]");
-            File.WriteAllText(optionsPath, string.Join(nl, lines) + nl);
-            progress?.Report(StageUpdate.Of(LaunchStage.Packwiz, $"리소스팩 {added}개 자동 적용"));
+            AtomicWrite(optionsPath, string.Join(nl, lines) + nl);
+            progress?.Report(StageUpdate.Of(LaunchStage.Packwiz,
+                addedCount > 0 ? $"리소스팩 {addedCount}개 적용" : "리소스팩 적용"));
         }
         catch
         {
@@ -143,39 +146,9 @@ public static class ClientDefaults
         {
             var t = part.Trim();
             if (t.Length > 0)
-                result.Add(t); // 따옴표 포함 그대로(예: "vanilla", "file/x.zip")
+                result.Add(t); // 따옴표 포함 그대로(예: "vanilla", "file/x.zip", lambdabettergrass:default)
         }
         return result;
-    }
-
-    private static HashSet<string> LoadMarker(string gameDir)
-    {
-        var set = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-        try
-        {
-            var p = Path.Combine(gameDir, MarkerFile);
-            if (File.Exists(p))
-                foreach (var l in File.ReadAllLines(p))
-                {
-                    var t = l.Trim();
-                    if (t.Length > 0 && !t.StartsWith("#"))
-                        set.Add(t);
-                }
-        }
-        catch { /* best-effort */ }
-        return set;
-    }
-
-    private static void SaveMarker(string gameDir, HashSet<string> applied)
-    {
-        try
-        {
-            var body = "# Herma Launcher: 이미 1회 자동 적용한 팩/쉐이더 목록." + Environment.NewLine
-                + "# 특정 줄을 지우면 그 팩이 다음 실행 때 다시 자동 활성화됩니다." + Environment.NewLine
-                + string.Join(Environment.NewLine, applied.OrderBy(x => x, StringComparer.Ordinal)) + Environment.NewLine;
-            File.WriteAllText(Path.Combine(gameDir, MarkerFile), body);
-        }
-        catch { /* best-effort */ }
     }
 
     private static void SetOrAddLine(List<string> lines, string keyPrefix, string fullLine)
@@ -188,4 +161,13 @@ public static class ClientDefaults
     private static bool IsExtensionPack(string fileName)
         => fileName.Contains("Extension", StringComparison.OrdinalIgnoreCase)
         || fileName.Contains("Addon", StringComparison.OrdinalIgnoreCase);
+
+    // 텍스트 파일 원자적 쓰기(.tmp → replace) — crash/전원손실 시 torn file 방지(Codex).
+    private static void AtomicWrite(string path, string content)
+    {
+        var tmp = path + ".tmp";
+        File.WriteAllText(tmp, content);
+        if (File.Exists(path)) File.Replace(tmp, path, null);
+        else File.Move(tmp, path);
+    }
 }

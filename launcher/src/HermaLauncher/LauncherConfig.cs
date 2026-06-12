@@ -22,6 +22,9 @@ public static class LauncherConfig
     public static readonly int ServerPort =
         int.TryParse(Environment.GetEnvironmentVariable("HERMA_SERVER_PORT"), out var p) ? p : 25565;
 
+    // 멀티플레이 서버 목록(servers.dat)에 표시될 이름.
+    public const string ServerListName = "Hermaphrodite World";
+
     // Azure 앱 client ID (public client, online 모드 device-code). 환경변수 HERMA_AZURE_CLIENT_ID 로 덮어쓰기 가능.
     // 공개 소스엔 all-zero placeholder(Guid.Empty) 유지 — release 빌드 시 CI 가 secret HERMA_AZURE_CLIENT_ID 로
     // 이 리터럴 1곳을 bake(치환)한다(launcher-build.yml). ※ 게이트는 아래 Guid.Empty 비교라 bake 와 충돌하지 않음.
