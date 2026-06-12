@@ -9,14 +9,12 @@ using HermaLauncher.Services;
 
 namespace HermaLauncher.ViewModels;
 
-// 화면 상태 머신. 시작 = 모드 선택 → 각 경로(친구 서버 바로 플레이 / 공식 런처 설치) →
-// 공식 런처 설치 성공 시 OfficialDone 으로 전환해 Play 오클릭을 구조적으로 차단한다.
+// 화면 상태. Main = 두 카드(친구 서버 / 공식 설치) 동시 표시 1화면. 공식 설치 성공 시 OfficialDone
+// 으로 전환해 안내 화면을 보여준다(Play 오클릭은 Main 의 카드 분리 + IsBusy 게이트로 차단).
 public enum AppView
 {
-    ModeSelect,      // 두 경로 카드 중 선택
-    FriendPlay,      // 이 런처가 직접 실행(친구 서버)
-    OfficialInstall, // 공식 런처에 프로필 설치
-    OfficialDone,    // 설치 완료 — 공식 런처로 전환 안내(전용 화면)
+    Main,         // 두 경로 카드 + 상태/진행 (기본 화면)
+    OfficialDone, // 공식 런처 설치 완료 — 전환 안내 전용 화면
 }
 
 public partial class MainWindowViewModel : ViewModelBase
@@ -52,21 +50,15 @@ public partial class MainWindowViewModel : ViewModelBase
     [NotifyCanExecuteChangedFor(nameof(PlayCommand))]
     [NotifyCanExecuteChangedFor(nameof(InstallToOfficialCommand))]
     [NotifyCanExecuteChangedFor(nameof(CancelCommand))]
-    [NotifyCanExecuteChangedFor(nameof(SelectFriendModeCommand))]
-    [NotifyCanExecuteChangedFor(nameof(SelectOfficialModeCommand))]
     [NotifyCanExecuteChangedFor(nameof(BackToMenuCommand))]
-    [NotifyPropertyChangedFor(nameof(ShowBack))]
     private bool _isBusy;
 
-    // 현재 화면. 변경 시 화면 분기 bool 들과 뒤로가기 가시성을 재평가.
+    // 현재 화면. 변경 시 화면 분기 bool 들을 재평가.
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(IsModeSelect))]
-    [NotifyPropertyChangedFor(nameof(IsFriendPlay))]
-    [NotifyPropertyChangedFor(nameof(IsOfficialInstall))]
+    [NotifyPropertyChangedFor(nameof(IsMain))]
     [NotifyPropertyChangedFor(nameof(IsOfficialDone))]
-    [NotifyPropertyChangedFor(nameof(ShowBack))]
     [NotifyCanExecuteChangedFor(nameof(BackToMenuCommand))]
-    private AppView _view = AppView.ModeSelect;
+    private AppView _view = AppView.Main;
 
     // 닉네임 (오프라인 모드에서 사용). 기본값 = OS 사용자명.
     [ObservableProperty]
@@ -87,38 +79,24 @@ public partial class MainWindowViewModel : ViewModelBase
         _statusMessage = ReadyText;
     }
 
-    public string Title => "HERMA";
+    public string Title => "HERMA LAUNCHER";
+    public string Subtitle => "친구들과 클릭 한 번으로 바로 플레이";
     public string ServerLabel => $"{LauncherConfig.ServerIp}:{LauncherConfig.ServerPort}";
 
+    // 상태 칩 (헤더 하단). Fabric / Mods / 자동 업데이트 는 XAML 리터럴.
+    public string VersionChip => $"Minecraft {LauncherConfig.MinecraftVersion}";
+
     // 화면 분기 (XAML IsVisible 바인딩).
-    public bool IsModeSelect => View == AppView.ModeSelect;
-    public bool IsFriendPlay => View == AppView.FriendPlay;
-    public bool IsOfficialInstall => View == AppView.OfficialInstall;
+    public bool IsMain => View == AppView.Main;
     public bool IsOfficialDone => View == AppView.OfficialDone;
-    // 뒤로가기 헤더 버튼: 실행 경로(친구/공식 설치)에서만, 작업 중이 아닐 때. (완료 화면은 자체 버튼 사용)
-    public bool ShowBack => (View == AppView.FriendPlay || View == AppView.OfficialInstall) && !IsBusy;
 
     private bool CanNavigate() => !IsBusy;
-
-    [RelayCommand(CanExecute = nameof(CanNavigate))]
-    private void SelectFriendMode()
-    {
-        ResetStatus();
-        View = AppView.FriendPlay;
-    }
-
-    [RelayCommand(CanExecute = nameof(CanNavigate))]
-    private void SelectOfficialMode()
-    {
-        ResetStatus();
-        View = AppView.OfficialInstall;
-    }
 
     [RelayCommand(CanExecute = nameof(CanNavigate))]
     private void BackToMenu()
     {
         ResetStatus();
-        View = AppView.ModeSelect;
+        View = AppView.Main;
     }
 
     private void ResetStatus()
@@ -200,7 +178,7 @@ public partial class MainWindowViewModel : ViewModelBase
     }
 
     // 대체 경로: 공식 마인크래프트 런처에 모드팩 프로필 설치(정품 로그인, Mojang 승인 대기 없음).
-    // 성공 시 OfficialDone 화면으로 전환 → Play 버튼이 사라져 잘못된 시나리오(설치 후 이 런처로 실행) 차단.
+    // 성공 시 OfficialDone 화면으로 전환 → 안내 화면 표시.
     [RelayCommand(CanExecute = nameof(CanPlay))]
     private async Task InstallToOfficialAsync()
     {
@@ -214,7 +192,7 @@ public partial class MainWindowViewModel : ViewModelBase
         var ok = false;
         try
         {
-            // InstallAsync 는 throw 하지 않고 성공=true / 실패·취소=false 를 반환(계약, L39).
+            // InstallAsync 는 throw 하지 않고 성공=true / 실패·취소=false 를 반환(계약).
             // 반드시 반환값으로 판정 — HasError 는 Progress→Dispatcher 이중 지연이라 await 직후엔 stale(race).
             ok = await _installer.InstallAsync(progress, _cts.Token).ConfigureAwait(true);
         }
@@ -226,7 +204,6 @@ public partial class MainWindowViewModel : ViewModelBase
             _cts = null;
         }
 
-        // 성공일 때만 완료 화면으로 → Play 오클릭 구조적 차단. 실패/취소는 설치 화면 유지(에러 메시지 노출).
         if (ok)
             View = AppView.OfficialDone;
     }
@@ -235,6 +212,41 @@ public partial class MainWindowViewModel : ViewModelBase
 
     [RelayCommand(CanExecute = nameof(CanCancel))]
     private void Cancel() => _cts?.Cancel();
+
+    // ── 푸터 내비 (스텁 — URL 은 LauncherConfig 에서, 미설정 시 no-op) ──
+    [RelayCommand]
+    private void OpenDiscord() => OpenExternal(LauncherConfig.DiscordUrl);
+
+    [RelayCommand]
+    private void OpenGuide() => OpenExternal(LauncherConfig.GuideUrl);
+
+    [RelayCommand]
+    private void OpenWebsite() => OpenExternal(LauncherConfig.WebsiteUrl);
+
+    [RelayCommand]
+    private void OpenLogs() => OpenExternal(AppPaths.LogDir);
+
+    [RelayCommand]
+    private void OpenSettings()
+    {
+        // TODO: 설정 다이얼로그(스텁). 현재는 안내만.
+        StatusMessage = "설정은 준비 중이에요.";
+    }
+
+    // URL/폴더를 기본 앱으로 연다. 빈 값(스텁 미설정)이면 조용히 무시.
+    private static void OpenExternal(string target)
+    {
+        if (string.IsNullOrWhiteSpace(target))
+            return;
+        try
+        {
+            Process.Start(new ProcessStartInfo(target) { UseShellExecute = true });
+        }
+        catch
+        {
+            // 외부 열기 실패는 사용자 흐름을 막지 않는다.
+        }
+    }
 
     private void OnStageUpdate(StageUpdate u)
     {

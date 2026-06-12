@@ -1,5 +1,6 @@
 using System;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Threading;
 using HermaLauncher.ViewModels;
 
@@ -12,11 +13,21 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
+
+        // 커스텀 크롬(ExtendClientArea + NoChrome): 타이틀바 드래그 + 최소화/닫기 직접 구현.
+        TitleBar.PointerPressed += (_, e) =>
+        {
+            if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
+                BeginMoveDrag(e);
+        };
+        MinBtn.Click += (_, _) => WindowState = WindowState.Minimized;
+        CloseBtn.Click += (_, _) => Close();
+
         DataContextChanged += OnDataContextChanged;
     }
 
-    // VM 의 창 제어 요청(최소화/복원/닫기)을 창에 연결. DataContext 는 App 에서 1회 주입되나,
-    // 중복 구독 방지로 가드. VM 은 창을 직접 참조하지 않아 MVVM 경계를 유지(이벤트 경유).
+    // VM 의 창 제어 요청(게임 모니터링: 최소화/복원/닫기)을 창에 연결. DataContext 는 App 에서 1회
+    // 주입되나 중복 구독 방지로 가드. VM 은 창을 직접 참조하지 않아 MVVM 경계를 유지(이벤트 경유).
     private void OnDataContextChanged(object? sender, EventArgs e)
     {
         if (_vmWired || DataContext is not MainWindowViewModel vm)

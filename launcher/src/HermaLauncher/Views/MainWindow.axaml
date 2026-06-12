@@ -3,161 +3,198 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="using:HermaLauncher.ViewModels"
-        mc:Ignorable="d" d:DesignWidth="560" d:DesignHeight="600"
+        mc:Ignorable="d" d:DesignWidth="940" d:DesignHeight="640"
         x:Class="HermaLauncher.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
-        Width="560" Height="600"
+        Width="940" Height="640"
         CanResize="False"
         WindowStartupLocation="CenterScreen"
         Background="{StaticResource WindowBg}"
+        Icon="/Assets/app.png"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaChromeHints="NoChrome"
+        ExtendClientAreaTitleBarHeightHint="-1"
         Title="Herma Launcher">
 
     <Design.DataContext>
         <vm:MainWindowViewModel />
     </Design.DataContext>
 
-    <Border Padding="28">
-        <Grid RowDefinitions="Auto,*">
+    <Grid RowDefinitions="Auto,*,Auto">
 
-            <!-- ── Header ── -->
-            <Grid Grid.Row="0" ColumnDefinitions="Auto,*" Margin="0,0,0,20">
-                <Button Grid.Column="0" Classes="ghost" Content="‹ 뒤로"
-                        Padding="13,7" VerticalAlignment="Top"
-                        IsVisible="{Binding ShowBack}"
-                        Command="{Binding BackToMenuCommand}" />
-                <StackPanel Grid.Column="1" Spacing="1" HorizontalAlignment="Right">
-                    <TextBlock Text="HERMA" FontSize="32" FontWeight="Black"
-                               Foreground="{StaticResource AccentBrush}"
-                               HorizontalAlignment="Right" />
-                    <TextBlock Text="{Binding ServerLabel}" FontSize="12"
-                               Foreground="{StaticResource TextMuted}"
-                               HorizontalAlignment="Right" />
+        <!-- ── Title bar (드래그 영역 + 로고 + 창 컨트롤) ── -->
+        <Grid Grid.Row="0" x:Name="TitleBar" Height="50" Background="Transparent"
+              ColumnDefinitions="Auto,*,Auto">
+            <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="11"
+                        Margin="18,0,0,0" VerticalAlignment="Center">
+                <Border Width="30" Height="30" CornerRadius="9" Background="{StaticResource AccentBrush}">
+                    <TextBlock Text="H" FontSize="18" FontWeight="Black" Foreground="White"
+                               HorizontalAlignment="Center" VerticalAlignment="Center" />
+                </Border>
+                <TextBlock Text="{Binding Title}" FontSize="15" FontWeight="Bold"
+                           VerticalAlignment="Center" />
+            </StackPanel>
+            <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="4"
+                        Margin="0,0,12,0" VerticalAlignment="Center">
+                <Button Classes="chrome" x:Name="MinBtn" Content="—" />
+                <Button Classes="chrome close" x:Name="CloseBtn" Content="✕" />
+            </StackPanel>
+        </Grid>
+
+        <!-- ── Content ── -->
+        <Panel Grid.Row="1">
+
+            <!-- Main: 두 카드 + 히어로 + 칩 + 진행 -->
+            <Grid IsVisible="{Binding IsMain}" Margin="24,4,24,18"
+                  ColumnDefinitions="*,300" RowDefinitions="Auto,*,Auto,Auto">
+
+                <!-- 헤더 텍스트 (좌) -->
+                <StackPanel Grid.Row="0" Grid.Column="0" Spacing="3" Margin="2,0,0,14">
+                    <TextBlock Text="어떻게 플레이할까요?" FontSize="20" FontWeight="Bold" />
+                    <TextBlock Text="{Binding Subtitle}" FontSize="12.5"
+                               Foreground="{StaticResource TextMuted}" />
                 </StackPanel>
+
+                <!-- 히어로 아트 (우, 헤더+카드 높이 span) -->
+                <Border Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" CornerRadius="18"
+                        Margin="22,0,0,0" ClipToBounds="True"
+                        BorderBrush="{StaticResource CardBorder}" BorderThickness="1">
+                    <Image Source="/Assets/hero.png" Stretch="UniformToFill" />
+                </Border>
+
+                <!-- 두 카드 (좌) -->
+                <Grid Grid.Row="1" Grid.Column="0" ColumnDefinitions="*,*">
+
+                    <!-- 친구 서버 바로 플레이 -->
+                    <Border Grid.Column="0" Background="{StaticResource CardBg}"
+                            BorderBrush="{StaticResource CardBorder}" BorderThickness="1"
+                            CornerRadius="16" Padding="18" Margin="0,0,7,0">
+                        <Grid RowDefinitions="Auto,*,Auto">
+                            <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="11">
+                                <Border Width="40" Height="40" CornerRadius="11"
+                                        Background="{StaticResource AccentBrush}">
+                                    <TextBlock Text="▶" FontSize="16" Foreground="White"
+                                               HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                </Border>
+                                <StackPanel VerticalAlignment="Center" Spacing="1">
+                                    <TextBlock Text="친구 서버 바로 플레이" FontSize="14" FontWeight="Bold" />
+                                    <TextBlock Text="닉네임만 입력하면 바로 접속" FontSize="11"
+                                               Foreground="{StaticResource TextMuted}" />
+                                </StackPanel>
+                            </StackPanel>
+
+                            <StackPanel Grid.Row="1" Spacing="9" Margin="0,16,0,0" VerticalAlignment="Top">
+                                <TextBox Text="{Binding Username}" Watermark="Player" />
+                                <CheckBox Content="오프라인 모드" IsChecked="{Binding IsOffline}" />
+                            </StackPanel>
+
+                            <Button Grid.Row="2" Classes="play" Content="▶  PLAY"
+                                    Margin="0,16,0,0" Command="{Binding PlayCommand}" />
+                        </Grid>
+                    </Border>
+
+                    <!-- 공식 런처에 설치 -->
+                    <Border Grid.Column="1" Background="{StaticResource CardBg}"
+                            BorderBrush="{StaticResource CardBorder}" BorderThickness="1"
+                            CornerRadius="16" Padding="18" Margin="7,0,0,0">
+                        <Grid RowDefinitions="Auto,*,Auto">
+                            <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="11">
+                                <Border Width="40" Height="40" CornerRadius="11" Background="#1E3A4D">
+                                    <TextBlock Text="↓" FontSize="18" Foreground="{StaticResource AccentCyan}"
+                                               HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                </Border>
+                                <StackPanel VerticalAlignment="Center" Spacing="1">
+                                    <TextBlock Text="공식 런처에 설치" FontSize="14" FontWeight="Bold" />
+                                    <TextBlock Text="정품 계정으로 공식 런처에서" FontSize="11"
+                                               Foreground="{StaticResource TextMuted}" />
+                                </StackPanel>
+                            </StackPanel>
+
+                            <TextBlock Grid.Row="1" Margin="0,16,0,0" VerticalAlignment="Top"
+                                       Text="'Hermaphrodite World' 프로필을 공식 마인크래프트 런처에 추가합니다. 설치 전 공식 런처를 완전히 닫아주세요."
+                                       FontSize="12" Foreground="{StaticResource TextMuted}" TextWrapping="Wrap" />
+
+                            <Button Grid.Row="2" Classes="play" Content="공식 런처에 설치"
+                                    Margin="0,16,0,0" Command="{Binding InstallToOfficialCommand}" />
+                        </Grid>
+                    </Border>
+                </Grid>
+
+                <!-- 상태 칩 (전체 폭) -->
+                <WrapPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,16,0,0">
+                    <Border Classes="chip" Margin="0,0,8,8">
+                        <TextBlock Text="{Binding VersionChip}" />
+                    </Border>
+                    <Border Classes="chip" Margin="0,0,8,8">
+                        <TextBlock Text="Fabric" />
+                    </Border>
+                    <Border Classes="chip" Margin="0,0,8,8">
+                        <TextBlock Text="77 Mods" />
+                    </Border>
+                    <Border Classes="chip" Margin="0,0,8,8">
+                        <TextBlock Text="✓ 자동 업데이트" />
+                    </Border>
+                </WrapPanel>
+
+                <!-- 상태 + 진행 (전체 폭) -->
+                <Grid Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,8,0,0"
+                      RowDefinitions="Auto,Auto" ColumnDefinitions="*,Auto">
+                    <Grid Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" ColumnDefinitions="*,Auto">
+                        <SelectableTextBlock Grid.Column="0" Text="{Binding StatusMessage}"
+                                             TextWrapping="Wrap" MaxLines="2" TextTrimming="CharacterEllipsis"
+                                             FontSize="13" Foreground="#D2D2DE" VerticalAlignment="Center" />
+                        <Button Grid.Column="1" Classes="foot" Content="자세히 보기" FontSize="11.5"
+                                Command="{Binding OpenLogsCommand}" />
+                    </Grid>
+                    <ProgressBar Grid.Row="1" Grid.Column="0" Margin="0,8,0,0" Minimum="0" Maximum="100"
+                                 Value="{Binding Progress}" IsIndeterminate="{Binding IsIndeterminate}" />
+                    <Button Grid.Row="1" Grid.Column="1" Classes="ghost" Content="취소"
+                            Margin="12,8,0,0" Padding="18,8"
+                            IsVisible="{Binding IsBusy}" Command="{Binding CancelCommand}" />
+                </Grid>
             </Grid>
 
-            <!-- ── Content (4 화면 오버레이, IsVisible 분기) ── -->
-            <Panel Grid.Row="1">
-
-                <!-- View 1: 모드 선택 -->
-                <StackPanel IsVisible="{Binding IsModeSelect}" VerticalAlignment="Center" Spacing="14">
-                    <TextBlock Text="어떻게 플레이할까요?" FontSize="18" FontWeight="SemiBold" Margin="2,0,0,4" />
-
-                    <Button Classes="card" Command="{Binding SelectFriendModeCommand}">
-                        <Grid ColumnDefinitions="Auto,*">
-                            <Border Grid.Column="0" Width="46" Height="46" CornerRadius="12"
-                                    Background="{StaticResource AccentBrush}" VerticalAlignment="Center">
-                                <TextBlock Text="▶" FontSize="19" Foreground="White"
-                                           HorizontalAlignment="Center" VerticalAlignment="Center" />
-                            </Border>
-                            <StackPanel Grid.Column="1" Margin="16,0,0,0" VerticalAlignment="Center" Spacing="3">
-                                <TextBlock Text="친구 서버 바로 플레이" FontSize="16" FontWeight="Bold" />
-                                <TextBlock Text="닉네임만 입력하면 이 런처에서 바로 접속해요" FontSize="12.5"
-                                           Foreground="{StaticResource TextMuted}" TextWrapping="Wrap" />
-                            </StackPanel>
-                        </Grid>
-                    </Button>
-
-                    <Button Classes="card" Command="{Binding SelectOfficialModeCommand}">
-                        <Grid ColumnDefinitions="Auto,*">
-                            <Border Grid.Column="0" Width="46" Height="46" CornerRadius="12"
-                                    Background="#1E3A4D" VerticalAlignment="Center">
-                                <TextBlock Text="↓" FontSize="20" Foreground="{StaticResource AccentCyan}"
-                                           HorizontalAlignment="Center" VerticalAlignment="Center" />
-                            </Border>
-                            <StackPanel Grid.Column="1" Margin="16,0,0,0" VerticalAlignment="Center" Spacing="3">
-                                <TextBlock Text="공식 런처에 설치" FontSize="16" FontWeight="Bold" />
-                                <TextBlock Text="정품 계정으로 공식 마인크래프트 런처에서 플레이" FontSize="12.5"
-                                           Foreground="{StaticResource TextMuted}" TextWrapping="Wrap" />
-                            </StackPanel>
-                        </Grid>
-                    </Button>
-
-                    <TextBlock Text="Minecraft 26.1.2 · Fabric" FontSize="11"
-                               Foreground="{StaticResource TextMuted}"
-                               HorizontalAlignment="Center" Margin="0,10,0,0" />
-                </StackPanel>
-
-                <!-- View 2: 친구 서버 바로 플레이 -->
-                <Grid IsVisible="{Binding IsFriendPlay}" RowDefinitions="Auto,*,Auto,Auto">
-                    <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="10" Margin="2,2,0,0">
-                        <TextBlock Text="닉네임" VerticalAlignment="Center" Foreground="{StaticResource TextMuted}" />
-                        <TextBox Text="{Binding Username}" Width="180" Watermark="Player" />
-                        <CheckBox Content="오프라인 모드" IsChecked="{Binding IsOffline}" VerticalAlignment="Center" />
+            <!-- 공식 런처 설치 완료 (전용 화면) -->
+            <StackPanel IsVisible="{Binding IsOfficialDone}" VerticalAlignment="Center"
+                        HorizontalAlignment="Center" MaxWidth="460" Spacing="16" Margin="24">
+                <Border Width="64" Height="64" CornerRadius="32"
+                        Background="{StaticResource AccentBrush}" HorizontalAlignment="Center">
+                    <TextBlock Text="✓" FontSize="34" FontWeight="Bold" Foreground="White"
+                               HorizontalAlignment="Center" VerticalAlignment="Center" />
+                </Border>
+                <TextBlock Text="설치 완료!" FontSize="22" FontWeight="Bold" HorizontalAlignment="Center" />
+                <Border Background="{StaticResource PanelBg}" CornerRadius="12" Padding="18"
+                        BorderBrush="{StaticResource CardBorder}" BorderThickness="1">
+                    <StackPanel Spacing="9">
+                        <TextBlock Text="이제 공식 런처에서 플레이하세요" FontWeight="SemiBold" FontSize="14"
+                                   Foreground="{StaticResource AccentCyan}" />
+                        <TextBlock Text="1.  공식 마인크래프트 런처를 엽니다" FontSize="13" TextWrapping="Wrap" />
+                        <TextBlock Text="2.  좌하단에서 'Hermaphrodite World' 프로필을 선택" FontSize="13" TextWrapping="Wrap" />
+                        <TextBlock Text="3.  플레이 → 서버에 자동 접속" FontSize="13" TextWrapping="Wrap" />
                     </StackPanel>
+                </Border>
+                <TextBlock Text="{Binding ServerLabel}" FontSize="12"
+                           Foreground="{StaticResource TextMuted}" HorizontalAlignment="Center" />
+                <Button Classes="ghost" Content="메뉴로 돌아가기" Padding="0,12"
+                        HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                        Command="{Binding BackToMenuCommand}" />
+            </StackPanel>
+        </Panel>
 
-                    <Border Grid.Row="1" VerticalAlignment="Center" Padding="2,0">
-                        <SelectableTextBlock Text="{Binding StatusMessage}" TextWrapping="Wrap"
-                                             FontSize="13.5" Foreground="#D2D2DE" />
-                    </Border>
-
-                    <ProgressBar Grid.Row="2" Margin="0,0,0,16" Minimum="0" Maximum="100"
-                                 Value="{Binding Progress}" IsIndeterminate="{Binding IsIndeterminate}" />
-
-                    <Grid Grid.Row="3" ColumnDefinitions="*,Auto">
-                        <Button Grid.Column="0" Classes="play" Content="▶  PLAY" Command="{Binding PlayCommand}" />
-                        <Button Grid.Column="1" Classes="ghost" Content="취소" Margin="12,0,0,0" Padding="20,13"
-                                IsVisible="{Binding IsBusy}" Command="{Binding CancelCommand}" />
-                    </Grid>
-                </Grid>
-
-                <!-- View 3: 공식 런처 설치 -->
-                <Grid IsVisible="{Binding IsOfficialInstall}" RowDefinitions="Auto,*,Auto,Auto">
-                    <Border Grid.Row="0" Background="{StaticResource PanelBg}" CornerRadius="12" Padding="16"
-                            BorderBrush="{StaticResource CardBorder}" BorderThickness="1" Margin="0,2,0,0">
-                        <StackPanel Spacing="6">
-                            <TextBlock Text="공식 마인크래프트 런처에 설치" FontWeight="Bold" FontSize="15" />
-                            <TextBlock Text="'Hermaphrodite World' 프로필을 공식 런처에 추가합니다. 정품 계정으로 로그인해 플레이할 수 있어요."
-                                       FontSize="12.5" Foreground="{StaticResource TextMuted}" TextWrapping="Wrap" />
-                            <TextBlock Text="● 설치 전 공식 마인크래프트 런처를 완전히 닫아주세요."
-                                       FontSize="12.5" Foreground="{StaticResource AccentCyan}" TextWrapping="Wrap"
-                                       Margin="0,2,0,0" />
-                        </StackPanel>
-                    </Border>
-
-                    <Border Grid.Row="1" VerticalAlignment="Center" Padding="2,0">
-                        <SelectableTextBlock Text="{Binding StatusMessage}" TextWrapping="Wrap"
-                                             FontSize="13.5" Foreground="#D2D2DE" />
-                    </Border>
-
-                    <ProgressBar Grid.Row="2" Margin="0,0,0,16" Minimum="0" Maximum="100"
-                                 Value="{Binding Progress}" IsIndeterminate="{Binding IsIndeterminate}" />
-
-                    <Grid Grid.Row="3" ColumnDefinitions="*,Auto">
-                        <Button Grid.Column="0" Classes="play" Content="공식 런처에 설치"
-                                Command="{Binding InstallToOfficialCommand}" />
-                        <Button Grid.Column="1" Classes="ghost" Content="취소" Margin="12,0,0,0" Padding="20,13"
-                                IsVisible="{Binding IsBusy}" Command="{Binding CancelCommand}" />
-                    </Grid>
-                </Grid>
-
-                <!-- View 4: 설치 완료 (Play 버튼 없음 → 오클릭 구조적 차단) -->
-                <StackPanel IsVisible="{Binding IsOfficialDone}" VerticalAlignment="Center" Spacing="16">
-                    <Border Width="64" Height="64" CornerRadius="32"
-                            Background="{StaticResource AccentBrush}" HorizontalAlignment="Center">
-                        <TextBlock Text="✓" FontSize="34" FontWeight="Bold" Foreground="White"
-                                   HorizontalAlignment="Center" VerticalAlignment="Center" />
-                    </Border>
-                    <TextBlock Text="설치 완료!" FontSize="22" FontWeight="Bold" HorizontalAlignment="Center" />
-
-                    <Border Background="{StaticResource PanelBg}" CornerRadius="12" Padding="18"
-                            BorderBrush="{StaticResource CardBorder}" BorderThickness="1">
-                        <StackPanel Spacing="9">
-                            <TextBlock Text="이제 공식 런처에서 플레이하세요" FontWeight="SemiBold" FontSize="14"
-                                       Foreground="{StaticResource AccentCyan}" />
-                            <TextBlock Text="1.  공식 마인크래프트 런처를 엽니다" FontSize="13" TextWrapping="Wrap" />
-                            <TextBlock Text="2.  좌하단에서 'Hermaphrodite World' 프로필을 선택" FontSize="13" TextWrapping="Wrap" />
-                            <TextBlock Text="3.  플레이 → 서버에 자동 접속" FontSize="13" TextWrapping="Wrap" />
-                        </StackPanel>
-                    </Border>
-
-                    <TextBlock Text="{Binding ServerLabel}" FontSize="12"
-                               Foreground="{StaticResource TextMuted}" HorizontalAlignment="Center" />
-                    <Button Classes="ghost" Content="메뉴로 돌아가기" Padding="0,12"
-                            HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
-                            Command="{Binding BackToMenuCommand}" />
+        <!-- ── Footer nav (스텁) ── -->
+        <Border Grid.Row="2" BorderBrush="{StaticResource CardBorder}" BorderThickness="0,1,0,0"
+                Padding="16,8">
+            <Grid ColumnDefinitions="Auto,*,Auto">
+                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="2">
+                    <Button Classes="foot" Content="💬  디스코드" Command="{Binding OpenDiscordCommand}" />
+                    <Button Classes="foot" Content="📖  가이드" Command="{Binding OpenGuideCommand}" />
+                    <Button Classes="foot" Content="🌐  웹사이트" Command="{Binding OpenWebsiteCommand}" />
                 </StackPanel>
-
-            </Panel>
-        </Grid>
-    </Border>
+                <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="2">
+                    <Button Classes="foot" Content="⚙  설정" Command="{Binding OpenSettingsCommand}" />
+                    <Button Classes="foot" Content="🗎  로그" Command="{Binding OpenLogsCommand}" />
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Grid>
 </Window>
