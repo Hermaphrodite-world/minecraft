@@ -171,7 +171,7 @@ metafile = true
 
 [[files]]
 file = "mods/jamlib.pw.toml"
-hash = "327b43324973489484983d411c086e5194689bd652632774566504f92309568d"
+hash = "ce665d02a697e2df0134584d967690414b970c8997f0d0cd0c9195a3a90cf32d"
 metafile = true
 
 [[files]]
@@ -241,7 +241,7 @@ metafile = true
 
 [[files]]
 file = "mods/open-parties-and-claims.pw.toml"
-hash = "f8754925da30a56fa5c1a42e5ead7b5c4aa405bf142d2dcedaf04a92ece7a35f"
+hash = "416d72a8a5764ebc5acc0b86e78f93c2006117e2eaf285c237fd9a52aa92806e"
 metafile = true
 
 [[files]]
@@ -281,7 +281,7 @@ metafile = true
 
 [[files]]
 file = "mods/rrv.pw.toml"
-hash = "edf4a7ea26c22360750d3988a8069a8fa7405e72a0e5cab19bba4ce807c8b00b"
+hash = "95260879087a49630240cc2e8eb3d4983a80cc09cbd68fb751daf02718cabb9d"
 metafile = true
 
 [[files]]
@@ -371,12 +371,12 @@ metafile = true
 
 [[files]]
 file = "mods/xaeros-minimap.pw.toml"
-hash = "f69228cef8adb3becb463aa2ed728998487fc947d79a3d0e47b8c47c964ce589"
+hash = "b209b1f555a7649782d3132d4a316ed163e564e7ca84d9b83653591382ebf0c3"
 metafile = true
 
 [[files]]
 file = "mods/xaeros-world-map.pw.toml"
-hash = "86237b7e69781303d17f0359da7e79821e1cd86472ebee91b3c0bd8d1abb467e"
+hash = "b19ded752c009e9be6838817a994360b49788ee3ff4be1ac143be6479e2a1e54"
 metafile = true
 
 [[files]]
