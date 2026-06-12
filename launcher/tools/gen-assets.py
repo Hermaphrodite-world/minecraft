@@ -31,12 +31,19 @@ def sq(img, size):
     return img.resize((size, size), Image.LANCZOS)
 
 
-# ── 앱 아이콘: 둥근사각 알파 마스크 → 검은 배경/모서리 투명 (씬은 그대로 보존) ──
-RADIUS = 252  # 아트 라운딩(~246)보다 약간 크게 — 검은 sliver 잔존 방지
-mask = Image.new("L", (W, H), 0)
-ImageDraw.Draw(mask).rounded_rectangle([x0, y0, x1, y1], radius=RADIUS, fill=255)
+# ── 앱 아이콘: 검은 캔버스를 border flood-fill 로 정확히 추출 → 투명 ──
+# 고정 반지름 마스크는 아트 라운딩과 어긋나 검은 링이 남는다. 대신 4모서리에서 near-black 을
+# flood-fill 해 "border 와 연결된 검정"만 투명화 → 아트 둘레 검은 링 제거 + 내부 어두운 씬
+# (포탈 안쪽/그림자: border 와 비연결) 은 보존.
+base = src.convert("RGB").copy()
+SENT = (255, 0, 255)  # 씬에 없는 sentinel
+for seed in [(0, 0), (W - 1, 0), (0, H - 1), (W - 1, H - 1)]:
+    ImageDraw.floodfill(base, seed, SENT, thresh=30)
+m = np.asarray(base)
+canvas = (m[..., 0] == 255) & (m[..., 1] == 0) & (m[..., 2] == 255)
+alpha = Image.fromarray(np.where(canvas, 0, 255).astype("uint8"), "L")
 icon = src.copy()
-icon.putalpha(mask)
+icon.putalpha(alpha)
 
 app_png = os.path.join(ASSETS, "app.png")
 sq(icon, 512).save(app_png)

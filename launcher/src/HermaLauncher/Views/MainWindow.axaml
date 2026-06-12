@@ -27,7 +27,10 @@
               ColumnDefinitions="Auto,*,Auto">
             <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="10"
                         Margin="16,0,0,0" VerticalAlignment="Center">
-                <Image Source="/Assets/app.png" Width="30" Height="30" VerticalAlignment="Center" />
+                <!-- 히어로와 같은 씬으로 채워 둥글게 클립 → 투명 모서리(어두운 배경 비침) 없이 앱 아이콘 통일. -->
+                <Border Width="30" Height="30" CornerRadius="8" ClipToBounds="True" VerticalAlignment="Center">
+                    <Image Source="/Assets/hero.png" Stretch="UniformToFill" />
+                </Border>
                 <TextBlock Text="{Binding Title}" FontSize="15" FontWeight="Bold"
                            VerticalAlignment="Center" />
             </StackPanel>
