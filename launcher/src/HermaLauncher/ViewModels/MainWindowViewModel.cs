@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Threading;
@@ -23,6 +24,15 @@ public partial class MainWindowViewModel : ViewModelBase
     private readonly LaunchOrchestrator _orchestrator = new();
     private readonly OfficialLauncherInstaller _installer = new();
     private CancellationTokenSource? _cts;
+
+    // 게임 시작 후 이 시간 안에 비정상 종료하면 '인스턴트 크래시'로 보고 런처를 복원해 에러를 보여준다.
+    // 그 이후 종료(정상 플레이 종료)는 조용히 런처만 닫는다(마크가 자체 크래시 화면을 띄우는 구간).
+    private const int InstantCrashWindowSeconds = 90;
+
+    // 런처 창 제어 요청(View 가 구독해 WindowState/Close 처리 — VM 은 창을 직접 모름, MVVM 경계 유지).
+    public event Action? MinimizeRequested;
+    public event Action? RestoreRequested;
+    public event Action? CloseRequested;
 
     private string ReadyText => $"Minecraft {LauncherConfig.MinecraftVersion} · Fabric · 준비 완료";
 
@@ -65,6 +75,12 @@ public partial class MainWindowViewModel : ViewModelBase
     // Azure client ID 설정됨(배포본) → 온라인 기본 / 미설정(테스트) → 오프라인 기본.
     [ObservableProperty]
     private bool _isOffline = !LauncherConfig.IsAzureClientConfigured;
+
+    // 게임 실행 중(런처 최소화 상태). 사용자가 런처를 복원해도 Play 재클릭(더블런치) 차단.
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(PlayCommand))]
+    [NotifyCanExecuteChangedFor(nameof(InstallToOfficialCommand))]
+    private bool _isGameRunning;
 
     public MainWindowViewModel()
     {
@@ -113,7 +129,7 @@ public partial class MainWindowViewModel : ViewModelBase
         StatusMessage = ReadyText;
     }
 
-    private bool CanPlay() => !IsBusy;
+    private bool CanPlay() => !IsBusy && !IsGameRunning;
 
     [RelayCommand(CanExecute = nameof(CanPlay))]
     private async Task PlayAsync()
@@ -126,9 +142,10 @@ public partial class MainWindowViewModel : ViewModelBase
 
         var progress = new Progress<StageUpdate>(OnStageUpdate);
         var options = new LaunchOptions(Username, IsOffline);
+        Process? game = null;
         try
         {
-            await _orchestrator.RunAsync(options, progress, _cts.Token).ConfigureAwait(true);
+            game = await _orchestrator.RunAsync(options, progress, _cts.Token).ConfigureAwait(true);
         }
         finally
         {
@@ -136,6 +153,49 @@ public partial class MainWindowViewModel : ViewModelBase
             IsIndeterminate = false;
             _cts.Dispose();
             _cts = null;
+        }
+
+        // 실행 성공(game != null) → 런처를 비켜주고(최소화) 게임 종료까지 모니터링.
+        if (game is not null)
+            await MonitorGameSessionAsync(game).ConfigureAwait(true);
+    }
+
+    // 게임이 떠 있는 동안 런처는 최소화로 비켜준다. 게임이 끝나면 런처를 닫되,
+    // 시작 직후 비정상 종료(크래시 의심)면 런처를 복원해 에러를 보여준다(failure-path-first).
+    private async Task MonitorGameSessionAsync(Process game)
+    {
+        IsGameRunning = true;
+        var startedAt = DateTime.Now;
+        using (game)
+        {
+            MinimizeRequested?.Invoke();
+            int exitCode;
+            try
+            {
+                await game.WaitForExitAsync().ConfigureAwait(true);
+                exitCode = game.ExitCode;
+            }
+            catch
+            {
+                // 모니터링 실패(권한/플랫폼) — 게임은 떠 있으니 런처만 조용히 닫는다.
+                IsGameRunning = false;
+                CloseRequested?.Invoke();
+                return;
+            }
+
+            IsGameRunning = false;
+            var ranSeconds = (DateTime.Now - startedAt).TotalSeconds;
+            var instantCrash = exitCode != 0 && ranSeconds < InstantCrashWindowSeconds;
+            if (instantCrash)
+            {
+                RestoreRequested?.Invoke();
+                HasError = true;
+                StatusMessage = "게임이 실행 직후 종료됐어요(크래시 의심). 다시 시도해 주세요.";
+            }
+            else
+            {
+                CloseRequested?.Invoke();
+            }
         }
     }
 

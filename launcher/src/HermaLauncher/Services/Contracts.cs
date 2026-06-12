@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -30,5 +31,6 @@ public interface IMinecraftService
     Task<string> EnsureJavaAsync(IProgress<StageUpdate> progress, CancellationToken ct);
 
     // (5)+(6) Fabric 설치 + 게임 install(해시 검증) + ServerIp 주입 실행.
-    Task LaunchAsync(AuthSession session, IProgress<StageUpdate> progress, CancellationToken ct);
+    // 시작된 게임 프로세스를 반환한다(런처가 종료 모니터링 후 자신을 닫기 위함). 호출자가 Dispose 소유.
+    Task<Process> LaunchAsync(AuthSession session, IProgress<StageUpdate> progress, CancellationToken ct);
 }
