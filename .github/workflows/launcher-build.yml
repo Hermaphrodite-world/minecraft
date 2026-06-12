@@ -155,9 +155,24 @@ jobs:
       # macOS 의 Velopack 자동 업데이트는 코드 서명이 사실상 필수다: Gatekeeper 가 미서명 .app 의
       # in-place 업데이트 교체를 거부하고, vpk 도 ad-hoc/미서명 macOS 경로를 공식 지원하지 않는다.
       # 식별자 이름(APPLE_SIGN_IDENTITY)만으론 부족 — runner keychain 에 실제 .p12 인증서가 import 돼야
-      # codesign 이 식별자를 찾는다(Codex 지적). 그래서 .p12(APPLE_CERT_P12_BASE64) 가 있을 때만 동작한다.
-      # 그 전까지는 위의 ad-hoc .app(우클릭→열기) 수동 배포 유지. 필요 secret:
-      #   APPLE_CERT_P12_BASE64(.p12 base64), APPLE_CERT_PASSWORD, APPLE_SIGN_IDENTITY, (선택) APPLE_NOTARY_PROFILE.
+      # codesign/productsign 이 식별자를 찾는다. 그래서 .p12(APPLE_CERT_P12_BASE64) 가 있을 때만 동작한다.
+      # 그 전까지는 위의 ad-hoc .app(우클릭→열기) 수동 배포 유지.
+      #
+      # vpk osx 는 .app(codesign) + .pkg(productsign) + portable .zip 을 만든다. .pkg 서명엔
+      # Developer ID **Installer** 인증서가, .app 서명엔 Developer ID **Application** 인증서가 필요하다
+      # (둘 다 한 개인키로 발급 가능 — docs/macos-release-signing.md). vpk 가 .NET 용 hardened-runtime
+      # entitlements 를 자동 적용하므로 entitlements 파일은 불필요.
+      #
+      # 게이트 2단: signcheck(아래)는 .p12+app identity 만으로 "이 경로를 켤지"를 판단하고,
+      # 켜진 release 에서는 Velopack 스텝이 나머지 필수 secret 누락 시 즉시 fail 한다(silent 서명-only 금지).
+      #
+      # 필요 Secret 8개 (전부 필수 — docs/macos-release-signing.md 의 단계별 생성 가이드 참조):
+      #   [서명] APPLE_CERT_P12_BASE64(Application .p12), APPLE_INSTALL_CERT_P12_BASE64(Installer .p12),
+      #          APPLE_CERT_PASSWORD(두 .p12 공유),
+      #          APPLE_SIGN_IDENTITY(Developer ID Application — .app), APPLE_INSTALL_SIGN_IDENTITY(Developer ID Installer — .pkg)
+      #   [공증] APPLE_ID, APPLE_TEAM_ID, APPLE_APP_PASSWORD(앱 암호) → notarytool 프로필 생성 후 공증(친구 경고 0)
+      # ※ Apple 은 한 CSR 으로 인증서 1개만 발급하므로 Application·Installer 는 별도 키·CSR → .p12 도 2개.
+      # 8개 미만이면 release 잡이 명시적으로 실패한다(첫 릴리스 전 모두 등록할 것).
       - name: 서명 자산 존재 확인
         id: signcheck
         shell: bash
@@ -178,35 +193,99 @@ jobs:
           REPO_URL: ${{ github.server_url }}/${{ github.repository }}
           TAG: ${{ github.event.release.tag_name }}
           SIGN_ID: ${{ secrets.APPLE_SIGN_IDENTITY }}
-          NOTARY: ${{ secrets.APPLE_NOTARY_PROFILE }}
+          INSTALL_ID: ${{ secrets.APPLE_INSTALL_SIGN_IDENTITY }}
           CERT_P12: ${{ secrets.APPLE_CERT_P12_BASE64 }}
+          INSTALL_CERT_P12: ${{ secrets.APPLE_INSTALL_CERT_P12_BASE64 }}
           CERT_PW: ${{ secrets.APPLE_CERT_PASSWORD }}
+          NOTARY_APPLE_ID: ${{ secrets.APPLE_ID }}
+          NOTARY_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          NOTARY_APP_PW: ${{ secrets.APPLE_APP_PASSWORD }}
         run: |
           set -euo pipefail
+          # 실패/중단 경로에서도 .p12 평문과 temp keychain 정리(Codex [10]).
+          trap 'rm -f "$RUNNER_TEMP/app.p12" "$RUNNER_TEMP/installer.p12"; [ -n "${KEYCHAIN:-}" ] && security delete-keychain "$KEYCHAIN" 2>/dev/null || true' EXIT
           ver="${TAG#v}"
           [ -z "$ver" ] && { echo 'release tag 비어있음'; exit 1; }
-          # (1) Developer ID 인증서를 임시 keychain 에 import — codesign 이 식별자를 찾으려면 필수(Codex MED).
+
+          # (0) 서명+공증 릴리스 목표 — 누락 secret 은 silent downgrade(서명만 업로드) 대신 즉시 fail(Codex [4][11]).
+          #     signcheck 게이트(p12+app identity)는 "이 경로를 켤지"만 판단하므로, 여기서 나머지 필수 secret 을 강제.
+          MISSING=()
+          [ -z "${INSTALL_CERT_P12:-}" ] && MISSING+=(APPLE_INSTALL_CERT_P12_BASE64)
+          [ -z "${INSTALL_ID:-}" ] && MISSING+=(APPLE_INSTALL_SIGN_IDENTITY)
+          [ -z "${NOTARY_APPLE_ID:-}" ] && MISSING+=(APPLE_ID)
+          [ -z "${NOTARY_TEAM_ID:-}" ] && MISSING+=(APPLE_TEAM_ID)
+          [ -z "${NOTARY_APP_PW:-}" ] && MISSING+=(APPLE_APP_PASSWORD)
+          if [ "${#MISSING[@]}" -gt 0 ]; then
+            echo "ERROR: 서명+공증 릴리스에 필요한 secret 누락: ${MISSING[*]}"
+            echo "  docs/macos-release-signing.md Part C 의 secret 8개를 모두 등록하세요."
+            exit 1
+          fi
+
+          # (1) Developer ID 인증서(.app용 Application + .pkg용 Installer)를 임시 keychain 에 import.
+          #     codesign/productsign 이 식별자를 찾으려면 runner keychain 에 실제 인증서가 있어야 함.
           KEYCHAIN="$RUNNER_TEMP/herma-sign.keychain-db"
           KPW="$(openssl rand -base64 24)"
           security create-keychain -p "$KPW" "$KEYCHAIN"
           security set-keychain-settings -lut 3600 "$KEYCHAIN"
           security unlock-keychain -p "$KPW" "$KEYCHAIN"
-          echo "$CERT_P12" | base64 --decode > "$RUNNER_TEMP/cert.p12"
-          security import "$RUNNER_TEMP/cert.p12" -k "$KEYCHAIN" -P "$CERT_PW" -T /usr/bin/codesign
+          # .p12 2개 import — Application(.app codesign) + Installer(.pkg productsign). 같은 비밀번호(CERT_PW) 공유.
+          echo "$CERT_P12" | base64 --decode > "$RUNNER_TEMP/app.p12"
+          security import "$RUNNER_TEMP/app.p12" -k "$KEYCHAIN" -P "$CERT_PW" -T /usr/bin/codesign
+          echo "$INSTALL_CERT_P12" | base64 --decode > "$RUNNER_TEMP/installer.p12"
+          security import "$RUNNER_TEMP/installer.p12" -k "$KEYCHAIN" -P "$CERT_PW" \
+            -T /usr/bin/productsign -T /usr/bin/productbuild
+          # 두 키 모두에 비대화형 접근 허용(partition list 는 keychain 내 전체 키에 적용).
           security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$KPW" "$KEYCHAIN" >/dev/null
           security list-keychains -d user -s "$KEYCHAIN" $(security list-keychains -d user | tr -d '"')
-          rm -f "$RUNNER_TEMP/cert.p12"
-          # (2) Velopack 패키징
+          rm -f "$RUNNER_TEMP/app.p12" "$RUNNER_TEMP/installer.p12"
+
+          # (1b) 두 .p12 에서 Application·Installer 두 identity 가 모두 잡혔는지 fail-fast(Codex [7]).
+          #      Application 은 codesigning policy 목록에, Installer 는 정책 없는 목록에 나온다.
+          echo "== keychain code-signing identities =="
+          security find-identity -v -p codesigning "$KEYCHAIN" || true
+          security find-identity -v -p codesigning "$KEYCHAIN" | grep -q "Developer ID Application" \
+            || { echo "ERROR: Developer ID Application identity 미발견 — .p12/APPLE_SIGN_IDENTITY 확인"; exit 1; }
+          security find-identity -v "$KEYCHAIN" | grep -q "Developer ID Installer" \
+            || { echo "ERROR: Developer ID Installer identity 미발견 — APPLE_INSTALL_CERT_P12_BASE64 의 Installer .p12 확인"; exit 1; }
+
+          # (2) notarytool 프로필 생성(앱 암호). --keychain 필수(미지정 시 CI 에서 credentials not found, Velopack discussion #15).
+          xcrun notarytool store-credentials herma-notary \
+            --apple-id "$NOTARY_APPLE_ID" --team-id "$NOTARY_TEAM_ID" --password "$NOTARY_APP_PW" \
+            --keychain "$KEYCHAIN"
+          echo "공증 활성 (notarytool 프로필 herma-notary 생성됨)"
+
+          # (3) Velopack 패키징 — vpk 가 .NET 용 hardened-runtime entitlements 자동 적용,
+          #     codesign(.app) + productsign(.pkg) + notarytool 공증까지 수행. 모든 서명/공증 인자가
+          #     필수(위에서 강제)이므로 식별자(공백 포함)는 직접 따옴표로 전달 — 배열 불필요.
           dotnet tool install -g vpk --version 1.2.0
           export PATH="$PATH:$HOME/.dotnet/tools"
           mkdir -p Releases
-          ICON=""; [ -f launcher/assets/app.icns ] && ICON="--icon launcher/assets/app.icns"
-          NOTARYARG=""; [ -n "${NOTARY:-}" ] && NOTARYARG="--notaryProfile $NOTARY"
-          # 이전 릴리스 받아 델타 베이스(첫 릴리스면 비어도 계속).
+          # 이전 릴리스 받아 델타 베이스(첫 릴리스면 비어도 계속 — Codex [12]: 첫 osx 릴리스 외 오류도 무시됨, 첫 릴리스 검증 시 주의).
           vpk download github --repoUrl "$REPO_URL" --channel osx --token "$GH_TOKEN" --outputDir Releases || true
           vpk pack --packId HermaLauncher --packVersion "$ver" --packTitle "Herma Launcher" \
             --packDir publish/osx-arm64 --mainExe HermaLauncher \
-            --channel osx --runtime osx-arm64 $ICON \
-            --signAppIdentity "$SIGN_ID" $NOTARYARG --outputDir Releases
+            --channel osx --runtime osx-arm64 \
+            --keychain "$KEYCHAIN" \
+            --signAppIdentity "$SIGN_ID" --signInstallIdentity "$INSTALL_ID" \
+            --notaryProfile herma-notary \
+            --icon launcher/assets/app.icns \
+            --outputDir Releases
+
+          # (3b) 산출 .pkg 서명/공증 검증(BLOCKING) — 깨진 산출물 업로드 방지(Codex [2][5][7]).
+          #      pkgutil: 미서명이면 비0 → set -e fail. stapler: 공증 staple 누락이면 fail.
+          PKG=""
+          for f in Releases/*.pkg; do
+            if [ -e "$f" ]; then PKG="$f"; break; fi
+          done
+          if [ -n "$PKG" ]; then
+            echo "== pkg signature ($PKG) =="
+            pkgutil --check-signature "$PKG"
+            xcrun stapler validate "$PKG" \
+              || { echo "ERROR: pkg staple 검증 실패 — 공증 미완/미staple. 첫 릴리스 진단 필요."; exit 1; }
+          else
+            echo "경고: Releases 에 .pkg 산출물 없음 — vpk osx 산출 형태 확인 필요"
+          fi
+
+          # (4) 업로드
           vpk upload github --channel osx --repoUrl "$REPO_URL" --token "$GH_TOKEN" \
             --tag "$TAG" --releaseName "Herma Launcher $ver" --merge --outputDir Releases
