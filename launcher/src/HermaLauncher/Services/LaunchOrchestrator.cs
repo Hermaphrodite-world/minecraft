@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -32,15 +33,16 @@ public sealed class LaunchOrchestrator
     {
     }
 
-    // 성공 시 true. 실패 시 progress 로 Error 보고 후 false.
-    public async Task<bool> RunAsync(LaunchOptions options, IProgress<StageUpdate> progress, CancellationToken ct)
+    // 성공 시 시작된 게임 Process. 재시작/취소/실패 시 null(실패는 progress 로 Error 보고).
+    // 호출자(VM)는 non-null 일 때만 종료 모니터링 후 런처를 닫는다.
+    public async Task<Process?> RunAsync(LaunchOptions options, IProgress<StageUpdate> progress, CancellationToken ct)
     {
         try
         {
             // (1) 자체 업데이트 — 소스 부재/오류는 graceful skip(예외 안 던짐).
             var restarting = await _update.CheckAndApplyAsync(progress, ct).ConfigureAwait(false);
             if (restarting)
-                return true; // 업데이트 적용 위해 재시작
+                return null; // 업데이트 적용 위해 재시작(앱 종료) — 모니터링 대상 아님
 
             ct.ThrowIfCancellationRequested();
 
@@ -60,27 +62,27 @@ public sealed class LaunchOrchestrator
             ClientDefaults.ApplyAll(AppPaths.GameDir, progress);
 
             // (5)+(6) Fabric 설치 + ServerIp 주입 실행 (토큰은 직전 인증에서 확보)
-            await _minecraft.LaunchAsync(session, progress, ct).ConfigureAwait(false);
+            var game = await _minecraft.LaunchAsync(session, progress, ct).ConfigureAwait(false);
 
             progress.Report(StageUpdate.Of(LaunchStage.Running, "게임을 실행했어요. 즐겜!", 1.0));
-            return true;
+            return game;
         }
         catch (OperationCanceledException)
         {
             progress.Report(StageUpdate.Of(LaunchStage.Idle, "취소했어요."));
-            return false;
+            return null;
         }
         catch (LaunchStageException ex)
         {
             // 단계별 사용자 친화 메시지
             progress.Report(StageUpdate.Error(ex.Stage, ex.Message));
-            return false;
+            return null;
         }
         catch (Exception ex)
         {
             progress.Report(StageUpdate.Error(LaunchStage.Failed,
                 "알 수 없는 오류가 발생했어요. 다시 시도해 주세요.\n" + ex.Message));
-            return false;
+            return null;
         }
     }
 }

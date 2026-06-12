@@ -145,7 +145,7 @@ public sealed class CmlLibMinecraftService : IMinecraftService
         return javaPath!;
     }
 
-    public async Task LaunchAsync(AuthSession session, IProgress<StageUpdate> progress, CancellationToken ct)
+    public async Task<Process> LaunchAsync(AuthSession session, IProgress<StageUpdate> progress, CancellationToken ct)
     {
         if (_fabricVersionId is null)
             throw new LaunchStageException(LaunchStage.Fabric, "설치 단계가 완료되지 않았어요.");
@@ -170,12 +170,20 @@ public sealed class CmlLibMinecraftService : IMinecraftService
         var proc = await _launcher.BuildProcessAsync(_fabricVersionId, option, ct).ConfigureAwait(false);
         try
         {
+            ct.ThrowIfCancellationRequested(); // build 후 start 직전 마지막 취소 가드(취소했는데 게임이 뜨는 race 방지)
             if (!proc.Start())
                 throw new LaunchStageException(LaunchStage.Launch, "게임 프로세스를 시작하지 못했어요.");
+            return proc; // 성공 — 핸들은 호출자(런처 모니터)가 소유/Dispose
         }
         catch (Exception ex) when (ex is Win32Exception or InvalidOperationException or ObjectDisposedException)
         {
+            proc.Dispose();
             throw new LaunchStageException(LaunchStage.Launch, "게임 실행에 실패했어요. 다시 시도해 주세요.", ex);
+        }
+        catch
+        {
+            proc.Dispose(); // 취소(start 전) / start 실패 등 — 핸들 정리 후 전파
+            throw;
         }
     }
 
