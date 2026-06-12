@@ -6,7 +6,7 @@
         mc:Ignorable="d" d:DesignWidth="940" d:DesignHeight="640"
         x:Class="HermaLauncher.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
-        Width="940" Height="640"
+        Width="940" Height="560"
         CanResize="False"
         WindowStartupLocation="CenterScreen"
         Background="{StaticResource WindowBg}"
@@ -45,8 +45,8 @@
         <Panel Grid.Row="1">
 
             <!-- Main: 두 카드 + 히어로 + 칩 + 진행 -->
-            <Grid IsVisible="{Binding IsMain}" Margin="24,4,24,18"
-                  ColumnDefinitions="*,300" RowDefinitions="Auto,*,Auto,Auto">
+            <Grid IsVisible="{Binding IsMain}" Margin="24,4,24,18" VerticalAlignment="Center"
+                  ColumnDefinitions="*,300" RowDefinitions="Auto,Auto,Auto,Auto">
 
                 <!-- 헤더 텍스트 (좌) -->
                 <StackPanel Grid.Row="0" Grid.Column="0" Spacing="3" Margin="2,0,0,14">
