@@ -25,12 +25,9 @@
         <!-- ── Title bar (드래그 영역 + 로고 + 창 컨트롤) ── -->
         <Grid Grid.Row="0" x:Name="TitleBar" Height="50" Background="Transparent"
               ColumnDefinitions="Auto,*,Auto">
-            <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="11"
-                        Margin="18,0,0,0" VerticalAlignment="Center">
-                <Border Width="30" Height="30" CornerRadius="9" Background="{StaticResource AccentBrush}">
-                    <TextBlock Text="H" FontSize="18" FontWeight="Black" Foreground="White"
-                               HorizontalAlignment="Center" VerticalAlignment="Center" />
-                </Border>
+            <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="10"
+                        Margin="16,0,0,0" VerticalAlignment="Center">
+                <Image Source="/Assets/app.png" Width="30" Height="30" VerticalAlignment="Center" />
                 <TextBlock Text="{Binding Title}" FontSize="15" FontWeight="Bold"
                            VerticalAlignment="Center" />
             </StackPanel>

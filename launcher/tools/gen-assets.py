@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
-# 런처 에셋 생성 — 단일 소스(icon-source.png)에서 app 아이콘(.ico/.png/.icns) + 히어로 이미지 파생.
-# 재현: python launcher/tools/gen-assets.py  (repo 루트에서 실행, Pillow 필요)
+# 런처 에셋 생성 — 단일 소스(icon-source.png, 검은 캔버스 위 둥근 하우스 아트)에서 파생.
+#  - 앱 아이콘(app.png/ico/icns): 둥근사각 마스크로 검은 배경/모서리 → 투명.
+#  - 히어로(hero.png): 내부 씬 직사각 크롭(검정 없이 패널을 꽉 채움).
+# 재현: python launcher/tools/gen-assets.py  (repo 루트, Pillow + numpy 필요)
 import os
 import sys
-from PIL import Image
+import numpy as np
+from PIL import Image, ImageDraw
 
-ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))  # repo root
+ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 SRC = os.path.join(ROOT, "launcher", "tools", "icon-source.png")
 ASSETS = os.path.join(ROOT, "launcher", "src", "HermaLauncher", "Assets")
 MAC = os.path.join(ROOT, "launcher", "assets")
@@ -13,36 +16,55 @@ os.makedirs(ASSETS, exist_ok=True)
 os.makedirs(MAC, exist_ok=True)
 
 src = Image.open(SRC).convert("RGBA")
+W, H = src.size
 print(f"source: {SRC} {src.size}")
+
+# 비-검정 콘텐츠 bbox (검은 테두리/모서리 제외)
+rgb = np.asarray(src.convert("RGB"))
+nz = rgb.sum(2) > 36
+ys, xs = np.where(nz)
+x0, y0, x1, y1 = int(xs.min()), int(ys.min()), int(xs.max()), int(ys.max())
+print(f"content bbox: x[{x0}..{x1}] y[{y0}..{y1}]")
 
 
 def sq(img, size):
     return img.resize((size, size), Image.LANCZOS)
 
 
-# 1) app.png — Avalonia 창/작업표시줄 아이콘 (512)
-app_png = os.path.join(ASSETS, "app.png")
-sq(src, 512).save(app_png)
-print(f"  app.png   -> {app_png} (512)")
+# ── 앱 아이콘: 둥근사각 알파 마스크 → 검은 배경/모서리 투명 (씬은 그대로 보존) ──
+RADIUS = 252  # 아트 라운딩(~246)보다 약간 크게 — 검은 sliver 잔존 방지
+mask = Image.new("L", (W, H), 0)
+ImageDraw.Draw(mask).rounded_rectangle([x0, y0, x1, y1], radius=RADIUS, fill=255)
+icon = src.copy()
+icon.putalpha(mask)
 
-# 2) app.ico — Windows exe 아이콘 (멀티사이즈)
+app_png = os.path.join(ASSETS, "app.png")
+sq(icon, 512).save(app_png)
+print(f"  app.png   -> 512 (투명 모서리)")
+
 app_ico = os.path.join(ASSETS, "app.ico")
 sizes = [16, 24, 32, 48, 64, 128, 256]
-sq(src, 256).save(app_ico, format="ICO", sizes=[(s, s) for s in sizes])
-print(f"  app.ico   -> {app_ico} ({sizes})")
+sq(icon, 256).save(app_ico, format="ICO", sizes=[(s, s) for s in sizes])
+print(f"  app.ico   -> {sizes} (투명 모서리)")
 
-# 3) hero.png — 헤더 우측 히어로 패널 (700, 둥근 보더 안에서 클립됨)
-hero_png = os.path.join(ASSETS, "hero.png")
-sq(src, 700).save(hero_png)
-print(f"  hero.png  -> {hero_png} (700)")
-
-# 4) app.icns — macOS 번들 아이콘. Pillow ICNS 저장 시도, 실패 시 CI(sips) 폴백 안내.
 app_icns = os.path.join(MAC, "app.icns")
 try:
-    sq(src, 1024).save(app_icns, format="ICNS")
-    print(f"  app.icns  -> {app_icns} (1024)")
+    sq(icon, 1024).save(app_icns, format="ICNS")
+    print(f"  app.icns  -> 1024 (투명 모서리)")
 except Exception as e:  # noqa: BLE001
-    print(f"  app.icns  -> SKIPPED (Pillow ICNS 실패: {e}). macOS CI 의 sips/iconutil 로 생성 필요.")
-    sys.exit(0)
+    print(f"  app.icns  -> SKIPPED ({e}). macOS CI sips/iconutil 폴백.")
 
+# ── 히어로: 내부 씬 정사각 크롭 (둥근 모서리 inset 안쪽 → 검정 0, 집 전체 노출) ──
+# 코너 컷(반지름 ~246) 안쪽으로 ~160px inset. 정사각이라 패널 UniformToFill 시 집이 꽉 참.
+cx0, cy0, cx1, cy1 = 160, 160, 1094, 1094
+hero = src.convert("RGB").crop((cx0, cy0, cx1, cy1))
+# 검증: 크롭 영역에 검정(테두리/코너) 잔존 없는지
+ha = np.asarray(hero)
+edge_min = min(int(ha[0].sum(axis=1).min()), int(ha[-1].sum(axis=1).min()),
+               int(ha[:, 0].sum(axis=1).min()), int(ha[:, -1].sum(axis=1).min()))
+hero_png = os.path.join(ASSETS, "hero.png")
+hero.save(hero_png)
+print(f"  hero.png  -> {hero.size} crop x[{cx0}..{cx1}] y[{cy0}..{cy1}], edge min-brightness={int(edge_min)} (>36 이면 검정 없음)")
+if edge_min <= 36:
+    print("  ⚠️ 히어로 크롭 가장자리에 검정 잔존 — inset 조정 필요")
 print("done.")
