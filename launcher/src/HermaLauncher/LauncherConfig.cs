@@ -41,6 +41,11 @@ public static class LauncherConfig
     // Velopack 자체 업데이트 소스 (GitHub Releases)
     public const string UpdateRepoUrl = "https://github.com/Hermaphrodite-world/minecraft";
 
+    // 푸터 외부 링크 (스텁 — 실제 URL 확정 시 교체). 빈 값이면 해당 버튼은 동작 안 함(no-op).
+    public const string DiscordUrl = "";
+    public const string GuideUrl = "";
+    public const string WebsiteUrl = "";
+
     // 오프라인 모드 — LAN/개발 테스트용(online-mode=false 서버/싱글). 기본 false.
     // static readonly (const 아님) — 분기를 compile-time 상수화하지 않아 unreachable 경고 방지.
     public static readonly bool OfflineMode = false;
