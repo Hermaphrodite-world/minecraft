@@ -55,11 +55,14 @@
                                Foreground="{StaticResource TextMuted}" />
                 </StackPanel>
 
-                <!-- 히어로 아트 (우, 헤더+카드 높이 span) -->
+                <!-- 히어로 아트 (우, 헤더+카드 높이에 맞춤). ImageBrush 배경으로 깔아 이미지가
+                     Auto 행 높이를 부풀리지 않게 한다 → 헤더-카드 사이 빈 공백 제거. -->
                 <Border Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" CornerRadius="18"
                         Margin="22,0,0,0" ClipToBounds="True"
                         BorderBrush="{StaticResource CardBorder}" BorderThickness="1">
-                    <Image Source="/Assets/hero.png" Stretch="UniformToFill" />
+                    <Border.Background>
+                        <ImageBrush Source="/Assets/hero.png" Stretch="UniformToFill" />
+                    </Border.Background>
                 </Border>
 
                 <!-- 두 카드 (좌) -->
