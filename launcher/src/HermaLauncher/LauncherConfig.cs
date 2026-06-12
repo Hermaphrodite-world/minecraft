@@ -23,6 +23,8 @@ public static class LauncherConfig
         int.TryParse(Environment.GetEnvironmentVariable("HERMA_SERVER_PORT"), out var p) ? p : 25565;
 
     // Azure 앱 client ID (public client, online 모드 device-code). 환경변수 HERMA_AZURE_CLIENT_ID 로 덮어쓰기 가능.
+    // 공개 소스엔 all-zero placeholder(Guid.Empty) 유지 — release 빌드 시 CI 가 secret HERMA_AZURE_CLIENT_ID 로
+    // 이 리터럴 1곳을 bake(치환)한다(launcher-build.yml). ※ 게이트는 아래 Guid.Empty 비교라 bake 와 충돌하지 않음.
     public static readonly string AzureClientId =
         Environment.GetEnvironmentVariable("HERMA_AZURE_CLIENT_ID") ?? "00000000-0000-0000-0000-000000000000";
 
@@ -44,7 +46,10 @@ public static class LauncherConfig
     public static readonly bool OfflineMode = false;
     public const string OfflineUsername = "Player";
 
+    // 설정 여부 게이트 — placeholder 리터럴을 직접 비교하지 않고 Guid.Empty(=all-zero) 로 판정.
+    // 이유: CI bake 가 위 default 리터럴을 실제 ID 로 치환할 때 이 비교식까지 같이 바뀌면
+    // realId != realId → 항상 false 가 되어 "승인해도 온라인 로그인이 안 켜지는" silent 버그가 난다.
+    // Guid.Empty 비교는 bake 대상 리터럴을 참조하지 않아 안전(placeholder→Empty→false, 실제 ID→true).
     public static bool IsAzureClientConfigured =>
-        !string.IsNullOrWhiteSpace(AzureClientId) &&
-        AzureClientId != "00000000-0000-0000-0000-000000000000";
+        Guid.TryParse(AzureClientId, out var g) && g != Guid.Empty;
 }
