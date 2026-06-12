@@ -9,7 +9,7 @@ using HermaLauncher.Services;
 
 namespace HermaLauncher.ViewModels;
 
-// 화면 상태. Main = 두 카드(친구 서버 / 공식 설치) 동시 표시 1화면. 공식 설치 성공 시 OfficialDone
+// 화면 상태. Main = 두 카드(바로 플레이 / 공식 설치) 동시 표시 1화면. 공식 설치 성공 시 OfficialDone
 // 으로 전환해 안내 화면을 보여준다(Play 오클릭은 Main 의 카드 분리 + IsBusy 게이트로 차단).
 public enum AppView
 {
@@ -60,14 +60,6 @@ public partial class MainWindowViewModel : ViewModelBase
     [NotifyCanExecuteChangedFor(nameof(BackToMenuCommand))]
     private AppView _view = AppView.Main;
 
-    // 닉네임 (오프라인 모드에서 사용). 기본값 = OS 사용자명.
-    [ObservableProperty]
-    private string _username = Environment.UserName;
-
-    // Azure client ID 설정됨(배포본) → 온라인 기본 / 미설정(테스트) → 오프라인 기본.
-    [ObservableProperty]
-    private bool _isOffline = !LauncherConfig.IsAzureClientConfigured;
-
     // 게임 실행 중(런처 최소화 상태). 사용자가 런처를 복원해도 Play 재클릭(더블런치) 차단.
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(PlayCommand))]
@@ -80,7 +72,7 @@ public partial class MainWindowViewModel : ViewModelBase
     }
 
     public string Title => "HERMA LAUNCHER";
-    public string Subtitle => "친구들과 클릭 한 번으로 바로 플레이";
+    public string Subtitle => "클릭 한 번으로 바로 플레이";
     public string ServerLabel => $"{LauncherConfig.ServerIp}:{LauncherConfig.ServerPort}";
 
     // 상태 칩 (헤더 하단). Fabric / Mods / 자동 업데이트 는 XAML 리터럴.
@@ -119,7 +111,8 @@ public partial class MainWindowViewModel : ViewModelBase
         _cts = new CancellationTokenSource();
 
         var progress = new Progress<StageUpdate>(OnStageUpdate);
-        var options = new LaunchOptions(Username, IsOffline);
+        // 온라인 전용(MS 정품 인증). 닉네임/오프라인 UI 제거됨 — username 은 온라인 경로에서 미사용.
+        var options = new LaunchOptions(Environment.UserName, Offline: false);
         Process? game = null;
         try
         {

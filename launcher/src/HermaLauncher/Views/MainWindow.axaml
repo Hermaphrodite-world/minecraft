@@ -65,7 +65,7 @@
                 <!-- 두 카드 (좌) -->
                 <Grid Grid.Row="1" Grid.Column="0" ColumnDefinitions="*,*">
 
-                    <!-- 친구 서버 바로 플레이 -->
+                    <!-- 바로 플레이 (이 런처로 직접 실행) -->
                     <Border Grid.Column="0" Background="{StaticResource CardBg}"
                             BorderBrush="{StaticResource CardBorder}" BorderThickness="1"
                             CornerRadius="16" Padding="18" Margin="0,0,7,0">
@@ -77,16 +77,15 @@
                                                HorizontalAlignment="Center" VerticalAlignment="Center" />
                                 </Border>
                                 <StackPanel VerticalAlignment="Center" Spacing="1">
-                                    <TextBlock Text="친구 서버 바로 플레이" FontSize="14" FontWeight="Bold" />
-                                    <TextBlock Text="닉네임만 입력하면 바로 접속" FontSize="11"
+                                    <TextBlock Text="바로 플레이" FontSize="14" FontWeight="Bold" />
+                                    <TextBlock Text="클릭 한 번으로 서버 접속" FontSize="11"
                                                Foreground="{StaticResource TextMuted}" />
                                 </StackPanel>
                             </StackPanel>
 
-                            <StackPanel Grid.Row="1" Spacing="9" Margin="0,16,0,0" VerticalAlignment="Top">
-                                <TextBox Text="{Binding Username}" Watermark="Player" />
-                                <CheckBox Content="오프라인 모드" IsChecked="{Binding IsOffline}" />
-                            </StackPanel>
+                            <TextBlock Grid.Row="1" Margin="0,16,0,0" VerticalAlignment="Top"
+                                       Text="마이크로소프트 정품 계정으로 로그인하고, 모드팩을 동기화한 뒤 서버에 자동 접속합니다."
+                                       FontSize="12" Foreground="{StaticResource TextMuted}" TextWrapping="Wrap" />
 
                             <Button Grid.Row="2" Classes="play" Content="▶  PLAY"
                                     Margin="0,16,0,0" Command="{Binding PlayCommand}" />
@@ -136,16 +135,12 @@
                     </Border>
                 </WrapPanel>
 
-                <!-- 상태 + 진행 (전체 폭) -->
+                <!-- 상태 + 진행 (전체 폭). 상세 로그는 푸터의 '로그'로 통일. -->
                 <Grid Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,8,0,0"
                       RowDefinitions="Auto,Auto" ColumnDefinitions="*,Auto">
-                    <Grid Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" ColumnDefinitions="*,Auto">
-                        <SelectableTextBlock Grid.Column="0" Text="{Binding StatusMessage}"
-                                             TextWrapping="Wrap" MaxLines="2" TextTrimming="CharacterEllipsis"
-                                             FontSize="13" Foreground="#D2D2DE" VerticalAlignment="Center" />
-                        <Button Grid.Column="1" Classes="foot" Content="자세히 보기" FontSize="11.5"
-                                Command="{Binding OpenLogsCommand}" />
-                    </Grid>
+                    <SelectableTextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding StatusMessage}"
+                                         TextWrapping="Wrap" MaxLines="2" TextTrimming="CharacterEllipsis"
+                                         FontSize="13" Foreground="#D2D2DE" VerticalAlignment="Center" />
                     <ProgressBar Grid.Row="1" Grid.Column="0" Margin="0,8,0,0" Minimum="0" Maximum="100"
                                  Value="{Binding Progress}" IsIndeterminate="{Binding IsIndeterminate}" />
                     <Button Grid.Row="1" Grid.Column="1" Classes="ghost" Content="취소"
