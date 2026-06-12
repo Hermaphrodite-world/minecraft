@@ -73,15 +73,16 @@ curl -fL -o DeveloperIDG2CA.cer https://www.apple.com/certificateauthority/Devel
 openssl x509 -inform DER -in DeveloperIDG2CA.cer -out intermediate.pem
 
 # A-6. .p12 2개 조립 (각 키 + leaf + 중간 인증서). 두 .p12 비밀번호는 동일하게(= APPLE_CERT_PASSWORD 하나로 공유).
-#      먼저 기본(non-legacy). openssl 3.x 기본은 AES-256-CBC/PBKDF2.
-openssl pkcs12 -export -out herma_app.p12 \
+#      ※ -legacy 필수: openssl 3.x 기본(AES-256-CBC/PBKDF2) .p12 는 macOS `security import` 가
+#        `MAC verification failed during PKCS12 import (wrong password?)` 로 거부한다(실측, v0.1.5 1차 빌드 실패).
+#        -legacy(PBE-SHA1-3DES) 형식이라야 GitHub macos-14 러너의 security import 가 통과한다.
+openssl pkcs12 -export -legacy -out herma_app.p12 \
   -inkey herma_dev_id.key -in app.pem -certfile intermediate.pem \
   -name "Herma Dev ID App" -passout pass:CHANGE_THIS_P12_PASSWORD
-openssl pkcs12 -export -out herma_installer.p12 \
+openssl pkcs12 -export -legacy -out herma_installer.p12 \
   -inkey herma_installer.key -in installer.pem -certfile intermediate.pem \
   -name "Herma Dev ID Installer" -passout pass:CHANGE_THIS_P12_PASSWORD
-#      → 첫 릴리스에서 CI 의 `security import` 가 실패하면(구 macOS keychain 이 AES p12 거부),
-#        두 .p12 모두 -legacy(RC2/3DES 계열) 플래그를 추가해 재생성하고 Secret 을 갱신.
+#      (openssl 1.1.x 라 -legacy 플래그가 없다는 에러가 나면 그 버전은 기본이 이미 호환 형식이므로 -legacy 만 빼고 실행.)
 
 # A-7. base64 인코딩 → APPLE_CERT_P12_BASE64 / APPLE_INSTALL_CERT_P12_BASE64 값
 base64 -w0 herma_app.p12       > herma_app.p12.b64
@@ -133,8 +134,8 @@ base64 -w0 herma_installer.p12 > herma_installer.p12.b64
 
 ## Part D — 검증 (첫 서명 릴리스 — 현재 유일한 미검증 영역)
 
-> 지금까지 Windows 자동 업데이트는 실설치 e2e 실증 완료, macOS 서명/공증 flow 만 미검증입니다.
-> 첫 서명 릴리스에서 아래를 반드시 확인하세요.
+> ✅ v0.1.5(2026-06-12)에서 실 CI(macos-14) 검증 완료 — notarytool `Accepted` + `pkgutil`(signed by Apple) + `stapler validate` 통과, osx 산출물 업로드 확인.
+> 아래는 이후 릴리스에서 동일하게 확인할 체크리스트입니다.
 
 1. 릴리스 발행(태그 `vX.Y.Z`) → Actions 의 **Launcher Build → macos** 잡 확인.
 2. `서명 자산 존재 확인` 스텝이 `enabled=true` 인지.
@@ -146,7 +147,8 @@ base64 -w0 herma_installer.p12 > herma_installer.p12.b64
 
 ### 트러블슈팅
 
-- **`security import` 실패** → `.p12` 를 `-legacy` 로 다시 만들기(A-6).
+- **공증이 멈춘 것처럼 ~50분+ 진행** → 락 아님. **신규 Apple 계정의 첫 공증은 Apple 큐에서 ~52분** 걸린 실측 사례(v0.1.5). `Preparing to Notarize` 후 로그가 멈춘 듯 보이는 건 notarytool 이 Apple 결과를 조용히 폴링하는 정상 동작. Apple System Status 의 *Developer ID Notary Service* 가 green 이면 그냥 기다릴 것. 둘째 제출부터는 보통 빠름.
+- **`security import` 실패** (`MAC verification failed ... wrong password?`) → openssl 3.x 비-legacy 형식. `.p12` 를 `-legacy` 로 다시 만들기(A-6). 비번이 맞아도 이 에러가 난다.
 - **공증 `credentials not found`** → `store-credentials` 에 `--keychain` 누락(이미 workflow 에 반영됨) / Team ID·앱 암호 오타.
 - **공증 `Invalid` (status)** → hardened runtime/서명 누락. vpk 가 자동 처리하나, 실패 시 `--signEntitlements` 로 .NET entitlements(`com.apple.security.cs.allow-jit`, `disable-library-validation`) 명시 검토.
 - **`.pkg` Gatekeeper 거부** → Installer 인증서 미사용. `APPLE_INSTALL_SIGN_IDENTITY` 등록 확인.
@@ -155,9 +157,8 @@ base64 -w0 herma_installer.p12 > herma_installer.p12.b64
 
 ## 참고
 
-- `launcher/build-mac-app.sh` 의 ad-hoc 서명 zip 은 인증서 도입 전의 interim 경로입니다.
-  공증 flow 가 검증되면, 릴리스에 ad-hoc zip 과 Velopack 산출물이 **둘 다** 붙어 친구가 혼동할 수 있으니
-  ad-hoc 첨부를 내릴지(`Attach to release` 스텝) 결정하세요. (현재는 안전망으로 유지)
+- `launcher/build-mac-app.sh` 의 ad-hoc 서명 zip 은 **비-릴리스 push 빌드의 테스트 아티팩트로만** 남았습니다
+  (v0.1.5 공증 검증 후 릴리스 첨부 제거). 릴리스의 macOS 산출물은 서명+공증된 `osx-Setup.pkg` / `osx-Portable.zip` 입니다.
 - 채널: 앱은 `UpdateManager(source, null, null)` 로 OS 기본 채널을 조회하고, Velopack 의 macOS 기본 채널은 `osx`
   이므로 CI 의 `--channel osx` 와 일치합니다(코드 수정 불필요).
 - 인증서 갱신: Developer ID 인증서는 유효기간이 있습니다(보통 5년). 만료 전 재발급 후 Secret 갱신.
