@@ -140,16 +140,13 @@ jobs:
         env:
           TAG: ${{ github.event.release.tag_name }}
 
+      # 비-릴리스(push) 테스트용 ad-hoc 아티팩트만 — 릴리스에는 첨부하지 않는다.
+      # 릴리스의 macOS 산출물은 아래 Velopack 의 서명+공증된 .pkg / osx-Portable.zip 이다
+      # (ad-hoc(미공증) zip 을 릴리스에 같이 붙이면 친구가 그걸 받아 Gatekeeper 경고를 보게 돼 혼동).
       - uses: actions/upload-artifact@v4
         with:
           name: HermaLauncher-macos-arm64
           path: publish/mac/HermaLauncher-macos-arm64.zip
-
-      - name: Attach to release (ad-hoc .app — 수동 배포용 interim)
-        if: github.event_name == 'release'
-        uses: softprops/action-gh-release@v2
-        with:
-          files: publish/mac/HermaLauncher-macos-arm64.zip
 
       # ── macOS 자동 업데이트(Velopack) — Developer ID 인증서(.p12)가 있을 때만 활성 ──
       # macOS 의 Velopack 자동 업데이트는 코드 서명이 사실상 필수다: Gatekeeper 가 미서명 .app 의
