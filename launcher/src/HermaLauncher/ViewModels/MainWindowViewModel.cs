@@ -240,7 +240,8 @@ public partial class MainWindowViewModel : ViewModelBase
             return;
         try
         {
-            Process.Start(new ProcessStartInfo(target) { UseShellExecute = true });
+            // 반환 Process 핸들 즉시 해제(누수 방지 — Codex). UseShellExecute=true 면 null 일 수 있어 using 안전.
+            using var proc = Process.Start(new ProcessStartInfo(target) { UseShellExecute = true });
         }
         catch
         {
