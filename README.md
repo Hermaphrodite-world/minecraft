@@ -45,13 +45,13 @@ bash build-mac-app.sh publish/osx-arm64 publish/mac   # → HermaLauncher-macos-
 
 ## 구현 상태
 
-> **🎉 end-to-end 실증 완료** — 로컬 26.1.2 서버 + 런처로 실제 검증: 클릭 한 번 → 오프라인 인증 → Java 25 설치 → 모드 동기화 → Fabric → quickPlayMultiplayer 자동 접속 → **월드 스폰**. 공식 런처·MS 로그인 없음. Xaero Minimap·Simple Voice Chat·Jade·Sodium 등 인게임 작동 확인.
+> **🎉 end-to-end 실증 완료** — 로컬 26.1.2 서버 + 런처로 실제 검증: 클릭 한 번 → 인증 → Java 25 설치 → 모드 동기화 → Fabric → quickPlayMultiplayer 자동 접속 → **월드 스폰**. (v0.1.5 부터 인증은 **온라인 정품 MS 전용** — MS 승인 완료, 오프라인/닉네임 UI 제거.) Xaero Minimap·Simple Voice Chat·Jade·Sodium 등 인게임 작동 확인.
 
 | 영역 | 상태 |
 |------|------|
 | packwiz 모드팩 (26.1.2, 77 모드 + 4 쉐이더팩 + 6 리소스팩 + 한국어 번역팩 + side 분류) | ✅ 완료 — Pages 라이브 + e2e 동기화 검증 + [모드 가이드](docs/mods-guide.md) |
-| 런처 풀 파이프라인 (UI·인증·Java·packwiz·Fabric·실행·자동접속) | ✅ **실 게임 실증** — 26.1.2 월드 접속 확인 (net10.0, 빌드 0/0) |
-| 오프라인 로그인 (친구 서버) | ✅ **실증** — 닉네임만, MS 로그인 0 |
+| 런처 풀 파이프라인 (UI·인증·Java·packwiz·Fabric·실행·자동접속) | ✅ **실 게임 실증** — 26.1.2 월드 접속 확인 (net10.0, 빌드 0/0). v0.1.5 게이밍 UI 리디자인(커스텀 크롬·2-컬럼·앱 아이콘·온라인 전용·실행 후 런처 자동 정리) |
+| 오프라인 로그인 | ◐ v0.1.5 부터 **UI 제거**(온라인 전용 전환) — 서비스 레이어 dormant 유지 |
 | 온라인 로그인 (정품 계정) | ✅ **시스템 브라우저**(요즘 공식 런처 방식, 크로스플랫폼) — [셋업 가이드](docs/online-login-setup.md). Azure 앱 1개(메인테이너) 공유. Mojang 앱 승인 후 동작 |
 | **공식 런처 설치 (대체 경로)** | ✅ **실증** — 실기기에서 공식 런처에 'Hermaphrodite World' 프로필 정상 추가 확인. "공식 런처에 설치" 버튼이 Fabric+모드팩을 공식 `.minecraft`에 등록 → **정품 로그인 즉시(Mojang 승인 대기 0)**. 머지 로직 fixture + 실기기 검증(기존 프로필 보존, MS Store/standalone 양쪽). [가이드](docs/installer-setup.md) |
 | 자동 접속 (quickPlayMultiplayer) | ✅ **실증** — MC 26.1 구형 --server 제거 대응 |
