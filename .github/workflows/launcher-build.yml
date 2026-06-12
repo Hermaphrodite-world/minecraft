@@ -37,6 +37,18 @@ jobs:
           (Get-Content $f) -replace 'play\.example\.com', $ip | Set-Content $f
           if (Select-String -Path $f -Pattern 'play\.example\.com' -Quiet) { Write-Error 'bake failed'; exit 1 }
 
+      # 온라인 로그인 client ID 주입(MS 승인 완료 — allow list 등록). placeholder all-zero(Guid.Empty)
+      # 리터럴 1곳을 실제 ID 로 치환. 게이트(IsAzureClientConfigured)는 Guid.Empty 비교라 bake 와 무충돌.
+      - name: Bake Azure client ID (release only)
+        if: github.event_name == 'release'
+        shell: pwsh
+        run: |
+          $cid = '${{ secrets.HERMA_AZURE_CLIENT_ID }}'
+          if (-not $cid) { Write-Error 'HERMA_AZURE_CLIENT_ID secret not set'; exit 1 }
+          $f = 'launcher/src/HermaLauncher/LauncherConfig.cs'
+          (Get-Content $f) -replace '00000000-0000-0000-0000-000000000000', $cid | Set-Content $f
+          if (Select-String -Path $f -Pattern '00000000-0000-0000-0000-000000000000' -Quiet) { Write-Error 'bake failed'; exit 1 }
+
       - name: Build
         run: dotnet build launcher/src/HermaLauncher/HermaLauncher.csproj -c Release
 
@@ -103,6 +115,17 @@ jobs:
           f=launcher/src/HermaLauncher/LauncherConfig.cs
           perl -pi -e "s/play\\.example\\.com/$IP/" "$f"
           grep -q 'play.example.com' "$f" && { echo 'bake failed'; exit 1; } || echo 'baked'
+
+      # 온라인 로그인 client ID 주입(MS 승인 완료). placeholder all-zero(Guid.Empty) 1곳을 실제 ID 로 치환.
+      - name: Bake Azure client ID (release only)
+        if: github.event_name == 'release'
+        shell: bash
+        run: |
+          CID='${{ secrets.HERMA_AZURE_CLIENT_ID }}'
+          [ -z "$CID" ] && { echo 'HERMA_AZURE_CLIENT_ID not set'; exit 1; }
+          f=launcher/src/HermaLauncher/LauncherConfig.cs
+          perl -pi -e "s/00000000-0000-0000-0000-000000000000/$CID/" "$f"
+          grep -q '00000000-0000-0000-0000-000000000000' "$f" && { echo 'bake failed'; exit 1; } || echo 'baked'
 
       - name: Publish (osx-arm64, self-contained, .app 용 dylib 분리)
         run: >
