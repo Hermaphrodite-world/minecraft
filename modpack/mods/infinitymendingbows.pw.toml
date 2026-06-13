@@ -1,0 +1,13 @@
+name = "Infinity Mending"
+filename = "infinitymendingbows-2.1.jar"
+side = "both"
+
+[download]
+url = "https://cdn.modrinth.com/data/kSEWG5wx/versions/XU5A6BNa/infinitymendingbows-2.1.jar"
+hash-format = "sha512"
+hash = "b768acd52219b502b7cef1be94299f479ca8dc213dcfc08f34a1a4520cef1243d04b9a7603dee3bc308e1f56e2132a6283c6d57dfac347b7f232389ab52d7acd"
+
+[update]
+[update.modrinth]
+mod-id = "kSEWG5wx"
+version = "XU5A6BNa"

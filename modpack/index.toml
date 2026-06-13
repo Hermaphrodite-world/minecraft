@@ -155,6 +155,11 @@ hash = "d9f54bcf75d036c25ebe636abb7ffa7c2d21c3601fec13b0fa2cc8916120affa"
 metafile = true
 
 [[files]]
+file = "mods/infinitymendingbows.pw.toml"
+hash = "a33b575d5636c0fcf58f324f07ea4e57507bf0c457e1aaf4ead3a647e9473b20"
+metafile = true
+
+[[files]]
 file = "mods/inventory-profiles-next.pw.toml"
 hash = "788a6bcfb51522bb66bb2988a14216299789e82f401bc727e77aaa95251e9807"
 metafile = true
