@@ -152,12 +152,14 @@ public sealed class CmlLibMinecraftService : IMinecraftService
 
         progress.Report(StageUpdate.Of(LaunchStage.Launch, "게임 실행 준비 중…"));
 
-        var isOSX = RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
         var option = new MLaunchOption
         {
             Session = ToMSession(session),
             MaximumRamMb = LauncherConfig.DefaultMaxRamMb,
-            DockName = isOSX ? LauncherConfig.MacDockName : null, // macOS 창 포커스 필수
+            // ※ DockName 미설정. 공백 포함 값("Herma Launcher")을 macOS 에서 DockName 으로 주면 CmlLib 의
+            //    런치 인자 구성에서 그 값이 메인 클래스 토큰으로 잘못 들어가 게임이 즉시 종료된다
+            //    (macOS 실측: `java.lang.ClassNotFoundException: Herma Launcher`). Windows 는 DockName=null
+            //    이라 영향 없음. dock 라벨보다 실행이 우선이므로 제거.
             // ★ MC 26.1 은 구형 --server/--port 인자를 제거함 → 모던 quickPlayMultiplayer 로 1-클릭 자동 접속.
             ExtraGameArguments = new[]
             {
