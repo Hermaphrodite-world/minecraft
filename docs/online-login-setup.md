@@ -61,7 +61,7 @@ set HERMA_AZURE_CLIENT_ID=<복사한-client-id>
 ### 계정이 다른 게 선택될 때 (질문 사례)
 - 브라우저 계정 선택 화면에서 다른 계정이 자동 선택되면 → **"다른 계정 사용"** 클릭 후 원하는 계정 로그인.
 - 또는 **시크릿/프라이빗 창**이 기본이 되도록 하거나, 브라우저에서 해당 계정 로그아웃 후 진행.
-- 런처는 토큰을 디스크에 저장하지 않아(매 실행 새 로그인) 이전 계정이 끼어들지 않습니다.
+- 런처는 MS 계정 토큰을 데이터 폴더(`%APPDATA%\HermaLauncher\accounts.json` / macOS `~/Library/Application Support/HermaLauncher/accounts.json`)에 **캐시**합니다 → 다음 실행 시 재로그인 없이 자동 로그인됩니다. **다른 계정으로 바꾸려면 그 `accounts.json` 을 삭제 후 재실행**(또는 위 "다른 계정 사용").
 - 각 친구는 **자기 PC에서 자기 MS 계정**으로 로그인 → 같은 client ID 하나를 공유(앱은 1개, 계정은 각자).
 
 > **Windows·macOS 동일** — 시스템 브라우저 방식이라 macOS도 별도 작업 없이 같은 코드로 동작합니다(공식 런처도 macOS에서 브라우저 로그인).
