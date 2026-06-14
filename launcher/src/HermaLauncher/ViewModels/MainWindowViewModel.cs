@@ -146,9 +146,10 @@ public partial class MainWindowViewModel : ViewModelBase
                 await game.WaitForExitAsync().ConfigureAwait(true);
                 exitCode = game.ExitCode;
             }
-            catch
+            catch (Exception ex)
             {
                 // 모니터링 실패(권한/플랫폼) — 게임은 떠 있으니 런처만 조용히 닫는다.
+                AppLog.Warn(LaunchStage.Running, "게임 종료 모니터링 실패: " + ex.Message);
                 IsGameRunning = false;
                 CloseRequested?.Invoke();
                 return;
@@ -156,16 +157,20 @@ public partial class MainWindowViewModel : ViewModelBase
 
             IsGameRunning = false;
             var ranSeconds = (DateTime.Now - startedAt).TotalSeconds;
-            var instantCrash = exitCode != 0 && ranSeconds < InstantCrashWindowSeconds;
-            if (instantCrash)
+            AppLog.Info(LaunchStage.Running, $"게임 종료 (코드={exitCode}, 실행 {ranSeconds:F0}s)");
+
+            // P1-7: 즉시 크래시뿐 아니라 한참 뒤 비정상 종료도 진단 보존(로그 버튼 + 재시도 안내).
+            if (exitCode != 0)
             {
                 RestoreRequested?.Invoke();
                 HasError = true;
-                StatusMessage = "게임이 실행 직후 종료됐어요(크래시 의심). 다시 시도해 주세요.";
+                StatusMessage = ranSeconds < InstantCrashWindowSeconds
+                    ? $"게임이 실행 직후 종료됐어요(크래시 의심, 코드 {exitCode}). 아래 '로그' 버튼에서 원인을 확인하거나 다시 시도해 주세요."
+                    : $"게임이 비정상 종료됐어요(코드 {exitCode}). 아래 '로그' 버튼에서 게임 로그·크래시 리포트를 확인할 수 있어요.";
             }
             else
             {
-                CloseRequested?.Invoke();
+                CloseRequested?.Invoke(); // 정상 종료(코드 0) → 런처 닫기
             }
         }
     }

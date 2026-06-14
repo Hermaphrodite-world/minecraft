@@ -61,7 +61,11 @@ public sealed class LaunchOrchestrator
             // (4b) 첫 실행 기본 쉐이더/리소스팩 적용. 이미 설정돼 있으면 보존 — best-effort.
             ClientDefaults.ApplyAll(AppPaths.GameDir, progress);
 
-            // (5)+(6) Fabric 설치 + ServerIp 주입 실행 (토큰은 직전 인증에서 확보)
+            // (5.5) 세션 재검증 — 긴 설치 동안 토큰이 만료됐을 수 있어 proc.Start 직전 갱신(best-effort).
+            session = await _auth.RevalidateAsync(session, progress, ct).ConfigureAwait(false);
+            ct.ThrowIfCancellationRequested();
+
+            // (5)+(6) Fabric 설치 + ServerIp 주입 실행 (토큰은 직전 인증/재검증에서 확보)
             var game = await _minecraft.LaunchAsync(session, progress, ct).ConfigureAwait(false);
 
             progress.Report(StageUpdate.Of(LaunchStage.Running, "게임을 실행했어요. 즐겜!", 1.0));

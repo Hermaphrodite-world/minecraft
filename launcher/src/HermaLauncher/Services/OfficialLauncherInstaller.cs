@@ -73,6 +73,7 @@ public sealed class OfficialLauncherInstaller
 
         // 쓰기 가능 여부 사전 점검(공식 런처가 열려 있으면 파일 잠금 가능) — 무거운 설치 전 빠른 실패.
         EnsureProfilesWritable(mcDir);
+        PreflightChecks.EnsureDiskSpace(mcDir, LaunchStage.Java); // P1-5: 공식 .minecraft 드라이브 공간 사전점검
 
         var launcher = new MinecraftLauncher(new MinecraftPath(mcDir));
 
