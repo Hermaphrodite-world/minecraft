@@ -21,6 +21,8 @@
     <!-- NU1903: Tmds.DBus.Protocol 는 Avalonia 의 Linux 전용 transitive dep. 본 런처는
          Windows/macOS 타깃이라 DBus 경로 미사용 → 해당 advisory 비해당. -->
     <NoWarn>$(NoWarn);NU1903</NoWarn>
+    <!-- 재현 가능 복원(P2-5): packages.lock.json 생성. CI 는 locked-mode 복원으로 검증. -->
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
   </PropertyGroup>
 
   <ItemGroup>

@@ -107,14 +107,24 @@ public sealed class PackwizService
         progress.Report(StageUpdate.Of(LaunchStage.Packwiz, "모드팩 동기화 완료", 1.0));
     }
 
+    // packwiz-installer-bootstrap 을 특정 버전+SHA-256 으로 핀(공급망 보호, P2-1). latest 무핀/무검증 제거.
+    //   v0.0.3 의 jar 해시 = a8fbb24...(2026-06-15 검증). 새 버전 채택 시 둘 다 함께 갱신.
+    private const string BootstrapVersion = "v0.0.3";
     private const string BootstrapUrl =
-        "https://github.com/packwiz/packwiz-installer-bootstrap/releases/latest/download/packwiz-installer-bootstrap.jar";
+        "https://github.com/packwiz/packwiz-installer-bootstrap/releases/download/" + BootstrapVersion +
+        "/packwiz-installer-bootstrap.jar";
+    private const string BootstrapSha256 = "a8fbb24dc604278e97f4688e82d3d91a318b98efc08d5dbfcbcbcab6443d116c";
 
-    // 번들/캐시에 bootstrap jar 가 없으면 GitHub 릴리스에서 받아 둔다(원자적 저장).
+    // 번들/캐시에 bootstrap jar 가 없거나 해시 불일치면 핀된 릴리스에서 받고 무결성 검증(원자적 저장).
     private static async Task EnsureBootstrapAsync(IProgress<StageUpdate> progress, CancellationToken ct)
     {
         if (File.Exists(AppPaths.BootstrapJar))
-            return;
+        {
+            if (await FileSha256MatchesAsync(AppPaths.BootstrapJar, BootstrapSha256, ct).ConfigureAwait(false))
+                return; // 캐시가 핀된 해시와 일치 → 신뢰
+            AppLog.Warn(LaunchStage.Packwiz, "캐시된 packwiz bootstrap 해시 불일치 — 재다운로드");
+            try { File.Delete(AppPaths.BootstrapJar); } catch { /* best-effort */ }
+        }
 
         progress.Report(StageUpdate.Of(LaunchStage.Packwiz, "모드 동기화 도구 내려받는 중…"));
         try
@@ -127,13 +137,34 @@ public sealed class PackwizService
             var tmp = AppPaths.BootstrapJar + ".tmp";
             await using (var fs = File.Create(tmp))
                 await resp.Content.CopyToAsync(fs, ct).ConfigureAwait(false);
+
+            // 다운로드 무결성 검증 — 불일치면 폐기 + 실패(공급망 공격/손상 차단).
+            if (!await FileSha256MatchesAsync(tmp, BootstrapSha256, ct).ConfigureAwait(false))
+            {
+                try { File.Delete(tmp); } catch { }
+                AppLog.Error(LaunchStage.Packwiz, "packwiz bootstrap 다운로드 무결성 검증 실패(해시 불일치)");
+                throw new LaunchStageException(LaunchStage.Packwiz,
+                    "모드 동기화 도구 무결성 검증에 실패했어요. 잠시 후 다시 시도해 주세요.");
+            }
             File.Move(tmp, AppPaths.BootstrapJar, overwrite: true);
         }
+        catch (LaunchStageException) { throw; }
         catch (Exception ex) when (ex is not OperationCanceledException)
         {
             throw new LaunchStageException(LaunchStage.Packwiz,
                 "모드 동기화 도구를 내려받지 못했어요. 네트워크를 확인하고 다시 시도해 주세요.", ex);
         }
+    }
+
+    private static async Task<bool> FileSha256MatchesAsync(string path, string expectedHex, CancellationToken ct)
+    {
+        try
+        {
+            await using var fs = File.OpenRead(path);
+            var hash = await System.Security.Cryptography.SHA256.HashDataAsync(fs, ct).ConfigureAwait(false);
+            return string.Equals(Convert.ToHexStringLower(hash), expectedHex, StringComparison.OrdinalIgnoreCase);
+        }
+        catch { return false; }
     }
 
     private static string NormalizeToConsoleJava(string javaExe)
