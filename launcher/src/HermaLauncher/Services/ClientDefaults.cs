@@ -7,15 +7,15 @@ using System.Text;
 namespace HermaLauncher.Services;
 
 // packwiz 동기화 후 클라이언트 기본값을 적용한다. 정책 = "전부 적용이 기본 + 사용자 변경 존중"(사용자 요청 2026-06-15):
-//   - 리소스팩: 각 팩을 "처음 1회만" 자동 활성(마커 herma_launcher_applied.txt 로 per-pack 기록).
+//   - 리소스팩: 각 팩을 "처음 1회만" 자동 활성(마커 herma_launcher_applied.txt 로 per-pack 기록) — resourcePacks 에만 추가.
 //               사용자가 게임 내에서 끈 팩은 다음 실행에 다시 켜지 않는다(존중). 새 팩만 자동 활성.
-//   - whitelist: 현재 활성(resourcePacks)인 file/ 팩은 incompatibleResourcePacks 에도 보장(매번 idempotent).
-//               → MC 26.1.2 가 호환성 미달이라며 조용히 드롭하는 것을 막는다(빨강이라도 로드). 비활성 팩은 안 건드림.
+//   - ※ incompatibleResourcePacks 에는 절대 추가하지 않는다. 모드팩 팩들은 supported_formats range 로 이미 호환이라
+//       incompat 에 넣으면 MC 26.1.2 가 "now compatible" 로 판단해 오히려 드롭한다(실측). 진짜 incompatible 팩만 MC 가 관리.
 //   - 쉐이더  : 처음 1회만 기본 쉐이더 적용(마커). 이후 사용자가 고른 유효 쉐이더/끈 상태는 보존.
 //   - 서버목록: servers.dat 에 명명된 모드팩 서버 항목 보장(ServerList).
 //   - best-effort — 실패해도 게임 실행/설치를 막지 않는다.
-// ※ "매 실행 강제"(과거 eba1135) 는 사용자 수동 정렬까지 매번 덮어써서 폐기. 대신 per-pack apply-once 로 복귀하되
-//    실제 로드 버그(whitelist 누락으로 vanilla-connected-glass 외 전부 드롭)는 whitelist-ensure 로 별도 해결.
+// ※ "매 실행 강제"(과거 eba1135) 는 사용자 수동 정렬까지 덮어써서 폐기 → per-pack apply-once. 그 위에 도입했던
+//    whitelist-ensure(v0.1.7~0.1.9) 도 호환 팩을 드롭시키는 원인이라 폐기(실측, 2026-06-15). 활성화는 resourcePacks 만으로 충분.
 public static class ClientDefaults
 {
     private const string MarkerFile = "herma_launcher_applied.txt";
@@ -98,11 +98,9 @@ public static class ClientDefaults
         }
     }
 
-    // resourcepacks/ 의 팩을 options.txt 에 보장. 두 단계:
-    //   (1) apply-once: 마커에 없는 팩만 resourcePacks 에 추가(처음 1회) + 마커 기록 → 사용자가 끈 팩은 존중.
-    //       베이스 먼저, 확장(Extension/Addon) 나중. 값은 "file/<파일명>".
-    //   (2) whitelist-ensure: 현재 활성인 file/ 팩은 incompatibleResourcePacks 에도 보장(매번, idempotent).
-    //       일부 팩은 MC 26.1.2 에서 "incompatible" 로 떠 화이트리스트 없으면 조용히 드롭되므로 강제 로드.
+    // resourcepacks/ 의 팩을 options.txt 의 resourcePacks 에 보장(apply-once):
+    //   - 마커에 없는 팩만 resourcePacks 에 추가(처음 1회) + 마커 기록 → 사용자가 끈 팩은 존중.
+    //     베이스 먼저, 확장(Extension/Addon) 나중. 값은 "file/<파일명>". incompatibleResourcePacks 에는 손대지 않는다.
     private static void EnsureDefaultResourcePacks(string gameDir, IProgress<StageUpdate>? progress)
     {
         try
@@ -156,14 +154,11 @@ public static class ClientDefaults
             //      중간 위치도 매 실행 교정 — 단 비활성(사용자가 끔)이면 active 에 없어 no-op(on/off 는 존중).
             EnsureTranslationPackAtBottom(active, ref changed);
 
-            // (2) whitelist-ensure — 현재 활성(resourcePacks)인 file/ 팩은 incompat 에도 보장(매번).
-            //     → MC 호환성 미달 드롭 방지. 비활성(사용자가 끈) 팩은 active 에 없으니 건드리지 않음.
-            foreach (var entry in active)
-            {
-                if (!entry.StartsWith("\"file/", StringComparison.Ordinal))
-                    continue; // "vanilla", lambdabettergrass:default 등 내장/네임스페이스 팩 제외(file/ 로 시작하는 zip 팩만)
-                if (!incompat.Contains(entry)) { incompat.Add(entry); changed = true; }
-            }
+            // ※ 과거 "whitelist-ensure"(active file/ 팩을 incompatibleResourcePacks 에 추가)는 폐기.
+            //   실측(오프라인 MC 26.1.2 + latest.log): 모드팩 팩들은 supported_formats range 로 이미 *호환*이라
+            //   incompat 에 넣으면 MC 가 "Removed ... from incompatibility list because it's now compatible" 하며
+            //   오히려 active 에서 드롭 → 로드 안 됨. incompat 에는 손대지 않는다(MC 가 진짜 incompatible 팩만 관리).
+            //   stale 정리(위)의 incompat 제거만 유지. 팩 활성화는 resourcePacks 에 넣는 것(apply-once)으로 충분.
 
             if (changed)
             {
