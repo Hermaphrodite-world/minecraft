@@ -164,7 +164,8 @@ public sealed class PackwizService
             var hash = await System.Security.Cryptography.SHA256.HashDataAsync(fs, ct).ConfigureAwait(false);
             return string.Equals(Convert.ToHexStringLower(hash), expectedHex, StringComparison.OrdinalIgnoreCase);
         }
-        catch { return false; }
+        catch (OperationCanceledException) when (ct.IsCancellationRequested) { throw; } // 취소는 전파(정상 캐시 오삭제 방지, Codex)
+        catch { return false; } // IO/mismatch 등 → 재다운로드 유도
     }
 
     private static string NormalizeToConsoleJava(string javaExe)

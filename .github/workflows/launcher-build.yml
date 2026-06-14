@@ -55,8 +55,12 @@ jobs:
         shell: pwsh
         run: |
           $ver = '${{ github.event.release.tag_name }}'.TrimStart('v')
-          "HERMA_VER=$ver" >> $env:GITHUB_ENV
-          if ($ver -match '^(\d+\.\d+\.\d+)') { "HERMA_ASMVER=$($Matches[1]).0" >> $env:GITHUB_ENV }
+          if ($ver -match '^(\d+\.\d+\.\d+)') {
+            "HERMA_VER=$ver" >> $env:GITHUB_ENV
+            "HERMA_ASMVER=$($Matches[1]).0" >> $env:GITHUB_ENV
+          } else {
+            Write-Error "release tag '$ver' 는 semver(x.y.z) 여야 해요 — packVersion/AssemblyVersion 정합"; exit 1
+          }
 
       - name: Build
         run: >
@@ -151,8 +155,8 @@ jobs:
         shell: bash
         run: |
           ver="${TAG#v}"
+          asm=$(echo "$ver" | grep -oE '^[0-9]+\.[0-9]+\.[0-9]+') || { echo "release tag '$ver' must be semver (x.y.z)"; exit 1; }
           echo "HERMA_VER=$ver" >> "$GITHUB_ENV"
-          asm=$(echo "$ver" | grep -oE '^[0-9]+\.[0-9]+\.[0-9]+' || echo '0.1.0')
           echo "HERMA_ASMVER=$asm.0" >> "$GITHUB_ENV"
         env:
           TAG: ${{ github.event.release.tag_name }}
