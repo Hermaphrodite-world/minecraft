@@ -81,6 +81,9 @@ public class LaunchOrchestratorTests
         Assert.Equal(new[] { "update" }, log); // auth 미호출(재시작 단축회로)
     }
 
+    // 주의(Codex S1 재리뷰): 본 테스트는 orchestrator 의 취소 단축회로(null 반환 + "취소" 보고)만 검증한다.
+    // S1 의 실제 자식 java 프로세스 kill 경로는 PackwizService 의 ct.Register 가 담당하며, 실 자식
+    // 프로세스가 필요해 여기서 단위 검증하지 않는다(integration 영역). 이 테스트를 S1 kill 커버리지로 오인 금지.
     [Fact]
     public async Task Precancelled_returns_null_and_reports_cancel()
     {
