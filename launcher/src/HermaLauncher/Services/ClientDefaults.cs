@@ -92,9 +92,10 @@ public static class ClientDefaults
             AppendMarker(gameDir, new[] { "shader:" + name });
             progress?.Report(StageUpdate.Of(LaunchStage.Packwiz, $"쉐이더 기본 적용: {name}"));
         }
-        catch
+        catch (Exception ex)
         {
-            // 쉐이더 기본값은 best-effort — 실패해도 진행을 막지 않는다.
+            // 쉐이더 기본값은 best-effort — 실패해도 진행을 막지 않는다(로그엔 남김, P1-8).
+            AppLog.Warn(LaunchStage.Packwiz, "기본 쉐이더 적용 실패: " + ex.Message);
         }
     }
 
@@ -173,9 +174,10 @@ public static class ClientDefaults
             if (newlyApplied.Count > 0)
                 AppendMarker(gameDir, newlyApplied);
         }
-        catch
+        catch (Exception ex)
         {
-            // 리소스팩 기본값도 best-effort.
+            // 리소스팩 기본값도 best-effort(로그엔 남김, P1-8).
+            AppLog.Warn(LaunchStage.Packwiz, "기본 리소스팩 적용 실패: " + ex.Message);
         }
     }
 

@@ -3,9 +3,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
-using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
@@ -51,28 +49,38 @@ public sealed class CmlLibAuthService : IAuthService
             return new AuthSession(name, string.Empty, "0", IsOffline: true);
         }
 
-        // ── 온라인: 시스템 브라우저 로그인 (요즘 공식 런처와 동일 방식, 크로스플랫폼) ──
-        //   클릭 → 기본 브라우저에서 MS 로그인 → loopback 으로 자동 복귀. WebView 불필요.
+        // ── 온라인: silent(캐시 토큰) 우선 → 실패 시 시스템 브라우저 로그인(P1-1) ──
         if (!LauncherConfig.IsAzureClientConfigured)
             throw new LaunchStageException(LaunchStage.Auth,
-                "온라인 로그인은 Azure 앱 client ID 설정이 필요해요(LauncherConfig.AzureClientId 또는 HERMA_AZURE_CLIENT_ID).\n" +
-                "지금 테스트하려면 '오프라인 모드'를 켜고 서버를 online-mode=false 로 두세요.");
+                "온라인 로그인 설정이 빠졌어요. 런처가 올바른 로그인 설정으로 빌드돼야 해요 — 관리자에게 문의하거나 최신 런처로 업데이트해 주세요."); // P1-2: 제거된 오프라인 모드 지시 삭제
 
+        var app = Microsoft.Identity.Client.PublicClientApplicationBuilder
+            .Create(LauncherConfig.AzureClientId)
+            .WithAuthority("https://login.microsoftonline.com/consumers")
+            .WithRedirectUri("http://localhost") // 시스템 브라우저 loopback (random port)
+            .Build();
+        var accountManager = new JsonXboxGameAccountManager(AppPaths.AccountsJson);
+
+        // (1) silent 우선 — 캐시된 계정으로 브라우저 없이 재로그인. 실패하면 (2) 브라우저.
+        var cached = accountManager.GetDefaultAccount();
+        if (cached is not null)
+        {
+            progress.Report(StageUpdate.Of(LaunchStage.Auth, "로그인 정보 확인 중…"));
+            var silentSession = await TrySilentAsync(app, accountManager, ct).ConfigureAwait(false);
+            if (silentSession is not null)
+            {
+                AppLog.Info(LaunchStage.Auth, "silent 로그인 성공(브라우저 생략)");
+                return ToAuthSession(silentSession);
+            }
+            AppLog.Info(LaunchStage.Auth, "silent 로그인 불가(토큰 만료/부재) → 브라우저 로그인");
+        }
+
+        // (2) 브라우저(interactive) — silent 실패 또는 첫 로그인.
         progress.Report(StageUpdate.Of(LaunchStage.Auth,
             "기본 브라우저에서 Microsoft 로그인을 진행해 주세요. 완료되면 자동으로 이어집니다."));
         try
         {
-            var app = Microsoft.Identity.Client.PublicClientApplicationBuilder
-                .Create(LauncherConfig.AzureClientId)
-                .WithAuthority("https://login.microsoftonline.com/consumers")
-                .WithRedirectUri("http://localhost") // 시스템 브라우저 loopback (random port)
-                .Build();
-
-            // 계정 매니저(생성 시 파일에서 자동 로드) → 계정의 SessionStorage 로 AuthenticateContext 구성
-            // (없으면 "Context not set" 에러). AuthenticateContext 는 생성자로만 구성(속성 read-only).
-            var accountManager = new JsonXboxGameAccountManager(AppPaths.AccountsJson);
-            var account = accountManager.GetDefaultAccount() ?? accountManager.NewAccount();
-
+            var account = cached ?? accountManager.NewAccount();
             var authenticator = new NestedAuthenticator
             {
                 Context = new AuthenticateContext(account.SessionStorage, _authHttp, ct,
@@ -83,10 +91,8 @@ public sealed class CmlLibAuthService : IAuthService
             authenticator.AddJEAuthenticator();
 
             MSession session = await authenticator.ExecuteForLauncherAsync().ConfigureAwait(false);
-            try { accountManager.SaveAccounts(); } catch { /* 캐시 저장 실패 무시 */ }
-            return new AuthSession(session.Username ?? string.Empty, session.UUID ?? string.Empty,
-                                   session.AccessToken ?? string.Empty, IsOffline: false,
-                                   Xuid: session.Xuid ?? string.Empty);
+            SaveAccountsBestEffort(accountManager);
+            return ToAuthSession(session);
         }
         catch (OperationCanceledException) when (ct.IsCancellationRequested) { throw; }
         catch (JEAuthException ex)
@@ -98,13 +104,72 @@ public sealed class CmlLibAuthService : IAuthService
         }
         catch (Exception ex)
         {
-            // AggregateException 등 내부 메시지를 펼쳐서 표시(이전 '알 수 없는 오류' 개선).
             var detail = ex is AggregateException agg
                 ? string.Join(" / ", agg.Flatten().InnerExceptions.Select(e => e.Message))
                 : ex.Message;
             throw new LaunchStageException(LaunchStage.Auth, "로그인에 실패했어요.\n" + detail, ex);
         }
     }
+
+    // (5.5) SessionRefresh — proc.Start 직전 세션 재검증. 긴 설치 중 토큰 만료 대응(P1-1).
+    // best-effort: silent refresh 성공하면 새 세션, 실패/오프라인이면 기존 세션 유지(런치 비차단).
+    public async Task<AuthSession> RevalidateAsync(AuthSession current, IProgress<StageUpdate> progress, CancellationToken ct)
+    {
+        if (current.IsOffline || !LauncherConfig.IsAzureClientConfigured)
+            return current;
+        try
+        {
+            var app = Microsoft.Identity.Client.PublicClientApplicationBuilder
+                .Create(LauncherConfig.AzureClientId)
+                .WithAuthority("https://login.microsoftonline.com/consumers")
+                .WithRedirectUri("http://localhost").Build();
+            var accountManager = new JsonXboxGameAccountManager(AppPaths.AccountsJson);
+            var s = await TrySilentAsync(app, accountManager, ct).ConfigureAwait(false);
+            if (s is not null)
+            {
+                AppLog.Info(LaunchStage.SessionRefresh, "세션 재검증 완료(토큰 갱신)");
+                return ToAuthSession(s);
+            }
+        }
+        catch (OperationCanceledException) when (ct.IsCancellationRequested) { throw; }
+        catch (Exception ex) { AppLog.Warn(LaunchStage.SessionRefresh, "세션 재검증 생략: " + ex.GetType().Name); }
+        return current; // 갱신 실패 → 기존 세션으로 진행(대개 아직 유효)
+    }
+
+    // 캐시된 default 계정으로 silent(브라우저 없이) 인증 시도. 성공=MSession, 실패/계정없음=null.
+    private static async Task<MSession?> TrySilentAsync(
+        Microsoft.Identity.Client.IPublicClientApplication app,
+        JsonXboxGameAccountManager accountManager, CancellationToken ct)
+    {
+        var account = accountManager.GetDefaultAccount();
+        if (account is null) return null;
+        try
+        {
+            var silent = new NestedAuthenticator
+            {
+                Context = new AuthenticateContext(account.SessionStorage, _authHttp, ct,
+                    Microsoft.Extensions.Logging.Abstractions.NullLogger.Instance),
+            };
+            silent.AddMsalOAuth(app, msal => msal.Silent());
+            silent.AddXboxAuthForJE(xbox => xbox.Basic());
+            silent.AddJEAuthenticator();
+            var s = await silent.ExecuteForLauncherAsync().ConfigureAwait(false);
+            SaveAccountsBestEffort(accountManager);
+            return s;
+        }
+        catch (OperationCanceledException) when (ct.IsCancellationRequested) { throw; }
+        catch { return null; } // 토큰 만료/부재 등 → interactive 로 fallback
+    }
+
+    private static void SaveAccountsBestEffort(JsonXboxGameAccountManager mgr)
+    {
+        try { mgr.SaveAccounts(); }
+        catch (Exception ex) { AppLog.Warn(LaunchStage.Auth, "계정 캐시 저장 실패(다음 실행 재로그인 필요할 수 있어요): " + ex.Message); }
+    }
+
+    private static AuthSession ToAuthSession(MSession s)
+        => new(s.Username ?? string.Empty, s.UUID ?? string.Empty, s.AccessToken ?? string.Empty,
+               IsOffline: false, Xuid: s.Xuid ?? string.Empty);
 }
 
 // (3)+(5)+(6) Fabric 설치 → 게임/Java 설치 → 실행. EnsureJavaAsync 가 무거운 설치를 수행하고
@@ -125,6 +190,7 @@ public sealed class CmlLibMinecraftService : IMinecraftService
 
     public async Task<string> EnsureJavaAsync(IProgress<StageUpdate> progress, CancellationToken ct)
     {
+        PreflightChecks.EnsureDiskSpace(AppPaths.GameDir, LaunchStage.Java); // P1-5: 무거운 설치 전 빠른 실패
         progress.Report(StageUpdate.Of(LaunchStage.Java, "Fabric 로더 설치 중…"));
         var fabric = new FabricInstaller(_http);
         _fabricVersionId = await fabric.Install(LauncherConfig.MinecraftVersion, _launcher.MinecraftPath)
@@ -254,33 +320,28 @@ public sealed class CmlLibMinecraftService : IMinecraftService
     //   일반 친구 PC 는 로컬에 서버가 없어 probe 실패 → 공개 IP(무영향).
     private static async Task<string> ResolveServerHostAsync(IProgress<StageUpdate> progress, CancellationToken ct)
     {
-        if (await IsLocalServerUpAsync(LauncherConfig.ServerPort, ct).ConfigureAwait(false))
+        // 호스트(서버 켠 PC) 우회: 로컬에 MC 서버가 떠 있으면 127.0.0.1. MC handshake 로 실제 MC 서버만 인정
+        // (P1-10 — 비-MC 프로세스가 같은 포트 점유 시 false-positive 제거).
+        if (await ServerPing.IsServerUpAsync("127.0.0.1", LauncherConfig.ServerPort, ct, timeoutMs: 700).ConfigureAwait(false))
         {
             progress.Report(StageUpdate.Of(LaunchStage.Launch, "이 PC에서 서버를 감지했어요 — 로컬(127.0.0.1)로 접속합니다."));
             return "127.0.0.1";
         }
-        return LauncherConfig.ServerIp;
-    }
 
-    // 127.0.0.1:port 에 짧은 TCP probe(~500ms). 열려 있으면 로컬 서버로 간주. 실패/타임아웃/취소는 모두 false.
-    private static async Task<bool> IsLocalServerUpAsync(int port, CancellationToken ct)
-    {
+        // 공개 서버 사전 점검(P1-10) — 다운이어도 차단하지 않고 경고만(원클릭 약속 유지).
+        var host = LauncherConfig.ServerIp;
         try
         {
-            using var client = new TcpClient();
-            using var probeCts = CancellationTokenSource.CreateLinkedTokenSource(ct);
-            probeCts.CancelAfter(TimeSpan.FromMilliseconds(500));
-            await client.ConnectAsync(IPAddress.Loopback, port, probeCts.Token).ConfigureAwait(false);
-            return client.Connected;
+            if (!await ServerPing.IsServerUpAsync(host, LauncherConfig.ServerPort, ct, timeoutMs: 2000).ConfigureAwait(false))
+            {
+                AppLog.Warn(LaunchStage.Launch, $"서버 응답 없음: {host}:{LauncherConfig.ServerPort}");
+                progress.Report(StageUpdate.Of(LaunchStage.Launch,
+                    "서버가 응답하지 않아요(꺼져 있거나 점검 중일 수 있어요). 그래도 게임을 실행할게요."));
+            }
         }
-        catch (OperationCanceledException) when (ct.IsCancellationRequested)
-        {
-            throw; // 사용자 취소는 전파(런치 흐름의 상위 취소 가드와 일치)
-        }
-        catch
-        {
-            return false; // 미연결/타임아웃/포트 거부 등 → 공개 IP 사용
-        }
+        catch (OperationCanceledException) when (ct.IsCancellationRequested) { throw; }
+        catch { /* ping 실패는 무시하고 진행 */ }
+        return host;
     }
 }
 
@@ -290,40 +351,63 @@ public sealed class VelopackUpdateService : IUpdateService
     public async Task<bool> CheckAndApplyAsync(IProgress<StageUpdate> progress, CancellationToken ct)
     {
         progress.Report(StageUpdate.Of(LaunchStage.Update, "업데이트 확인 중…"));
+
+        // P1-3: 체크/다운로드/적용 실패를 구분해 각각 로그 + graceful 진행(broken 상태 진입 방지).
+        UpdateManager mgr;
+        UpdateInfo? info;
         try
         {
             var source = new GithubSource(LauncherConfig.UpdateRepoUrl, null, false, null);
-            var mgr = new UpdateManager(source, null, null);
-
+            mgr = new UpdateManager(source, null, null);
             if (!mgr.IsInstalled)
             {
-                // 개발/포터블 빌드(미설치) — 업데이트 스킵.
+                AppLog.Info(LaunchStage.Update, "개발/포터블 빌드(미설치) — 업데이트 생략");
                 progress.Report(StageUpdate.Of(LaunchStage.Update, "개발 빌드 — 업데이트 확인 생략", 1.0));
                 return false;
             }
+            info = await mgr.CheckForUpdatesAsync().ConfigureAwait(false);
+        }
+        catch (OperationCanceledException) when (ct.IsCancellationRequested) { throw; }
+        catch (Exception ex)
+        {
+            // 체크 실패(소스 부재/네트워크) → graceful skip. 플레이는 계속 가능.
+            AppLog.Warn(LaunchStage.Update, "업데이트 확인 실패(계속 진행): " + ex);
+            progress.Report(StageUpdate.Of(LaunchStage.Update, "업데이트 확인 건너뜀 (네트워크를 확인해 주세요)", 1.0));
+            return false;
+        }
 
-            var info = await mgr.CheckForUpdatesAsync().ConfigureAwait(false);
-            if (info is null)
-            {
-                progress.Report(StageUpdate.Of(LaunchStage.Update, "최신 버전입니다", 1.0));
-                return false;
-            }
+        if (info is null)
+        {
+            progress.Report(StageUpdate.Of(LaunchStage.Update, "최신 버전입니다", 1.0));
+            return false;
+        }
 
+        // 다운로드 실패 → 이번엔 건너뛰고 현재 버전으로 진행(다음 실행에 재시도).
+        try
+        {
             await mgr.DownloadUpdatesAsync(info,
                 p => progress.Report(StageUpdate.Of(LaunchStage.Update, $"업데이트 받는 중 {p}%", p / 100.0)),
                 ct).ConfigureAwait(false);
+        }
+        catch (OperationCanceledException) when (ct.IsCancellationRequested) { throw; }
+        catch (Exception ex)
+        {
+            AppLog.Warn(LaunchStage.Update, "업데이트 다운로드 실패(이번엔 건너뜀): " + ex);
+            progress.Report(StageUpdate.Of(LaunchStage.Update, "업데이트 다운로드 실패 — 일단 현재 버전으로 실행할게요.", 1.0));
+            return false;
+        }
 
+        // 적용 + 재시작 실패 → broken 진입 방지: 로그 + 현재 버전으로 계속.
+        try
+        {
+            AppLog.Info(LaunchStage.Update, "업데이트 적용 및 재시작");
             mgr.ApplyUpdatesAndRestart(info.TargetFullRelease, null);
             return true; // 재시작 예정
         }
-        catch (OperationCanceledException) when (ct.IsCancellationRequested)
-        {
-            throw; // 사용자 취소는 graceful-skip 으로 삼키지 않음(Codex) — 실행으로 진행 금지.
-        }
         catch (Exception ex)
         {
-            // 소스 부재/네트워크 오류 → graceful skip(Codex M7). 예외 전파 금지.
-            progress.Report(StageUpdate.Of(LaunchStage.Update, "업데이트 확인 건너뜀 (" + ex.GetType().Name + ")", 1.0));
+            AppLog.Error(LaunchStage.Update, "업데이트 적용 실패(현재 버전으로 계속)", ex);
+            progress.Report(StageUpdate.Of(LaunchStage.Update, "업데이트 적용에 실패했어요 — 현재 버전으로 실행할게요.", 1.0));
             return false;
         }
     }

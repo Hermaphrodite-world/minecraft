@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using Avalonia;
 using Velopack;
 using HermaLauncher.Services;
@@ -7,15 +8,38 @@ namespace HermaLauncher;
 
 internal static class Program
 {
+    private static Mutex? _singleInstance; // 앱 수명 동안 보유(GC/해제 방지).
+
     // 진입점. Velopack 자체 업데이트 훅은 반드시 Avalonia 초기화 이전 "첫 줄"
     // (구현계획 §4 불변식 (1) — 원자적 교체/재시작이 UI 와 race 하지 않도록).
     [STAThread]
     public static void Main(string[] args)
     {
-        VelopackApp.Build().Run();
+        VelopackApp.Build().Run();      // Velopack 보다 단일인스턴스 락을 먼저 잡지 않는다(재시작 훅 비차단).
         AppLog.RotateOnce();            // 오래된 로그 정리(P0)
+
+        // 단일 인스턴스(P1-4) — 중복 실행 시 packwiz/servers.dat/Velopack 동시쓰기 race 방지.
+        // 업데이트 재시작 직후 기존 프로세스 종료 지연(overlap)을 위해 짧게 대기 후 판정.
+        _singleInstance = new Mutex(initiallyOwned: false, "HermaLauncher_SingleInstance");
+        bool acquired;
+        try { acquired = _singleInstance.WaitOne(TimeSpan.FromSeconds(3)); }
+        catch (AbandonedMutexException) { acquired = true; } // 이전 인스턴스가 비정상 종료하며 남긴 것 → 인수
+        if (!acquired)
+        {
+            AppLog.Info(LaunchStage.Idle, "이미 실행 중 — 중복 인스턴스 종료(MVP)");
+            return; // 두 번째 인스턴스는 즉시 종료. (기존 창 활성화 IPC 는 POST-1.0)
+        }
+
         AppLog.Info(LaunchStage.Idle, $"런처 시작 v{AppInfo.Version}");
-        BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
+        try
+        {
+            BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
+        }
+        finally
+        {
+            try { _singleInstance.ReleaseMutex(); } catch { /* 미보유 등 */ }
+            _singleInstance.Dispose();
+        }
     }
 
     // Avalonia 디자이너/테스트가 참조하는 표준 빌더.

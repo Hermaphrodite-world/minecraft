@@ -71,9 +71,10 @@ public static class ServerList
             Nbt.WriteFile(path, root);
             progress?.Report(StageUpdate.Of(LaunchStage.Packwiz, $"서버 목록에 '{displayName}' 등록"));
         }
-        catch
+        catch (Exception ex)
         {
-            // best-effort — servers.dat 갱신 실패가 게임 실행을 막지 않는다.
+            // best-effort — servers.dat 갱신 실패가 게임 실행을 막지 않는다. 단 로그엔 남긴다(P1-8).
+            AppLog.Warn(LaunchStage.Packwiz, "서버 목록(servers.dat) 갱신 실패: " + ex.Message);
         }
     }
 

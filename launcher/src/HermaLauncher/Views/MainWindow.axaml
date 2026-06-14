@@ -167,8 +167,8 @@
                         <TextBlock Text="이제 공식 런처에서 플레이하세요" FontWeight="SemiBold" FontSize="14"
                                    Foreground="{StaticResource AccentCyan}" />
                         <TextBlock Text="1.  공식 마인크래프트 런처를 엽니다" FontSize="13" TextWrapping="Wrap" />
-                        <TextBlock Text="2.  좌하단에서 'Hermaphrodite World' 프로필을 선택" FontSize="13" TextWrapping="Wrap" />
-                        <TextBlock Text="3.  플레이 → 서버에 자동 접속" FontSize="13" TextWrapping="Wrap" />
+                        <TextBlock Text="2.  좌하단에서 'Hermaphrodite World' 프로필을 선택 후 플레이" FontSize="13" TextWrapping="Wrap" />
+                        <TextBlock Text="3.  멀티플레이 목록에서 'Hermaphrodite World' 서버를 선택해 접속" FontSize="13" TextWrapping="Wrap" />
                     </StackPanel>
                 </Border>
                 <TextBlock Text="{Binding ServerLabel}" FontSize="12"

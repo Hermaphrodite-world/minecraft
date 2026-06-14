@@ -21,8 +21,11 @@ public interface IUpdateService
 
 public interface IAuthService
 {
-    // (2) offline(username) 또는 online(device-code) 로그인.
+    // (2) offline(username) 또는 online 로그인(silent 우선 → 브라우저 fallback).
     Task<AuthSession> AuthenticateAsync(LaunchOptions options, IProgress<StageUpdate> progress, CancellationToken ct);
+
+    // (5.5) proc.Start 직전 세션 재검증/갱신(긴 설치 중 토큰 만료 대응). best-effort — 실패 시 current 반환.
+    Task<AuthSession> RevalidateAsync(AuthSession current, IProgress<StageUpdate> progress, CancellationToken ct);
 }
 
 public interface IMinecraftService
