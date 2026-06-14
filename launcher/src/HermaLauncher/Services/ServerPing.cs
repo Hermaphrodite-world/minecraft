@@ -39,14 +39,35 @@ public static class ServerPing
                 WriteVarInt(req, 0x00);
                 await WritePacketAsync(stream, req.ToArray(), cts.Token).ConfigureAwait(false);
             }
-            // (3) Status response: length(varint) → packet id(varint, 0x00) → json. 여기까지면 MC 서버 up.
+            // (3) Status response: length(varint) → packet id(varint, 0x00) → string len(varint) → UTF-8 JSON.
+            //     JSON 이 '{' 로 시작하는지까지 확인해야 임의 0x00 바이트를 에코하는 비-MC 서버를 배제(P1-10, Codex).
             var len = await ReadVarIntAsync(stream, cts.Token).ConfigureAwait(false);
-            if (len <= 0) return false;
+            if (len <= 0 || len > (1 << 20)) return false;
             var pid = await ReadVarIntAsync(stream, cts.Token).ConfigureAwait(false);
-            return pid == 0x00;
+            if (pid != 0x00) return false;
+            var jsonLen = await ReadVarIntAsync(stream, cts.Token).ConfigureAwait(false);
+            if (jsonLen <= 0 || jsonLen > (1 << 20)) return false;
+            // 선두 비공백 바이트가 '{' 면 MC status JSON 으로 간주.
+            var first = await ReadFirstNonWhitespaceAsync(stream, cts.Token).ConfigureAwait(false);
+            return first == (byte)'{';
         }
         catch (OperationCanceledException) when (ct.IsCancellationRequested) { throw; }
         catch { return false; }
+    }
+
+    // JSON 본문 선두의 비공백 바이트 1개를 읽는다(공백/개행 스킵, 최대 16바이트). EOF/초과 시 0.
+    private static async Task<byte> ReadFirstNonWhitespaceAsync(Stream s, CancellationToken ct)
+    {
+        var one = new byte[1];
+        for (var i = 0; i < 16; i++)
+        {
+            var n = await s.ReadAsync(one.AsMemory(0, 1), ct).ConfigureAwait(false);
+            if (n == 0) return 0;
+            var b = one[0];
+            if (b is not ((byte)' ' or (byte)'\t' or (byte)'\r' or (byte)'\n'))
+                return b;
+        }
+        return 0;
     }
 
     private static async Task WritePacketAsync(Stream s, byte[] data, CancellationToken ct)
