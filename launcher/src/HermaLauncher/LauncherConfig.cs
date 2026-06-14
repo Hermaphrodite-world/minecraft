@@ -33,11 +33,12 @@ public static class LauncherConfig
     public static readonly string AzureClientId =
         Environment.GetEnvironmentVariable("HERMA_AZURE_CLIENT_ID") ?? "00000000-0000-0000-0000-000000000000";
 
-    // 기본 RAM (MB). 추후 호스트 RAM 감지로 동적화(구현계획 M3-3).
+    // RAM 미감지/예외 시 폴백 기본값 (MB). 정상 경로는 RamAdvisor 가 호스트 RAM 으로 동적 산정(P3-3).
     public const int DefaultMaxRamMb = 4096;
 
-    // macOS Dock 표시명 (CmlLib gotcha: 미설정 시 창 포커스 불가)
-    public const string MacDockName = "Herma Launcher";
+    // ※ MacDockName 제거(P4): MLaunchOption.DockName 에 공백 포함 값을 주면 macOS 에서 게임이
+    //   즉시 종료돼(ClassNotFoundException) DockName 을 설정하지 않기로 함 → 상수도 미사용 dead 라 제거.
+    //   사유 상세는 CmlLibServices.LaunchAsync 의 DockName 주석 참조.
 
     // 기본 적용 쉐이더(Iris). packwiz 가 shaderpacks/ 에 받은 zip 중 이 prefix 로 시작하는 것을
     // 첫 설치 시 자동 활성화(config/iris.properties). 일치 없으면 첫 zip. 모드구성: Complementary Reimagined.
@@ -50,10 +51,14 @@ public static class LauncherConfig
     // Velopack 자체 업데이트 소스 (GitHub Releases)
     public const string UpdateRepoUrl = "https://github.com/Hermaphrodite-world/minecraft";
 
-    // 푸터 외부 링크 (스텁 — 실제 URL 확정 시 교체). 빈 값이면 해당 버튼은 동작 안 함(no-op).
-    public const string DiscordUrl = "";
-    public const string GuideUrl = "";
-    public const string WebsiteUrl = "";
+    // 푸터 외부 링크. 재빌드 없이 환경변수로 주입 가능(HERMA_DISCORD_URL / HERMA_GUIDE_URL /
+    // HERMA_WEBSITE_URL). 빈 값이면 해당 버튼을 UI 에서 숨긴다(P3-6 — no-op 버튼 노출 방지).
+    public static readonly string DiscordUrl =
+        Environment.GetEnvironmentVariable("HERMA_DISCORD_URL") ?? "";
+    public static readonly string GuideUrl =
+        Environment.GetEnvironmentVariable("HERMA_GUIDE_URL") ?? "";
+    public static readonly string WebsiteUrl =
+        Environment.GetEnvironmentVariable("HERMA_WEBSITE_URL") ?? "";
 
     // 오프라인 모드 — LAN/개발 테스트용(online-mode=false 서버/싱글). 기본 false.
     // static readonly (const 아님) — 분기를 compile-time 상수화하지 않아 unreachable 경고 방지.

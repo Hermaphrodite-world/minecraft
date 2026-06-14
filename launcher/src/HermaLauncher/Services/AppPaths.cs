@@ -24,6 +24,12 @@ public static class AppPaths
     // MS 계정/토큰 캐시 (JELoginHandler.WithAccountManager) — 번들 밖
     public static string AccountsJson => Path.Combine(DataRoot, "accounts.json");
 
+    // 로그인 표시명 캐시(평문 닉네임 — 토큰 아님, P3-1). 시작/설정 화면 "○○님으로 로그인됨".
+    public static string LastAccountFile => Path.Combine(DataRoot, "last-account.txt");
+
+    // 사용자 설정(JSON — RAM override 등, P3-2).
+    public static string SettingsJson => Path.Combine(DataRoot, "settings.json");
+
     // 로그
     public static string LogDir => EnsureDir(Path.Combine(DataRoot, "logs"));
 

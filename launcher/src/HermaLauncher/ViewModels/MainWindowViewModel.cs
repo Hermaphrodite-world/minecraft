@@ -15,6 +15,7 @@ public enum AppView
 {
     Main,         // 두 경로 카드 + 상태/진행 (기본 화면)
     OfficialDone, // 공식 런처 설치 완료 — 전환 안내 전용 화면
+    Settings,     // 설정/복구 — 계정·RAM·로그(P3-2)
 }
 
 public partial class MainWindowViewModel : ViewModelBase
@@ -44,6 +45,7 @@ public partial class MainWindowViewModel : ViewModelBase
     private bool _isIndeterminate;
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(CanShowErrorLog))]
     private bool _hasError;
 
     [ObservableProperty]
@@ -51,14 +53,40 @@ public partial class MainWindowViewModel : ViewModelBase
     [NotifyCanExecuteChangedFor(nameof(InstallToOfficialCommand))]
     [NotifyCanExecuteChangedFor(nameof(CancelCommand))]
     [NotifyCanExecuteChangedFor(nameof(BackToMenuCommand))]
+    [NotifyCanExecuteChangedFor(nameof(OpenSettingsCommand))]
+    [NotifyPropertyChangedFor(nameof(CanShowErrorLog))]
     private bool _isBusy;
 
     // 현재 화면. 변경 시 화면 분기 bool 들을 재평가.
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsMain))]
     [NotifyPropertyChangedFor(nameof(IsOfficialDone))]
+    [NotifyPropertyChangedFor(nameof(IsSettings))]
     [NotifyCanExecuteChangedFor(nameof(BackToMenuCommand))]
     private AppView _view = AppView.Main;
+
+    // ── 계정(P3-1) ──
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsLoggedIn))]
+    [NotifyPropertyChangedFor(nameof(AccountLabel))]
+    [NotifyCanExecuteChangedFor(nameof(LogoutCommand))]
+    private string? _accountName;
+
+    // ── 설정/RAM(P3-2/P3-3) ──
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(RamSummary))]
+    private bool _ramAuto;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(RamSummary))]
+    private int _maxRamMb;
+
+    // RAM 자동 토글 시 권장값으로 되돌린다(수동 입력은 자동 OFF 시 NumericUpDown 으로).
+    partial void OnRamAutoChanged(bool value)
+    {
+        if (value)
+            MaxRamMb = RamAdvisor.RecommendedMaxRamMb();
+    }
 
     // 게임 실행 중(런처 최소화 상태). 사용자가 런처를 복원해도 Play 재클릭(더블런치) 차단.
     [ObservableProperty]
@@ -69,6 +97,10 @@ public partial class MainWindowViewModel : ViewModelBase
     public MainWindowViewModel()
     {
         _statusMessage = ReadyText;
+        _accountName = AccountCache.LastUsername();
+        var settings = LauncherSettings.Load();
+        _ramAuto = settings.IsRamAuto;
+        _maxRamMb = RamAdvisor.EffectiveMaxRamMb();
     }
 
     public string Title => "HERMA LAUNCHER";
@@ -78,9 +110,33 @@ public partial class MainWindowViewModel : ViewModelBase
     // 상태 칩 (헤더 하단). Fabric / Mods / 자동 업데이트 는 XAML 리터럴.
     public string VersionChip => $"Minecraft {LauncherConfig.MinecraftVersion}";
 
+    // 런처 자체 버전 (푸터/설정 표시, P3-1).
+    public string LauncherVersionLabel => $"런처 v{AppInfo.Version}";
+
+    // 계정 표시(P3-1). 로그인 캐시 없으면 안내.
+    public bool IsLoggedIn => !string.IsNullOrWhiteSpace(AccountName);
+    public string AccountLabel => IsLoggedIn ? $"{AccountName} 님으로 로그인됨" : "로그인되어 있지 않아요";
+
+    // RAM 요약(설정 화면, P3-3).
+    public string RamSummary => RamAuto
+        ? $"자동 ({MaxRamMb} MB)"
+        : $"수동 ({MaxRamMb} MB)";
+
+    public int RamMinMb => RamAdvisor.MinRamMb;
+    public int RamMaxMb => RamAdvisor.MaxRamMb;
+
+    // 푸터 외부 링크 표시 여부(P3-6 — 빈 URL 버튼 숨김).
+    public bool HasDiscord => !string.IsNullOrWhiteSpace(LauncherConfig.DiscordUrl);
+    public bool HasGuide => !string.IsNullOrWhiteSpace(LauncherConfig.GuideUrl);
+    public bool HasWebsite => !string.IsNullOrWhiteSpace(LauncherConfig.WebsiteUrl);
+
+    // 오류 진단 바로가기 노출 — 오류 상태이고 작업 중이 아닐 때만(취소 버튼과 셀 공유 겹침 방지, Codex LOW-7).
+    public bool CanShowErrorLog => HasError && !IsBusy;
+
     // 화면 분기 (XAML IsVisible 바인딩).
     public bool IsMain => View == AppView.Main;
     public bool IsOfficialDone => View == AppView.OfficialDone;
+    public bool IsSettings => View == AppView.Settings;
 
     private bool CanNavigate() => !IsBusy;
 
@@ -211,31 +267,97 @@ public partial class MainWindowViewModel : ViewModelBase
     [RelayCommand(CanExecute = nameof(CanCancel))]
     private void Cancel() => _cts?.Cancel();
 
-    // ── 푸터 내비 (스텁 — URL 은 LauncherConfig 에서, 미설정 시 no-op) ──
+    // ── 푸터 내비 (URL 은 LauncherConfig 에서, 미설정 시 no-op) ──
+    // 외부 링크는 OpenUrl(http/https 만 허용). 로그는 OpenPath(로컬 경로) — 둘을 분리해
+    // env 주입 URL 이 임의 실행파일/커스텀 스킴을 여는 것을 차단(Codex HIGH-2).
     [RelayCommand]
-    private void OpenDiscord() => OpenExternal(LauncherConfig.DiscordUrl);
+    private void OpenDiscord() => OpenUrl(LauncherConfig.DiscordUrl);
 
     [RelayCommand]
-    private void OpenGuide() => OpenExternal(LauncherConfig.GuideUrl);
+    private void OpenGuide() => OpenUrl(LauncherConfig.GuideUrl);
 
     [RelayCommand]
-    private void OpenWebsite() => OpenExternal(LauncherConfig.WebsiteUrl);
+    private void OpenWebsite() => OpenUrl(LauncherConfig.WebsiteUrl);
 
     [RelayCommand]
-    private void OpenLogs() => OpenExternal(AppLog.LatestLogOrDir());
+    private void OpenLogs() => OpenPath(AppLog.LatestLogOrDir());
 
+    // 로그 폴더(파일이 아닌 디렉토리)를 연다 — 설정 화면 '로그 폴더 열기'.
     [RelayCommand]
+    private void OpenLogFolder() => OpenPath(AppPaths.LogDir);
+
+    // ── 설정 화면(P3-2) ── CanNavigate(=!IsBusy)는 BackToMenu 와 공유.
+    [RelayCommand(CanExecute = nameof(CanNavigate))]
     private void OpenSettings()
     {
-        // TODO: 설정 다이얼로그(스텁). 현재는 안내만.
-        StatusMessage = "설정은 준비 중이에요.";
+        // 화면 진입 시 저장된 값으로 동기화(다른 곳에서 바뀌었을 수 있음).
+        var settings = LauncherSettings.Load();
+        RamAuto = settings.IsRamAuto;
+        MaxRamMb = RamAdvisor.EffectiveMaxRamMb();
+        AccountName = AccountCache.LastUsername();
+        View = AppView.Settings;
     }
 
-    // URL/폴더를 기본 앱으로 연다. 빈 값(스텁 미설정)이면 조용히 무시.
-    private static void OpenExternal(string target)
+    [RelayCommand]
+    private void SaveSettings()
     {
-        if (string.IsNullOrWhiteSpace(target))
+        var clamped = Math.Clamp(MaxRamMb, RamAdvisor.MinRamMb, RamAdvisor.MaxRamMb);
+        // 슬라이더 tick(512MB)에 맞춰 라운딩 후 재clamp — double↔int 코어션으로 어긋난 값 영속화 방지(Codex LOW-5).
+        clamped = (int)(Math.Round(clamped / 512.0) * 512);
+        clamped = Math.Clamp(clamped, RamAdvisor.MinRamMb, RamAdvisor.MaxRamMb);
+        if (clamped != MaxRamMb)
+            MaxRamMb = clamped;
+        new LauncherSettings { MaxRamMbOverride = RamAuto ? null : clamped }.Save();
+        // 참고(Codex MEDIUM-3, 알려진 제약): 공식 런처 프로필의 -Xmx 는 '공식 런처에 설치' 시점에
+        // EffectiveMaxRamMb 로 기록된다. RAM 변경 후 공식 런처 경로에 반영하려면 '공식 런처에 설치'를
+        // 다시 실행하면 된다. '바로 플레이'는 매 실행 시 EffectiveMaxRamMb 를 읽으므로 즉시 반영.
+        StatusMessage = "설정을 저장했어요.";
+        View = AppView.Main;
+    }
+
+    private bool CanLogout() => IsLoggedIn;
+
+    // 계정 재설정(P3-1) — 토큰 캐시 삭제. 다음 Play 시 브라우저 재로그인.
+    // 삭제 실패(파일 사용 중 등) 시 토큰이 남으므로 UI 를 '로그인됨' 으로 유지하고 재시도 안내(Codex HIGH-1).
+    [RelayCommand(CanExecute = nameof(CanLogout))]
+    private void Logout()
+    {
+        if (AccountCache.Clear())
+        {
+            AccountName = null;
+            StatusMessage = "로그아웃했어요. 다음 플레이 시 다시 로그인해요.";
+        }
+        else
+        {
+            StatusMessage = "로그아웃에 실패했어요(로그인 정보 파일이 사용 중일 수 있어요). 잠시 후 다시 시도해 주세요.";
+        }
+    }
+
+    // 외부 링크 — http/https 절대 URL 만 허용. 그 외(빈 값/잘못된 스킴/file: 등)는 무시.
+    // env 로 주입되는 푸터 URL 이 임의 실행파일/커스텀 스킴을 여는 것을 차단(Codex HIGH-2).
+    private static void OpenUrl(string url)
+    {
+        if (string.IsNullOrWhiteSpace(url))
             return;
+        if (!Uri.TryCreate(url, UriKind.Absolute, out var uri) ||
+            (uri.Scheme != Uri.UriSchemeHttp && uri.Scheme != Uri.UriSchemeHttps))
+        {
+            AppLog.Warn(LaunchStage.Idle, "허용되지 않은 링크 무시(http/https 만 허용): " + url);
+            return;
+        }
+        Open(uri.AbsoluteUri);
+    }
+
+    // 로컬 경로(로그 파일/폴더)를 기본 앱/탐색기로 연다. 내부에서 만든 신뢰 경로에만 사용.
+    private static void OpenPath(string path)
+    {
+        if (string.IsNullOrWhiteSpace(path))
+            return;
+        Open(path);
+    }
+
+    private static void Open(string target)
+    {
         try
         {
             // 반환 Process 핸들 즉시 해제(누수 방지 — Codex). UseShellExecute=true 면 null 일 수 있어 using 안전.
