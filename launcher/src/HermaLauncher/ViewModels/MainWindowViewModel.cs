@@ -217,7 +217,7 @@ public partial class MainWindowViewModel : ViewModelBase
     private void OpenWebsite() => OpenExternal(LauncherConfig.WebsiteUrl);
 
     [RelayCommand]
-    private void OpenLogs() => OpenExternal(AppPaths.LogDir);
+    private void OpenLogs() => OpenExternal(AppLog.LatestLogOrDir());
 
     [RelayCommand]
     private void OpenSettings()
@@ -244,6 +244,10 @@ public partial class MainWindowViewModel : ViewModelBase
 
     private void OnStageUpdate(StageUpdate u)
     {
+        // 모든 단계/오류를 로그 파일에 기록(P0) — 진단 SoT.
+        if (u.IsError) AppLog.Error(u.Stage, u.Message);
+        else AppLog.Info(u.Stage, u.Message);
+
         // Progress<T> 콜백은 캡처된 UI 컨텍스트에서 호출되나, 안전하게 디스패치.
         Dispatcher.UIThread.Post(() =>
         {
