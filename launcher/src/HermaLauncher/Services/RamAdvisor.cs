@@ -9,8 +9,12 @@ public static class RamAdvisor
     // 모드팩(77 mods) 안정 구동 하한 / 단일 인스턴스에 과할당 방지 상한.
     public const int MinRamMb = 2048;
     public const int MaxRamMb = 8192;
+    // 저사양 호스트(물리 RAM < 4GB)용 절대 하한. 일반 하한(2048)을 강제하면 물리의 2/3 이상을
+    // 잡아 OS/스왑 압박 → 오히려 불안정. 이 경우 하한을 낮춰 절반만 권장(Codex MEDIUM-4).
+    public const int LowHostMinRamMb = 1024;
+    private const long LowHostThresholdMb = 4096;
 
-    // 물리 RAM 의 절반을 [Min, Max] 로 clamp. GC.GetGCMemoryInfo().TotalAvailableMemoryBytes 는
+    // 물리 RAM 의 절반을 clamp. GC.GetGCMemoryInfo().TotalAvailableMemoryBytes 는
     // 데스크톱(컨테이너 제한 없음)에서 ~물리 RAM 과 같다 — 추가 P/Invoke 없이 크로스플랫폼.
     public static int RecommendedMaxRamMb()
     {
@@ -20,7 +24,8 @@ public static class RamAdvisor
             if (totalBytes <= 0)
                 return LauncherConfig.DefaultMaxRamMb;
             var totalMb = totalBytes / (1024L * 1024L);
-            return (int)Math.Clamp(totalMb / 2, MinRamMb, MaxRamMb);
+            var floor = totalMb < LowHostThresholdMb ? LowHostMinRamMb : MinRamMb;
+            return (int)Math.Clamp(totalMb / 2, floor, MaxRamMb);
         }
         catch
         {
