@@ -30,6 +30,11 @@
     <AvaloniaResource Include="Assets/**" />
   </ItemGroup>
 
+  <!-- 단위 테스트(P4)에서 internal 순수 로직(ParsePackArray 등) 접근 허용 -->
+  <ItemGroup>
+    <InternalsVisibleTo Include="HermaLauncher.Tests" />
+  </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="Avalonia" Version="11.3.0" />
     <PackageReference Include="Avalonia.Desktop" Version="11.3.0" />

@@ -62,6 +62,10 @@ jobs:
             Write-Error "release tag '$ver' 는 semver(x.y.z) 여야 해요 — packVersion/AssemblyVersion 정합"; exit 1
           }
 
+      # 단위 테스트 게이트(P4) — pack 파싱·한국어팩 순서·RAM·config drift. 실패 시 릴리스 차단.
+      - name: Test
+        run: dotnet test launcher/tests/HermaLauncher.Tests/HermaLauncher.Tests.csproj -c Release --nologo
+
       - name: Build
         run: >
           dotnet build launcher/src/HermaLauncher/HermaLauncher.csproj -c Release

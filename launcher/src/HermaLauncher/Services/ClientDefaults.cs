@@ -228,7 +228,7 @@ public static class ClientDefaults
 
     // options.txt 의 "key:[\"a\",\"b\"]" 배열을 따옴표 포함 항목 리스트로 파싱(없으면 빈 리스트).
     // 따옴표 안의 쉼표는 분리하지 않는다 — 파일명에 ',' 가 있어도 엔트리가 깨지지 않게 quote-aware.
-    private static List<string> ParsePackArray(List<string> lines, string keyPrefix)
+    internal static List<string> ParsePackArray(List<string> lines, string keyPrefix) // internal: 단위 테스트 접근
     {
         var result = new List<string>();
         var i = lines.FindIndex(l => l.StartsWith(keyPrefix, StringComparison.Ordinal));
@@ -264,13 +264,13 @@ public static class ClientDefaults
         else lines[i] = fullLine;
     }
 
-    private static bool IsExtensionPack(string fileName)
+    internal static bool IsExtensionPack(string fileName) // internal: 단위 테스트 접근
         => fileName.Contains("Extension", StringComparison.OrdinalIgnoreCase)
         || fileName.Contains("Addon", StringComparison.OrdinalIgnoreCase);
 
     // 번역 보충팩을 active 의 첫 file 엔트리(="vanilla" 바로 다음)로 이동 → 게임 내 '선택됨' 맨 아래 = lowest priority.
     // idempotent: 이미 제자리거나 비활성이면 아무것도 안 한다(불필요한 쓰기/사용자 on/off 침해 방지).
-    private static void EnsureTranslationPackAtBottom(List<string> active, ref bool changed)
+    internal static void EnsureTranslationPackAtBottom(List<string> active, ref bool changed) // internal: 단위 테스트 접근
     {
         var ko = active.FirstOrDefault(e =>
             e.StartsWith("\"file/", StringComparison.Ordinal) &&
