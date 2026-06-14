@@ -7,6 +7,7 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using CmlLib.Core;
@@ -176,11 +177,20 @@ public sealed class CmlLibMinecraftService : IMinecraftService
 
         // 이미 EnsureJavaAsync 에서 설치 완료 → build only.
         var proc = await _launcher.BuildProcessAsync(_fabricVersionId, option, ct).ConfigureAwait(false);
+        // 게임 stdout/stderr 를 game-*.log 로 캡처(P0/P1-7) — MC 자체 로그 init 전 조기 크래시 진단용(macOS 실사례).
+        // redirect 설정 실패(UseShellExecute 충돌 등) 시 캡처 생략 — 런치 흐름 비차단.
+        var captureAttached = TryEnableGameLogCapture(proc);
         try
         {
             ct.ThrowIfCancellationRequested(); // build 후 start 직전 마지막 취소 가드(취소했는데 게임이 뜨는 race 방지)
             if (!proc.Start())
                 throw new LaunchStageException(LaunchStage.Launch, "게임 프로세스를 시작하지 못했어요.");
+            if (captureAttached)
+            {
+                // redirect 를 켰으면 반드시 읽어야 파이프 버퍼가 안 막힘.
+                try { proc.BeginOutputReadLine(); proc.BeginErrorReadLine(); } catch { /* 캡처 best-effort */ }
+            }
+            AppLog.Info(LaunchStage.Running, $"게임 실행 시작 (pid={proc.Id}, 캡처={captureAttached})");
             return proc; // 성공 — 핸들은 호출자(런처 모니터)가 소유/Dispose
         }
         catch (Exception ex) when (ex is Win32Exception or InvalidOperationException or ObjectDisposedException)
@@ -192,6 +202,37 @@ public sealed class CmlLibMinecraftService : IMinecraftService
         {
             proc.Dispose(); // 취소(start 전) / start 실패 등 — 핸들 정리 후 전파
             throw;
+        }
+    }
+
+    // 게임 프로세스 stdout/stderr 를 game-*.log 로 redirect. 성공 시 true(호출자가 BeginReadLine).
+    // 실패(예: UseShellExecute 충돌)면 false → 캡처 없이 런치 계속(비차단).
+    private static bool TryEnableGameLogCapture(Process proc)
+    {
+        try
+        {
+            proc.StartInfo.UseShellExecute = false;
+            proc.StartInfo.RedirectStandardOutput = true;
+            proc.StartInfo.RedirectStandardError = true;
+            proc.StartInfo.StandardOutputEncoding = Encoding.UTF8;
+            proc.StartInfo.StandardErrorEncoding = Encoding.UTF8;
+
+            var writer = new StreamWriter(AppLog.NewGameLogPath(), append: false, new UTF8Encoding(false)) { AutoFlush = true };
+            var sync = new object();
+            void Append(string? line)
+            {
+                if (line is null) return;
+                lock (sync) { try { writer.WriteLine(line); } catch { /* 게임 종료 직후 등 */ } }
+            }
+            proc.OutputDataReceived += (_, e) => Append(e.Data);
+            proc.ErrorDataReceived += (_, e) => Append(e.Data);
+            proc.EnableRaisingEvents = true;
+            proc.Exited += (_, _) => { lock (sync) { try { writer.Flush(); writer.Dispose(); } catch { } } };
+            return true;
+        }
+        catch
+        {
+            return false; // redirect 불가 → 캡처 생략
         }
     }
 

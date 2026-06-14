@@ -44,6 +44,9 @@ public sealed class PackwizService
             WorkingDirectory = folder,
             RedirectStandardOutput = true,
             RedirectStandardError = true,
+            // 한국어 Windows(cp949)에서 packwiz 한글 출력 mojibake 방지(P1-6). 자식은 UTF-8 출력.
+            StandardOutputEncoding = Encoding.UTF8,
+            StandardErrorEncoding = Encoding.UTF8,
             UseShellExecute = false,
             CreateNoWindow = true,
         };
@@ -64,12 +67,18 @@ public sealed class PackwizService
         proc.OutputDataReceived += (_, e) =>
         {
             if (!string.IsNullOrWhiteSpace(e.Data))
+            {
                 progress.Report(StageUpdate.Of(LaunchStage.Packwiz, e.Data!.Trim()));
+                AppLog.Raw("packwiz", e.Data!);
+            }
         };
         proc.ErrorDataReceived += (_, e) =>
         {
             if (!string.IsNullOrWhiteSpace(e.Data))
+            {
                 stderr.AppendLine(e.Data);
+                AppLog.Raw("packwiz!", e.Data!);
+            }
         };
 
         if (!proc.Start())

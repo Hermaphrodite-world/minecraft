@@ -1,6 +1,7 @@
 using System;
 using Avalonia;
 using Velopack;
+using HermaLauncher.Services;
 
 namespace HermaLauncher;
 
@@ -12,6 +13,8 @@ internal static class Program
     public static void Main(string[] args)
     {
         VelopackApp.Build().Run();
+        AppLog.RotateOnce();            // 오래된 로그 정리(P0)
+        AppLog.Info(LaunchStage.Idle, $"런처 시작 v{AppInfo.Version}");
         BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
     }
 
