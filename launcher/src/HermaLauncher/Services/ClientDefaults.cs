@@ -141,6 +141,11 @@ public static class ClientDefaults
                 newlyApplied.Add(markerKey);
             }
 
+            // (1b) 한국어 보충팩은 항상 '선택됨' 목록 맨 아래(= options.txt 첫 file 엔트리 = lowest priority)로 고정.
+            //      보충팩은 다른 팩/모드 번역을 덮지 않는 fallback 이어야 하므로 최저 우선순위가 맞다. 기존 유저의
+            //      중간 위치도 매 실행 교정 — 단 비활성(사용자가 끔)이면 active 에 없어 no-op(on/off 는 존중).
+            EnsureTranslationPackAtBottom(active, ref changed);
+
             // (2) whitelist-ensure — 현재 활성(resourcePacks)인 file/ 팩은 incompat 에도 보장(매번).
             //     → MC 호환성 미달 드롭 방지. 비활성(사용자가 끈) 팩은 active 에 없으니 건드리지 않음.
             foreach (var entry in active)
@@ -243,6 +248,27 @@ public static class ClientDefaults
     private static bool IsExtensionPack(string fileName)
         => fileName.Contains("Extension", StringComparison.OrdinalIgnoreCase)
         || fileName.Contains("Addon", StringComparison.OrdinalIgnoreCase);
+
+    // 번역 보충팩을 active 의 첫 file 엔트리(="vanilla" 바로 다음)로 이동 → 게임 내 '선택됨' 맨 아래 = lowest priority.
+    // idempotent: 이미 제자리거나 비활성이면 아무것도 안 한다(불필요한 쓰기/사용자 on/off 침해 방지).
+    private static void EnsureTranslationPackAtBottom(List<string> active, ref bool changed)
+    {
+        var ko = active.FirstOrDefault(e =>
+            e.StartsWith("\"file/", StringComparison.Ordinal) &&
+            e.Contains(LauncherConfig.TranslationPackToken, StringComparison.OrdinalIgnoreCase));
+        if (ko is null)
+            return; // 번역팩이 비활성(사용자가 끔)이거나 폴더에 없음 → 존중, no-op
+
+        var vanillaIdx = active.FindIndex(e => e.Equals("\"vanilla\"", StringComparison.Ordinal));
+        var target = vanillaIdx >= 0 ? vanillaIdx + 1 : 0; // "vanilla" 바로 다음(없으면 맨 앞)
+        if (active.IndexOf(ko) == target)
+            return; // 이미 제자리
+
+        active.Remove(ko);
+        var v = active.FindIndex(e => e.Equals("\"vanilla\"", StringComparison.Ordinal)); // 제거 후 재계산
+        active.Insert(v >= 0 ? v + 1 : 0, ko);
+        changed = true;
+    }
 
     // 텍스트 파일 원자적 쓰기(.tmp → replace) — crash/전원손실 시 torn file 방지(Codex).
     private static void AtomicWrite(string path, string content)
