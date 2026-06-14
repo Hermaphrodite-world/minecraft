@@ -163,7 +163,11 @@ public sealed class CmlLibAuthService : IAuthService
 
     private static void SaveAccountsBestEffort(JsonXboxGameAccountManager mgr)
     {
-        try { mgr.SaveAccounts(); }
+        try
+        {
+            mgr.SaveAccounts();
+            SecureFile.Harden(AppPaths.AccountsJson); // P2-3: 토큰 캐시 권한 강화
+        }
         catch (Exception ex) { AppLog.Warn(LaunchStage.Auth, "계정 캐시 저장 실패(다음 실행 재로그인 필요할 수 있어요): " + ex.Message); }
     }
 
@@ -193,8 +197,10 @@ public sealed class CmlLibMinecraftService : IMinecraftService
         PreflightChecks.EnsureDiskSpace(AppPaths.GameDir, LaunchStage.Java); // P1-5: 무거운 설치 전 빠른 실패
         progress.Report(StageUpdate.Of(LaunchStage.Java, "Fabric 로더 설치 중…"));
         var fabric = new FabricInstaller(_http);
-        _fabricVersionId = await fabric.Install(LauncherConfig.MinecraftVersion, _launcher.MinecraftPath)
-                                       .ConfigureAwait(false);
+        // P2-2: loader 버전 핀(설정돼 있으면 3-arg, 비면 최신 자동).
+        _fabricVersionId = string.IsNullOrWhiteSpace(LauncherConfig.FabricLoaderVersion)
+            ? await fabric.Install(LauncherConfig.MinecraftVersion, _launcher.MinecraftPath).ConfigureAwait(false)
+            : await fabric.Install(LauncherConfig.MinecraftVersion, LauncherConfig.FabricLoaderVersion, _launcher.MinecraftPath).ConfigureAwait(false);
 
         progress.Report(StageUpdate.Of(LaunchStage.Java, "게임 파일·Java 설치 중…"));
         var fileProgress = new Progress<InstallerProgressChangedEventArgs>(e =>

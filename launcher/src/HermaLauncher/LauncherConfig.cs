@@ -9,7 +9,9 @@ public static class LauncherConfig
 {
     // 마인크래프트 / 로더 (모드구성.md 확정)
     public const string MinecraftVersion = "26.1.2";
-    public const string FabricLoaderVersion = "";   // "" = Fabric Meta 최신 stable 자동 해석
+    // 테스트 완료한 Fabric loader 버전 핀(P2-2 — 무핀 rolling 방지, pack.toml fabric 과 정합).
+    // "" 로 두면 Fabric Meta 최신 stable 자동 해석(비권장 — 배포 후 의도치 않은 변경 가능).
+    public const string FabricLoaderVersion = "0.19.3";
 
     // packwiz 팩 URL — 정확히 pack.toml 로 끝나는 전체 URL (구현계획 Codex M3).
     // GitHub Pages(modpack-pages.yml 이 modpack/ 를 배포) 기준. Pages 활성화 필요(공개 레포 또는 유료).

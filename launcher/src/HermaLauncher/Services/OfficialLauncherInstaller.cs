@@ -80,8 +80,10 @@ public sealed class OfficialLauncherInstaller
         // (2) Fabric 설치 → 공식 versions/
         progress.Report(StageUpdate.Of(LaunchStage.Fabric, "Fabric 로더 설치 중…"));
         var fabric = new FabricInstaller(_http);
-        var versionId = await fabric.Install(LauncherConfig.MinecraftVersion, launcher.MinecraftPath)
-                                    .ConfigureAwait(false);
+        // P2-2: loader 버전 핀(커스텀 경로와 동일 — 양 경로 정합).
+        var versionId = string.IsNullOrWhiteSpace(LauncherConfig.FabricLoaderVersion)
+            ? await fabric.Install(LauncherConfig.MinecraftVersion, launcher.MinecraftPath).ConfigureAwait(false)
+            : await fabric.Install(LauncherConfig.MinecraftVersion, LauncherConfig.FabricLoaderVersion, launcher.MinecraftPath).ConfigureAwait(false);
         if (string.IsNullOrWhiteSpace(versionId))
             throw new LaunchStageException(LaunchStage.Fabric, "Fabric 로더 버전을 확인하지 못했어요.");
 

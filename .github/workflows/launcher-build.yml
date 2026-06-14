@@ -49,8 +49,22 @@ jobs:
           (Get-Content $f) -replace '00000000-0000-0000-0000-000000000000', $cid | Set-Content $f
           if (Select-String -Path $f -Pattern '00000000-0000-0000-0000-000000000000' -Quiet) { Write-Error 'bake failed'; exit 1 }
 
+      # 버전 메타데이터를 release tag 로 주입(P2-4 — csproj 정적 0.1.0 과 런타임 버전 불일치 해소).
+      - name: Set version (release)
+        if: github.event_name == 'release'
+        shell: pwsh
+        run: |
+          $ver = '${{ github.event.release.tag_name }}'.TrimStart('v')
+          "HERMA_VER=$ver" >> $env:GITHUB_ENV
+          if ($ver -match '^(\d+\.\d+\.\d+)') { "HERMA_ASMVER=$($Matches[1]).0" >> $env:GITHUB_ENV }
+
       - name: Build
-        run: dotnet build launcher/src/HermaLauncher/HermaLauncher.csproj -c Release
+        run: >
+          dotnet build launcher/src/HermaLauncher/HermaLauncher.csproj -c Release
+          -p:Version=${{ env.HERMA_VER || '0.1.0' }}
+          -p:InformationalVersion=${{ env.HERMA_VER || '0.1.0-dev' }}
+          -p:AssemblyVersion=${{ env.HERMA_ASMVER || '0.1.0.0' }}
+          -p:FileVersion=${{ env.HERMA_ASMVER || '0.1.0.0' }}
 
       # Velopack vpk 는 단일파일이 아닌 "폴더" 산출물을 패키징한다(자체 Setup.exe/델타 생성).
       - name: Publish (self-contained 폴더 — Velopack 용)
@@ -58,6 +72,10 @@ jobs:
           dotnet publish launcher/src/HermaLauncher/HermaLauncher.csproj
           -c Release -r win-x64 --self-contained true
           -p:PublishSingleFile=false
+          -p:Version=${{ env.HERMA_VER || '0.1.0' }}
+          -p:InformationalVersion=${{ env.HERMA_VER || '0.1.0-dev' }}
+          -p:AssemblyVersion=${{ env.HERMA_ASMVER || '0.1.0.0' }}
+          -p:FileVersion=${{ env.HERMA_ASMVER || '0.1.0.0' }}
           -o publish/win-x64
 
       # 비-릴리즈(push/dispatch): 폴더 산출물을 테스트 아티팩트로.
@@ -127,11 +145,27 @@ jobs:
           perl -pi -e "s/00000000-0000-0000-0000-000000000000/$CID/" "$f"
           grep -q '00000000-0000-0000-0000-000000000000' "$f" && { echo 'bake failed'; exit 1; } || echo 'baked'
 
+      # 버전 메타데이터 release tag 주입(P2-4 — Windows job 과 동일).
+      - name: Set version (release)
+        if: github.event_name == 'release'
+        shell: bash
+        run: |
+          ver="${TAG#v}"
+          echo "HERMA_VER=$ver" >> "$GITHUB_ENV"
+          asm=$(echo "$ver" | grep -oE '^[0-9]+\.[0-9]+\.[0-9]+' || echo '0.1.0')
+          echo "HERMA_ASMVER=$asm.0" >> "$GITHUB_ENV"
+        env:
+          TAG: ${{ github.event.release.tag_name }}
+
       - name: Publish (osx-arm64, self-contained, .app 용 dylib 분리)
         run: >
           dotnet publish launcher/src/HermaLauncher/HermaLauncher.csproj
           -c Release -r osx-arm64 --self-contained true
           -p:PublishSingleFile=false
+          -p:Version=${{ env.HERMA_VER || '0.1.0' }}
+          -p:InformationalVersion=${{ env.HERMA_VER || '0.1.0-dev' }}
+          -p:AssemblyVersion=${{ env.HERMA_ASMVER || '0.1.0.0' }}
+          -p:FileVersion=${{ env.HERMA_ASMVER || '0.1.0.0' }}
           -o publish/osx-arm64
 
       - name: Bundle .app + ad-hoc sign
