@@ -221,8 +221,8 @@ public partial class MainWindowViewModel : ViewModelBase
                 RestoreRequested?.Invoke();
                 HasError = true;
                 StatusMessage = ranSeconds < InstantCrashWindowSeconds
-                    ? $"게임이 실행 직후 종료됐어요(크래시 의심, 코드 {exitCode}). 아래 '로그' 버튼에서 원인을 확인하거나 다시 시도해 주세요."
-                    : $"게임이 비정상 종료됐어요(코드 {exitCode}). 아래 '로그' 버튼에서 게임 로그·크래시 리포트를 확인할 수 있어요.";
+                    ? $"게임이 실행 직후 종료됐어요(크래시 의심, 코드 {exitCode}). 아래 '로그 열기'에서 game-*.log 로 원인을 확인하거나 다시 시도해 주세요."
+                    : $"게임이 비정상 종료됐어요(코드 {exitCode}). 아래 '로그 열기'에서 game-*.log·크래시 리포트를 확인할 수 있어요.";
             }
             else
             {
@@ -267,6 +267,10 @@ public partial class MainWindowViewModel : ViewModelBase
     [RelayCommand(CanExecute = nameof(CanCancel))]
     private void Cancel() => _cts?.Cancel();
 
+    // 창 닫기 시점 등 외부에서 진행 중 작업을 취소한다. _cts 취소 → PackwizService 의 ct.Register 가
+    // 자식 java 프로세스를 동기적으로 kill 해 고아 프로세스를 막는다(Codex SHIP-BLOCKER S1). 멱등.
+    public void CancelOngoing() => _cts?.Cancel();
+
     // ── 푸터 내비 (URL 은 LauncherConfig 에서, 미설정 시 no-op) ──
     // 외부 링크는 OpenUrl(http/https 만 허용). 로그는 OpenPath(로컬 경로) — 둘을 분리해
     // env 주입 URL 이 임의 실행파일/커스텀 스킴을 여는 것을 차단(Codex HIGH-2).
@@ -307,7 +311,12 @@ public partial class MainWindowViewModel : ViewModelBase
         clamped = Math.Clamp(clamped, RamAdvisor.MinRamMb, RamAdvisor.MaxRamMb);
         if (clamped != MaxRamMb)
             MaxRamMb = clamped;
-        new LauncherSettings { MaxRamMbOverride = RamAuto ? null : clamped }.Save();
+        // 저장 실패(파일 권한/사용 중) 시 사용자에게 알리고 설정 화면 유지(Codex UX-R1).
+        if (!new LauncherSettings { MaxRamMbOverride = RamAuto ? null : clamped }.Save())
+        {
+            StatusMessage = "설정 저장에 실패했어요(파일 권한/사용 중일 수 있어요). 잠시 후 다시 시도해 주세요.";
+            return;
+        }
         // 참고(Codex MEDIUM-3, 알려진 제약): 공식 런처 프로필의 -Xmx 는 '공식 런처에 설치' 시점에
         // EffectiveMaxRamMb 로 기록된다. RAM 변경 후 공식 런처 경로에 반영하려면 '공식 런처에 설치'를
         // 다시 실행하면 된다. '바로 플레이'는 매 실행 시 EffectiveMaxRamMb 를 읽으므로 즉시 반영.

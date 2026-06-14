@@ -13,13 +13,13 @@ public sealed class LaunchOrchestrator
     private readonly IUpdateService _update;
     private readonly IAuthService _auth;
     private readonly IMinecraftService _minecraft;
-    private readonly PackwizService _packwiz;
+    private readonly IPackwizService _packwiz;
 
     public LaunchOrchestrator(
         IUpdateService update,
         IAuthService auth,
         IMinecraftService minecraft,
-        PackwizService packwiz)
+        IPackwizService packwiz)
     {
         _update = update;
         _auth = auth;

@@ -12,7 +12,7 @@ namespace HermaLauncher.Services;
 // (4) packwiz 동기화. ★ (3)에서 CmlLib가 확보한 java 실행파일 경로를 그대로 재사용한다
 //    (구현계획 §4 불변식 — Java-before-packwiz 닭/달걀 해소, MultiMC $INST_JAVA 패턴).
 //    -g(GUI off) -s client 고정, --pack-folder = 외부 데이터 디렉토리.
-public sealed class PackwizService
+public sealed class PackwizService : IPackwizService
 {
     // packFolder = mods 를 받을 게임 디렉토리(--pack-folder). null = AppPaths.GameDir(커스텀 런처 기본).
     //   공식 런처 installer 는 공식 .minecraft 안의 전용 폴더(예: <.minecraft>/herma)를 넘긴다.

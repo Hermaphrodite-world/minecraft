@@ -29,6 +29,14 @@ public partial class MainWindow : Window
         MinBtn.Click += (_, _) => WindowState = WindowState.Minimized;
         CloseBtn.Click += (_, _) => Close();
 
+        // 진행 중(설치/동기화) 닫기 시 작업을 먼저 취소 → PackwizService 자식 java 가 고아로 남는 것 방지
+        // (Codex SHIP-BLOCKER S1). ct.Register kill 은 Cancel() 에서 동기 실행되므로 닫기 진행 전 정리됨.
+        Closing += (_, _) =>
+        {
+            if (DataContext is MainWindowViewModel { IsBusy: true } vm)
+                vm.CancelOngoing();
+        };
+
         DataContextChanged += OnDataContextChanged;
     }
 

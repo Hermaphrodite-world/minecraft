@@ -15,13 +15,16 @@ public sealed class LauncherSettings
     [JsonIgnore]
     public bool IsRamAuto => MaxRamMbOverride is null or <= 0;
 
-    public static LauncherSettings Load()
+    public static LauncherSettings Load() => Load(AppPaths.SettingsJson);
+
+    // path 주입 오버로드(단위 테스트용 — InternalsVisibleTo).
+    internal static LauncherSettings Load(string path)
     {
         try
         {
-            if (File.Exists(AppPaths.SettingsJson))
+            if (File.Exists(path))
             {
-                var json = File.ReadAllText(AppPaths.SettingsJson);
+                var json = File.ReadAllText(path);
                 var s = JsonSerializer.Deserialize<LauncherSettings>(json);
                 if (s is not null)
                     return s;
@@ -34,18 +37,23 @@ public sealed class LauncherSettings
         return new LauncherSettings();
     }
 
-    public void Save()
+    // 성공 여부 반환(Codex UX-R1) — 호출자가 실패를 사용자에게 알릴 수 있게. 실패해도 throw 안 함.
+    public bool Save() => Save(AppPaths.SettingsJson);
+
+    internal bool Save(string path)
     {
         try
         {
-            var tmp = AppPaths.SettingsJson + ".tmp";
+            var tmp = path + ".tmp";
             var json = JsonSerializer.Serialize(this, new JsonSerializerOptions { WriteIndented = true });
             File.WriteAllText(tmp, json);
-            File.Move(tmp, AppPaths.SettingsJson, overwrite: true); // 원자적 교체
+            File.Move(tmp, path, overwrite: true); // 원자적 교체
+            return true;
         }
         catch (Exception ex)
         {
-            AppLog.Warn(LaunchStage.Idle, "설정 저장 실패(무시): " + ex.Message);
+            AppLog.Warn(LaunchStage.Idle, "설정 저장 실패: " + ex.Message);
+            return false;
         }
     }
 }

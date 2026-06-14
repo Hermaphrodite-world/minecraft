@@ -37,3 +37,10 @@ public interface IMinecraftService
     // 시작된 게임 프로세스를 반환한다(런처가 종료 모니터링 후 자신을 닫기 위함). 호출자가 Dispose 소유.
     Task<Process> LaunchAsync(AuthSession session, IProgress<StageUpdate> progress, CancellationToken ct);
 }
+
+// (4) packwiz 모드팩 동기화. LaunchOrchestrator 단위 테스트를 위해 인터페이스로 분리(Codex Test-R1).
+public interface IPackwizService
+{
+    Task RunAsync(string javaExecutable, string packTomlUrl, IProgress<StageUpdate> progress,
+        CancellationToken ct, string? packFolder = null);
+}
