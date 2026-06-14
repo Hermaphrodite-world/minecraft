@@ -172,8 +172,12 @@ public sealed class CmlLibAuthService : IAuthService
     }
 
     private static AuthSession ToAuthSession(MSession s)
-        => new(s.Username ?? string.Empty, s.UUID ?? string.Empty, s.AccessToken ?? string.Empty,
-               IsOffline: false, Xuid: s.Xuid ?? string.Empty);
+    {
+        var session = new AuthSession(s.Username ?? string.Empty, s.UUID ?? string.Empty,
+            s.AccessToken ?? string.Empty, IsOffline: false, Xuid: s.Xuid ?? string.Empty);
+        AccountCache.Remember(session.Username); // P3-1: 로그인 표시명 캐시(시작/설정 화면용)
+        return session;
+    }
 }
 
 // (3)+(5)+(6) Fabric 설치 → 게임/Java 설치 → 실행. EnsureJavaAsync 가 무거운 설치를 수행하고
@@ -234,7 +238,7 @@ public sealed class CmlLibMinecraftService : IMinecraftService
         var option = new MLaunchOption
         {
             Session = ToMSession(session),
-            MaximumRamMb = LauncherConfig.DefaultMaxRamMb,
+            MaximumRamMb = RamAdvisor.EffectiveMaxRamMb(), // P3-3: 호스트 RAM 기반(설정 override 우선)
             // ※ DockName 미설정. 공백 포함 값("Herma Launcher")을 macOS 에서 DockName 으로 주면 CmlLib 의
             //    런치 인자 구성에서 그 값이 메인 클래스 토큰으로 잘못 들어가 게임이 즉시 종료된다
             //    (macOS 실측: `java.lang.ClassNotFoundException: Herma Launcher`). Windows 는 DockName=null

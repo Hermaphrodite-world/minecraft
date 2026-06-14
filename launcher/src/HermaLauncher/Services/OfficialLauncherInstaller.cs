@@ -235,7 +235,7 @@ public sealed class OfficialLauncherInstaller
             ["lastUsed"] = now,
             ["lastVersionId"] = versionId,
             ["gameDir"] = gameDir,
-            ["javaArgs"] = $"-Xmx{LauncherConfig.DefaultMaxRamMb}M",
+            ["javaArgs"] = $"-Xmx{RamAdvisor.EffectiveMaxRamMb()}M", // P3-3: 호스트 RAM 기반(설정 override 우선)
         };
 
         var tmp = profilesPath + ".tmp";

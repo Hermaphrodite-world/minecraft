@@ -149,6 +149,10 @@
                     <Button Grid.Row="1" Grid.Column="1" Classes="ghost" Content="취소"
                             Margin="12,8,0,0" Padding="18,8"
                             IsVisible="{Binding IsBusy}" Command="{Binding CancelCommand}" />
+                    <!-- 오류 시 진단 바로가기(P3-4). 작업 중이 아닐 때만(취소와 자리 공유). -->
+                    <Button Grid.Row="1" Grid.Column="1" Classes="ghost" Content="🗎  로그 보기"
+                            Margin="12,8,0,0" Padding="18,8"
+                            IsVisible="{Binding HasError}" Command="{Binding OpenLogsCommand}" />
                 </Grid>
             </Grid>
 
@@ -177,6 +181,56 @@
                         HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
                         Command="{Binding BackToMenuCommand}" />
             </StackPanel>
+
+            <!-- 설정 / 복구 (P3-2: 계정 재설정 · RAM · 로그) -->
+            <StackPanel IsVisible="{Binding IsSettings}" VerticalAlignment="Center"
+                        HorizontalAlignment="Center" MaxWidth="480" Spacing="13" Margin="24,8">
+                <TextBlock Text="설정" FontSize="22" FontWeight="Bold" HorizontalAlignment="Center" />
+
+                <!-- 계정 -->
+                <Border Background="{StaticResource PanelBg}" CornerRadius="12" Padding="16"
+                        BorderBrush="{StaticResource CardBorder}" BorderThickness="1">
+                    <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto">
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="계정" FontWeight="SemiBold" FontSize="14" />
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="{Binding AccountLabel}" FontSize="12.5"
+                                   Foreground="{StaticResource TextMuted}" Margin="0,4,0,0"
+                                   VerticalAlignment="Center" TextWrapping="Wrap" />
+                        <Button Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" Classes="ghost" Content="로그아웃"
+                                Padding="16,8" VerticalAlignment="Center"
+                                Command="{Binding LogoutCommand}" />
+                    </Grid>
+                </Border>
+
+                <!-- 메모리(RAM) -->
+                <Border Background="{StaticResource PanelBg}" CornerRadius="12" Padding="16"
+                        BorderBrush="{StaticResource CardBorder}" BorderThickness="1">
+                    <StackPanel Spacing="9">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <TextBlock Grid.Column="0" Text="메모리 (RAM)" FontWeight="SemiBold" FontSize="14" />
+                            <TextBlock Grid.Column="1" Text="{Binding RamSummary}" FontSize="12.5"
+                                       Foreground="{StaticResource AccentCyan}" VerticalAlignment="Center" />
+                        </Grid>
+                        <CheckBox Content="자동 (호스트 메모리에 맞춰 권장값 사용)" IsChecked="{Binding RamAuto}" />
+                        <Slider Minimum="{Binding RamMinMb}" Maximum="{Binding RamMaxMb}"
+                                Value="{Binding MaxRamMb}" TickFrequency="512" IsSnapToTickEnabled="True"
+                                IsEnabled="{Binding !RamAuto}" />
+                    </StackPanel>
+                </Border>
+
+                <!-- 진단 -->
+                <Button Classes="ghost" Content="🗎  로그 폴더 열기" Padding="0,11"
+                        HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                        Command="{Binding OpenLogFolderCommand}" />
+
+                <!-- 닫기 / 저장 -->
+                <Grid ColumnDefinitions="*,*" Margin="0,2,0,0">
+                    <Button Grid.Column="0" Classes="ghost" Content="닫기" Padding="0,12" Margin="0,0,6,0"
+                            HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                            Command="{Binding BackToMenuCommand}" />
+                    <Button Grid.Column="1" Classes="play" Content="저장" Margin="6,0,0,0"
+                            Command="{Binding SaveSettingsCommand}" />
+                </Grid>
+            </StackPanel>
         </Panel>
 
         <!-- ── Footer nav (스텁) ── -->
@@ -184,10 +238,18 @@
                 Padding="16,8">
             <Grid ColumnDefinitions="Auto,*,Auto">
                 <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="2">
-                    <Button Classes="foot" Content="💬  디스코드" Command="{Binding OpenDiscordCommand}" />
-                    <Button Classes="foot" Content="📖  가이드" Command="{Binding OpenGuideCommand}" />
-                    <Button Classes="foot" Content="🌐  웹사이트" Command="{Binding OpenWebsiteCommand}" />
+                    <!-- 외부 링크는 URL 이 설정된 것만 표시(P3-6 — 빈 URL no-op 버튼 숨김) -->
+                    <Button Classes="foot" Content="💬  디스코드" Command="{Binding OpenDiscordCommand}"
+                            IsVisible="{Binding HasDiscord}" />
+                    <Button Classes="foot" Content="📖  가이드" Command="{Binding OpenGuideCommand}"
+                            IsVisible="{Binding HasGuide}" />
+                    <Button Classes="foot" Content="🌐  웹사이트" Command="{Binding OpenWebsiteCommand}"
+                            IsVisible="{Binding HasWebsite}" />
                 </StackPanel>
+                <!-- 런처 버전(P3-1) -->
+                <TextBlock Grid.Column="1" Text="{Binding LauncherVersionLabel}" FontSize="11"
+                           Foreground="{StaticResource TextMuted}" VerticalAlignment="Center"
+                           HorizontalAlignment="Center" />
                 <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="2">
                     <Button Classes="foot" Content="⚙  설정" Command="{Binding OpenSettingsCommand}" />
                     <Button Classes="foot" Content="🗎  로그" Command="{Binding OpenLogsCommand}" />
