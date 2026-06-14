@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace HermaLauncher.Services;
 
@@ -116,7 +117,7 @@ public static class ClientDefaults
 
             var applied = LoadMarker(gameDir);
             var optionsPath = Path.Combine(gameDir, "options.txt");
-            var nl = Environment.NewLine; // MC 는 Windows=CRLF / Unix=LF
+            var nl = DetectNewline(optionsPath, Environment.NewLine); // 원본 개행(CRLF/LF) 보존
             var lines = File.Exists(optionsPath) ? File.ReadAllLines(optionsPath).ToList() : new List<string>();
 
             var active = ParsePackArray(lines, "resourcePacks:");
@@ -141,6 +142,15 @@ public static class ClientDefaults
                 newlyApplied.Add(markerKey);
             }
 
+            // (1a-clean) stale 정리 — resourcepacks/ 에 더 이상 없는 file/ 엔트리 제거(팩 rename/삭제 후 죽은
+            //            엔트리 누적 방지). present(현재 zip)만 유효. vanilla/네임스페이스 엔트리는 보존.
+            //            대소문자 무시(Windows FS) — 우연히 valid 엔트리를 지우지 않게 보수적.
+            var presentSet = present.Select(n => "\"file/" + n + "\"").ToHashSet(StringComparer.OrdinalIgnoreCase);
+            bool IsStaleFileEntry(string e) =>
+                e.StartsWith("\"file/", StringComparison.Ordinal) && !presentSet.Contains(e);
+            if (active.RemoveAll(IsStaleFileEntry) > 0) changed = true;
+            if (incompat.RemoveAll(IsStaleFileEntry) > 0) changed = true;
+
             // (1b) 한국어 보충팩은 항상 '선택됨' 목록 맨 아래(= options.txt 첫 file 엔트리 = lowest priority)로 고정.
             //      보충팩은 다른 팩/모드 번역을 덮지 않는 fallback 이어야 하므로 최저 우선순위가 맞다. 기존 유저의
             //      중간 위치도 매 실행 교정 — 단 비활성(사용자가 끔)이면 active 에 없어 no-op(on/off 는 존중).
@@ -159,7 +169,7 @@ public static class ClientDefaults
             {
                 SetOrAddLine(lines, "resourcePacks:", "resourcePacks:[" + string.Join(",", active) + "]");
                 SetOrAddLine(lines, "incompatibleResourcePacks:", "incompatibleResourcePacks:[" + string.Join(",", incompat) + "]");
-                AtomicWrite(optionsPath, string.Join(nl, lines) + nl);
+                AtomicWrite(optionsPath, string.Join(nl, lines) + nl, DetectUtf8(optionsPath)); // 원본 인코딩(BOM) 보존
                 progress?.Report(StageUpdate.Of(LaunchStage.Packwiz,
                     addedCount > 0 ? $"리소스팩 {addedCount}개 적용" : "리소스팩 적용"));
             }
@@ -220,6 +230,7 @@ public static class ClientDefaults
     }
 
     // options.txt 의 "key:[\"a\",\"b\"]" 배열을 따옴표 포함 항목 리스트로 파싱(없으면 빈 리스트).
+    // 따옴표 안의 쉼표는 분리하지 않는다 — 파일명에 ',' 가 있어도 엔트리가 깨지지 않게 quote-aware.
     private static List<string> ParsePackArray(List<string> lines, string keyPrefix)
     {
         var result = new List<string>();
@@ -229,12 +240,23 @@ public static class ClientDefaults
         var val = lines[i][keyPrefix.Length..].Trim();
         if (val.StartsWith("[")) val = val[1..];
         if (val.EndsWith("]")) val = val[..^1];
-        foreach (var part in val.Split(','))
+
+        var sb = new StringBuilder();
+        var inQuotes = false;
+        void Flush()
         {
-            var t = part.Trim();
+            var t = sb.ToString().Trim();
             if (t.Length > 0)
                 result.Add(t); // 따옴표 포함 그대로(예: "vanilla", "file/x.zip", lambdabettergrass:default)
+            sb.Clear();
         }
+        foreach (var ch in val)
+        {
+            if (ch == '"') { inQuotes = !inQuotes; sb.Append(ch); }
+            else if (ch == ',' && !inQuotes) Flush();
+            else sb.Append(ch);
+        }
+        Flush();
         return result;
     }
 
@@ -270,11 +292,44 @@ public static class ClientDefaults
         changed = true;
     }
 
+    // 원본 개행(CRLF/LF) 감지 — 재기록 시 보존(파일이 비-플랫폼 개행이어도 깨뜨리지 않게).
+    private static string DetectNewline(string path, string fallback)
+    {
+        try
+        {
+            if (!File.Exists(path)) return fallback;
+            var raw = File.ReadAllText(path);
+            if (raw.Contains("\r\n", StringComparison.Ordinal)) return "\r\n";
+            if (raw.Contains('\n')) return "\n";
+            return fallback;
+        }
+        catch { return fallback; }
+    }
+
+    // 원본 UTF-8 BOM 유무 감지 — 보존(MC 표준은 BOM 없음이나 외부 편집 내성). 기본은 BOM 없는 UTF-8.
+    private static Encoding DetectUtf8(string path)
+    {
+        try
+        {
+            if (File.Exists(path))
+            {
+                var bom = new byte[3];
+                using var fs = File.OpenRead(path);
+                if (fs.Read(bom, 0, 3) == 3 && bom[0] == 0xEF && bom[1] == 0xBB && bom[2] == 0xBF)
+                    return new UTF8Encoding(true);
+            }
+        }
+        catch { /* fallthrough → no-BOM */ }
+        return new UTF8Encoding(false);
+    }
+
     // 텍스트 파일 원자적 쓰기(.tmp → replace) — crash/전원손실 시 torn file 방지(Codex).
-    private static void AtomicWrite(string path, string content)
+    // encoding 미지정 시 기본(UTF-8 no BOM). 지정 시 원본 인코딩 보존용.
+    private static void AtomicWrite(string path, string content, Encoding? encoding = null)
     {
         var tmp = path + ".tmp";
-        File.WriteAllText(tmp, content);
+        if (encoding is null) File.WriteAllText(tmp, content);
+        else File.WriteAllText(tmp, content, encoding);
         if (File.Exists(path)) File.Replace(tmp, path, null);
         else File.Move(tmp, path);
     }
