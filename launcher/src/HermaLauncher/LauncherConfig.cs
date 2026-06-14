@@ -41,6 +41,10 @@ public static class LauncherConfig
     // 첫 설치 시 자동 활성화(config/iris.properties). 일치 없으면 첫 zip. 모드구성: Complementary Reimagined.
     public const string DefaultShaderPackPrefix = "ComplementaryReimagined";
 
+    // 한국어 번역 보충팩 파일명 토큰. 리소스팩 목록에서 항상 '맨 아래'(options.txt 첫 file 엔트리 =
+    // lowest priority = 게임 내 '선택됨' 맨 아래)로 고정하는 식별자 — 다른 팩 lang 을 덮지 않는 fallback.
+    public const string TranslationPackToken = "herma-korean";
+
     // Velopack 자체 업데이트 소스 (GitHub Releases)
     public const string UpdateRepoUrl = "https://github.com/Hermaphrodite-world/minecraft";
 
