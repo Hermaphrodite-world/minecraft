@@ -199,29 +199,42 @@ public sealed class CmlLibMinecraftService : IMinecraftService
     public async Task<string> EnsureJavaAsync(IProgress<StageUpdate> progress, CancellationToken ct)
     {
         PreflightChecks.EnsureDiskSpace(AppPaths.GameDir, LaunchStage.Java); // P1-5: 무거운 설치 전 빠른 실패
-        progress.Report(StageUpdate.Of(LaunchStage.Java, "Fabric 로더 설치 중…"));
-        var fabric = new FabricInstaller(_http);
-        // P2-2: loader 버전 핀(설정돼 있으면 3-arg, 비면 최신 자동).
-        _fabricVersionId = string.IsNullOrWhiteSpace(LauncherConfig.FabricLoaderVersion)
-            ? await fabric.Install(LauncherConfig.MinecraftVersion, _launcher.MinecraftPath).ConfigureAwait(false)
-            : await fabric.Install(LauncherConfig.MinecraftVersion, LauncherConfig.FabricLoaderVersion, _launcher.MinecraftPath).ConfigureAwait(false);
+        try
+        {
+            progress.Report(StageUpdate.Of(LaunchStage.Java, "Fabric 로더 설치 중…"));
+            var fabric = new FabricInstaller(_http);
+            // P2-2: loader 버전 핀(설정돼 있으면 3-arg, 비면 최신 자동).
+            _fabricVersionId = string.IsNullOrWhiteSpace(LauncherConfig.FabricLoaderVersion)
+                ? await fabric.Install(LauncherConfig.MinecraftVersion, _launcher.MinecraftPath).ConfigureAwait(false)
+                : await fabric.Install(LauncherConfig.MinecraftVersion, LauncherConfig.FabricLoaderVersion, _launcher.MinecraftPath).ConfigureAwait(false);
 
-        progress.Report(StageUpdate.Of(LaunchStage.Java, "게임 파일·Java 설치 중…"));
-        var fileProgress = new Progress<InstallerProgressChangedEventArgs>(e =>
-            progress.Report(StageUpdate.Of(LaunchStage.Java, e.Name ?? "설치 중",
-                e.TotalTasks > 0 ? (double)e.ProgressedTasks / e.TotalTasks : (double?)null)));
-        // byte 진행률은 고빈도라 UI 마샬링 없이 무시(NullProgress) — flood 방지.
-        await _launcher.InstallAsync(_fabricVersionId, fileProgress, NullProgress<ByteProgress>.Instance, ct)
-                       .ConfigureAwait(false);
+            progress.Report(StageUpdate.Of(LaunchStage.Java, "게임 파일·Java 설치 중…"));
+            var fileProgress = new Progress<InstallerProgressChangedEventArgs>(e =>
+                progress.Report(StageUpdate.Of(LaunchStage.Java, e.Name ?? "설치 중",
+                    e.TotalTasks > 0 ? (double)e.ProgressedTasks / e.TotalTasks : (double?)null)));
+            // byte 진행률은 고빈도라 UI 마샬링 없이 무시(NullProgress) — flood 방지.
+            await _launcher.InstallAsync(_fabricVersionId, fileProgress, NullProgress<ByteProgress>.Instance, ct)
+                           .ConfigureAwait(false);
 
-        var version = await _launcher.GetVersionAsync(_fabricVersionId, ct).ConfigureAwait(false);
-        var javaPath = _launcher.GetJavaPath(version);
-        if (string.IsNullOrEmpty(javaPath) || !File.Exists(javaPath))
-            javaPath = _launcher.GetDefaultJavaPath();
-        if (string.IsNullOrEmpty(javaPath) || !File.Exists(javaPath))
+            var version = await _launcher.GetVersionAsync(_fabricVersionId, ct).ConfigureAwait(false);
+            var javaPath = _launcher.GetJavaPath(version);
+            if (string.IsNullOrEmpty(javaPath) || !File.Exists(javaPath))
+                javaPath = _launcher.GetDefaultJavaPath();
+            if (string.IsNullOrEmpty(javaPath) || !File.Exists(javaPath))
+                throw new LaunchStageException(LaunchStage.Java,
+                    "Java 런타임을 찾지 못했어요. 잠시 후 다시 시도해 주세요.");
+            return javaPath!;
+        }
+        catch (OperationCanceledException) { throw; }
+        catch (LaunchStageException) { throw; }
+        catch (Exception ex)
+        {
+            // Fabric/게임 설치 중 네트워크 끊김·디스크 부족·서버 오류 등을 단계별 메시지로 변환(Codex Launch-R1)
+            // — generic "알 수 없는 오류" 대신 사용자가 행동할 수 있는 안내.
+            AppLog.Error(LaunchStage.Java, "게임 파일/Java 설치 실패: " + ex.Message);
             throw new LaunchStageException(LaunchStage.Java,
-                "Java 런타임을 찾지 못했어요. 잠시 후 다시 시도해 주세요.");
-        return javaPath!;
+                "게임 파일·Java 설치 중 문제가 생겼어요. 네트워크와 디스크 여유 공간을 확인하고 다시 시도해 주세요.", ex);
+        }
     }
 
     public async Task<Process> LaunchAsync(AuthSession session, IProgress<StageUpdate> progress, CancellationToken ct)

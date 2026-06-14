@@ -149,10 +149,11 @@
                     <Button Grid.Row="1" Grid.Column="1" Classes="ghost" Content="취소"
                             Margin="12,8,0,0" Padding="18,8"
                             IsVisible="{Binding IsBusy}" Command="{Binding CancelCommand}" />
-                    <!-- 오류 시 진단 바로가기(P3-4). 작업 중이 아닐 때만(취소와 자리 공유). -->
-                    <Button Grid.Row="1" Grid.Column="1" Classes="ghost" Content="🗎  로그 보기"
+                    <!-- 오류/크래시 시 진단 바로가기(P3-4). 폴더를 열어 launcher-*.log + game-*.log 를 함께
+                         찾을 수 있게 함(Codex UX-R2 — 크래시는 게임 로그가 핵심). 작업 중 아닐 때만(취소와 자리 공유). -->
+                    <Button Grid.Row="1" Grid.Column="1" Classes="ghost" Content="🗎  로그 열기"
                             Margin="12,8,0,0" Padding="18,8"
-                            IsVisible="{Binding CanShowErrorLog}" Command="{Binding OpenLogsCommand}" />
+                            IsVisible="{Binding CanShowErrorLog}" Command="{Binding OpenLogFolderCommand}" />
                 </Grid>
             </Grid>
 

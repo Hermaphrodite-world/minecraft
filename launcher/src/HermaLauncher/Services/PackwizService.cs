@@ -12,7 +12,7 @@ namespace HermaLauncher.Services;
 // (4) packwiz 동기화. ★ (3)에서 CmlLib가 확보한 java 실행파일 경로를 그대로 재사용한다
 //    (구현계획 §4 불변식 — Java-before-packwiz 닭/달걀 해소, MultiMC $INST_JAVA 패턴).
 //    -g(GUI off) -s client 고정, --pack-folder = 외부 데이터 디렉토리.
-public sealed class PackwizService
+public sealed class PackwizService : IPackwizService
 {
     // packFolder = mods 를 받을 게임 디렉토리(--pack-folder). null = AppPaths.GameDir(커스텀 런처 기본).
     //   공식 런처 installer 는 공식 .minecraft 안의 전용 폴더(예: <.minecraft>/herma)를 넘긴다.
@@ -87,7 +87,7 @@ public sealed class PackwizService
         proc.BeginOutputReadLine();
         proc.BeginErrorReadLine();
 
-        // 취소 시 자식 java 프로세스를 정리(고아 프로세스 방지).
+        // 취소 시(런처 닫기 포함, S1) 자식 java 프로세스를 동기적으로 정리(고아 프로세스 방지).
         await using var killOnCancel = ct.Register(() =>
         {
             try
@@ -95,7 +95,12 @@ public sealed class PackwizService
                 if (!proc.HasExited)
                     proc.Kill(entireProcessTree: true);
             }
-            catch { /* 이미 종료됨 */ }
+            catch (Exception ex)
+            {
+                // 대개 '이미 종료됨' race. 그 외(권한/OS 제약)로 kill 이 실패하면 고아가 남을 수 있으니
+                // 최소한 로그로 관측 가능하게 한다(Codex S1 재리뷰 Q3 — silent 차단 제거).
+                AppLog.Warn(LaunchStage.Packwiz, "동기화 취소 시 자식 프로세스 종료 실패(고아 가능): " + ex.Message);
+            }
         });
 
         await proc.WaitForExitAsync(ct).ConfigureAwait(false);
