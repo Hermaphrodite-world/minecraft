@@ -3,7 +3,9 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
+using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -152,6 +154,10 @@ public sealed class CmlLibMinecraftService : IMinecraftService
 
         progress.Report(StageUpdate.Of(LaunchStage.Launch, "게임 실행 준비 중…"));
 
+        // 서버를 켠 본인 PC(호스트)는 NAT 헤어핀 미지원 시 자기 공개 IP 로 자기 서버에 못 들어간다.
+        // → 접속 직전 127.0.0.1:port 짧은 TCP probe. 로컬에 서버가 떠 있으면 로컬로, 아니면 공개 ServerIp.
+        var host = await ResolveServerHostAsync(progress, ct).ConfigureAwait(false);
+
         var option = new MLaunchOption
         {
             Session = ToMSession(session),
@@ -164,7 +170,7 @@ public sealed class CmlLibMinecraftService : IMinecraftService
             ExtraGameArguments = new[]
             {
                 new MArgument("--quickPlayMultiplayer"),
-                new MArgument($"{LauncherConfig.ServerIp}:{LauncherConfig.ServerPort}"),
+                new MArgument($"{host}:{LauncherConfig.ServerPort}"),
             },
         };
 
@@ -201,6 +207,40 @@ public sealed class CmlLibMinecraftService : IMinecraftService
                 UserType = "msa",
                 Xuid = s.Xuid,
             };
+
+    // quickPlay 자동 접속 대상 host 해석. 로컬(127.0.0.1)에 서버가 떠 있으면 로컬, 아니면 공개 ServerIp.
+    //   호스트(서버 켠 PC)는 NAT 헤어핀 미지원 시 공개 IP 로 자기 자신을 못 들어가므로 로컬로 우회.
+    //   일반 친구 PC 는 로컬에 서버가 없어 probe 실패 → 공개 IP(무영향).
+    private static async Task<string> ResolveServerHostAsync(IProgress<StageUpdate> progress, CancellationToken ct)
+    {
+        if (await IsLocalServerUpAsync(LauncherConfig.ServerPort, ct).ConfigureAwait(false))
+        {
+            progress.Report(StageUpdate.Of(LaunchStage.Launch, "이 PC에서 서버를 감지했어요 — 로컬(127.0.0.1)로 접속합니다."));
+            return "127.0.0.1";
+        }
+        return LauncherConfig.ServerIp;
+    }
+
+    // 127.0.0.1:port 에 짧은 TCP probe(~500ms). 열려 있으면 로컬 서버로 간주. 실패/타임아웃/취소는 모두 false.
+    private static async Task<bool> IsLocalServerUpAsync(int port, CancellationToken ct)
+    {
+        try
+        {
+            using var client = new TcpClient();
+            using var probeCts = CancellationTokenSource.CreateLinkedTokenSource(ct);
+            probeCts.CancelAfter(TimeSpan.FromMilliseconds(500));
+            await client.ConnectAsync(IPAddress.Loopback, port, probeCts.Token).ConfigureAwait(false);
+            return client.Connected;
+        }
+        catch (OperationCanceledException) when (ct.IsCancellationRequested)
+        {
+            throw; // 사용자 취소는 전파(런치 흐름의 상위 취소 가드와 일치)
+        }
+        catch
+        {
+            return false; // 미연결/타임아웃/포트 거부 등 → 공개 IP 사용
+        }
+    }
 }
 
 // (1) Velopack 자체 업데이트. Program.Main 첫 줄의 VelopackApp.Build().Run() 과 짝.
