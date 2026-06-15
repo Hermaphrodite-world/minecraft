@@ -6,7 +6,7 @@
         mc:Ignorable="d" d:DesignWidth="940" d:DesignHeight="640"
         x:Class="HermaLauncher.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
-        Width="940" Height="486"
+        Width="940" Height="520"
         CanResize="False"
         WindowStartupLocation="CenterScreen"
         Background="{StaticResource WindowBg}"
@@ -41,8 +41,8 @@
             </StackPanel>
         </Grid>
 
-        <!-- ── Content ── -->
-        <Panel Grid.Row="1">
+        <!-- ── Content ── (ClipToBounds: 어떤 화면도 푸터/타이틀바 위로 그려지지 않게 백스톱) -->
+        <Panel Grid.Row="1" ClipToBounds="True">
 
             <!-- Main: 두 카드 + 히어로 + 칩 + 진행 -->
             <Grid IsVisible="{Binding IsMain}" Margin="24,4,24,18" VerticalAlignment="Center"
