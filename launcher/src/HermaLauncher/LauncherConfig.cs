@@ -51,6 +51,11 @@ public static class LauncherConfig
     // Velopack 자체 업데이트 소스 (GitHub Releases)
     public const string UpdateRepoUrl = "https://github.com/Hermaphrodite-world/minecraft";
 
+    // 운영자 공지/점검 원격 소스(news.json). 환경변수 HERMA_NEWS_URL 로 주입. 빈 값이면 공지 기능 off(graceful).
+    // 예: GitHub Pages 의 https://hermaphrodite-world.github.io/minecraft/news.json
+    public static readonly string NewsUrl =
+        Environment.GetEnvironmentVariable("HERMA_NEWS_URL") ?? "";
+
     // 푸터 외부 링크. 재빌드 없이 환경변수로 주입 가능(HERMA_DISCORD_URL / HERMA_GUIDE_URL /
     // HERMA_WEBSITE_URL). 빈 값이면 해당 버튼을 UI 에서 숨긴다(P3-6 — no-op 버튼 노출 방지).
     public static readonly string DiscordUrl =

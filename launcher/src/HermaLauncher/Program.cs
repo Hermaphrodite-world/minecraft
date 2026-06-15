@@ -26,11 +26,15 @@ internal static class Program
         catch (AbandonedMutexException) { acquired = true; } // 이전 인스턴스가 비정상 종료하며 남긴 것 → 인수
         if (!acquired)
         {
-            AppLog.Info(LaunchStage.Idle, "이미 실행 중 — 중복 인스턴스 종료(MVP)");
-            return; // 두 번째 인스턴스는 즉시 종료. (기존 창 활성화 IPC 는 POST-1.0)
+            // 두 번째 인스턴스: 기존 창을 앞으로 가져오라고 신호 후 종료(Windows). 신호 실패해도 그냥 종료.
+            var signaled = SingleInstanceSignal.SignalExisting();
+            AppLog.Info(LaunchStage.Idle, $"이미 실행 중 — 기존 창 활성화 신호({(signaled ? "전송" : "미지원/실패")}) 후 종료");
+            return;
         }
 
         AppLog.Info(LaunchStage.Idle, $"런처 시작 v{AppInfo.Version}");
+        // 첫 인스턴스: 두 번째 실행의 활성화 신호를 받아 기존 창을 앞으로(Windows 전용, fail-safe).
+        SingleInstanceSignal.StartListener(App.ActivateMainWindow);
         try
         {
             BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);

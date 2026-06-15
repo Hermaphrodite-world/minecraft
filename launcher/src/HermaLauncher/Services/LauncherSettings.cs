@@ -12,8 +12,18 @@ public sealed class LauncherSettings
     // null = 자동(RamAdvisor 권장값 사용). 값이 있으면 사용자 지정 MaxRamMb.
     public int? MaxRamMbOverride { get; set; }
 
+    // 서버 주소 직접 입력(고급). null/빈 값 = 자동(로컬 서버 감지 → 공개 ServerIp).
+    // 같은 집/네트워크의 다른 PC 에서 서버를 켠 경우(NAT 헤어핀 미지원 → 자동 접속 실패) 서버 PC 의 LAN IP 를 지정.
+    public string? ServerHostOverride { get; set; }
+
+    // 첫 실행 환영 화면을 봤는지(1회성). false = 다음 실행 시 환영 화면 표시.
+    public bool HasSeenWelcome { get; set; }
+
     [JsonIgnore]
     public bool IsRamAuto => MaxRamMbOverride is null or <= 0;
+
+    [JsonIgnore]
+    public bool HasServerHostOverride => !string.IsNullOrWhiteSpace(ServerHostOverride);
 
     public static LauncherSettings Load() => Load(AppPaths.SettingsJson);
 

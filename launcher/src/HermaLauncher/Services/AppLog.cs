@@ -79,4 +79,20 @@ public static class AppLog
         catch { /* fallthrough */ }
         return AppPaths.LogDir;
     }
+
+    // 가장 최근 game-*.log 경로(없으면 null). 크래시 진단(FailureDiagnosis)이 본문을 읽는다.
+    public static string? LatestGameLogPath()
+    {
+        try
+        {
+            var files = Directory.GetFiles(AppPaths.LogDir, "game-*.log");
+            if (files.Length > 0)
+            {
+                Array.Sort(files, StringComparer.Ordinal);
+                return files[^1];
+            }
+        }
+        catch { /* fallthrough */ }
+        return null;
+    }
 }

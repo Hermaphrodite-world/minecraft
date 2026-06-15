@@ -50,6 +50,18 @@
 
                 <!-- 헤더 텍스트 (좌) -->
                 <StackPanel Grid.Row="0" Grid.Column="0" Spacing="3" Margin="2,0,0,14">
+                    <!-- 점검 배너 (운영자 maintenance.active 시) -->
+                    <Border IsVisible="{Binding HasMaintenance}" Background="#3A1E1E" CornerRadius="8"
+                            Padding="10,7" Margin="0,0,0,6" BorderBrush="#5A2A2A" BorderThickness="1">
+                        <TextBlock Text="{Binding MaintenanceText}" FontSize="12.5"
+                                   Foreground="#F0B0B0" TextWrapping="Wrap" />
+                    </Border>
+                    <!-- 공지 (운영자 최신 item) -->
+                    <Border IsVisible="{Binding HasNews}" Background="{StaticResource PanelBg}" CornerRadius="8"
+                            Padding="10,7" Margin="0,0,0,6" BorderBrush="{StaticResource CardBorder}" BorderThickness="1">
+                        <TextBlock Text="{Binding NewsText}" FontSize="12.5"
+                                   Foreground="{StaticResource AccentCyan}" TextWrapping="Wrap" />
+                    </Border>
                     <TextBlock Text="어떻게 플레이할까요?" FontSize="20" FontWeight="Bold" />
                     <TextBlock Text="{Binding Subtitle}" FontSize="12.5"
                                Foreground="{StaticResource TextMuted}" />
@@ -125,6 +137,9 @@
                 <!-- 상태 칩 (전체 폭) -->
                 <WrapPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,16,0,0">
                     <Border Classes="chip" Margin="0,0,8,8">
+                        <TextBlock Text="{Binding ServerStatusText}" />
+                    </Border>
+                    <Border Classes="chip" Margin="0,0,8,8">
                         <TextBlock Text="{Binding VersionChip}" />
                     </Border>
                     <Border Classes="chip" Margin="0,0,8,8">
@@ -156,6 +171,31 @@
                             IsVisible="{Binding CanShowErrorLog}" Command="{Binding OpenLogFolderCommand}" />
                 </Grid>
             </Grid>
+
+            <!-- 첫 실행 환영 (전용 화면, 1회성) -->
+            <StackPanel IsVisible="{Binding IsWelcome}" VerticalAlignment="Center"
+                        HorizontalAlignment="Center" MaxWidth="470" Spacing="16" Margin="24">
+                <Border Width="64" Height="64" CornerRadius="32" ClipToBounds="True"
+                        HorizontalAlignment="Center"
+                        BorderBrush="{StaticResource CardBorder}" BorderThickness="1">
+                    <Image Source="/Assets/hero.png" Stretch="UniformToFill" />
+                </Border>
+                <TextBlock Text="HERMA 런처에 오신 걸 환영해요" FontSize="22" FontWeight="Bold"
+                           HorizontalAlignment="Center" TextAlignment="Center" />
+                <Border Background="{StaticResource PanelBg}" CornerRadius="12" Padding="18"
+                        BorderBrush="{StaticResource CardBorder}" BorderThickness="1">
+                    <StackPanel Spacing="9">
+                        <TextBlock Text="PLAY 한 번이면 끝나요" FontWeight="SemiBold" FontSize="14"
+                                   Foreground="{StaticResource AccentCyan}" />
+                        <TextBlock Text="1.  마이크로소프트 정품 계정으로 로그인해요 (브라우저가 한 번 열려요)" FontSize="13" TextWrapping="Wrap" />
+                        <TextBlock Text="2.  모드를 자동으로 내려받아 설치해요 (처음엔 몇 분 걸릴 수 있어요)" FontSize="13" TextWrapping="Wrap" />
+                        <TextBlock Text="3.  서버에 자동으로 접속해요" FontSize="13" TextWrapping="Wrap" />
+                    </StackPanel>
+                </Border>
+                <Button Classes="play" Content="시작하기" Padding="0,12"
+                        HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                        Command="{Binding StartFromWelcomeCommand}" />
+            </StackPanel>
 
             <!-- 공식 런처 설치 완료 (전용 화면) -->
             <StackPanel IsVisible="{Binding IsOfficialDone}" VerticalAlignment="Center"
@@ -218,10 +258,27 @@
                     </StackPanel>
                 </Border>
 
+                <!-- 서버 주소 직접 입력(고급) — 같은 집/네트워크에서 서버를 켠 경우 자동 접속이 안 될 때만 -->
+                <Border Background="{StaticResource PanelBg}" CornerRadius="12" Padding="16"
+                        BorderBrush="{StaticResource CardBorder}" BorderThickness="1">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="서버 주소 직접 입력 (고급)" FontWeight="SemiBold" FontSize="14" />
+                        <TextBlock Text="보통은 비워 두세요(자동). 같은 집·네트워크의 다른 PC에서 서버를 켜서 자동 접속이 안 될 때만 서버 PC의 IP를 넣으세요."
+                                   FontSize="11.5" Foreground="{StaticResource TextMuted}" TextWrapping="Wrap" />
+                        <TextBox Text="{Binding ServerHostOverride}"
+                                 Watermark="비워 두면 자동 (예: 192.168.219.102)" />
+                    </StackPanel>
+                </Border>
+
                 <!-- 진단 -->
-                <Button Classes="ghost" Content="🗎  로그 폴더 열기" Padding="0,11"
-                        HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
-                        Command="{Binding OpenLogFolderCommand}" />
+                <Grid ColumnDefinitions="*,*">
+                    <Button Grid.Column="0" Classes="ghost" Content="🧩  진단 파일 만들기" Padding="0,11" Margin="0,0,6,0"
+                            HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                            Command="{Binding CreateDiagnosticsCommand}" />
+                    <Button Grid.Column="1" Classes="ghost" Content="🗎  로그 폴더 열기" Padding="0,11" Margin="6,0,0,0"
+                            HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                            Command="{Binding OpenLogFolderCommand}" />
+                </Grid>
 
                 <!-- 닫기 / 저장 -->
                 <Grid ColumnDefinitions="*,*" Margin="0,2,0,0">

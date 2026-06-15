@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Threading;
@@ -16,6 +17,7 @@ public enum AppView
     Main,         // 두 경로 카드 + 상태/진행 (기본 화면)
     OfficialDone, // 공식 런처 설치 완료 — 전환 안내 전용 화면
     Settings,     // 설정/복구 — 계정·RAM·로그(P3-2)
+    Welcome,      // 첫 실행 환영 — 기대치 안내(1회성)
 }
 
 public partial class MainWindowViewModel : ViewModelBase
@@ -23,6 +25,9 @@ public partial class MainWindowViewModel : ViewModelBase
     private readonly LaunchOrchestrator _orchestrator = new();
     private readonly OfficialLauncherInstaller _installer = new();
     private CancellationTokenSource? _cts;
+
+    // 메인 화면 서버 상태 pill 주기 갱신(30초). 디자이너/테스트 환경에선 미가동(네트워크 호출 방지).
+    private readonly DispatcherTimer? _statusTimer;
 
     // 게임 시작 후 이 시간 안에 비정상 종료하면 '인스턴트 크래시'로 보고 런처를 복원해 에러를 보여준다.
     // 그 이후 종료(정상 플레이 종료)는 조용히 런처만 닫는다(마크가 자체 크래시 화면을 띄우는 구간).
@@ -62,6 +67,7 @@ public partial class MainWindowViewModel : ViewModelBase
     [NotifyPropertyChangedFor(nameof(IsMain))]
     [NotifyPropertyChangedFor(nameof(IsOfficialDone))]
     [NotifyPropertyChangedFor(nameof(IsSettings))]
+    [NotifyPropertyChangedFor(nameof(IsWelcome))]
     [NotifyCanExecuteChangedFor(nameof(BackToMenuCommand))]
     private AppView _view = AppView.Main;
 
@@ -80,6 +86,28 @@ public partial class MainWindowViewModel : ViewModelBase
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(RamSummary))]
     private int _maxRamMb;
+
+    // ── 서버 주소 직접 입력(고급, 접속 이슈 대응) ──
+    // 같은 집/네트워크의 다른 PC 에서 서버를 켠 경우 등 자동 접속이 안 될 때 서버 PC 의 IP 를 지정.
+    [ObservableProperty]
+    private string? _serverHostOverride;
+
+    // ── 서버 상태 pill(메인 화면) ── 주기적으로 서버 ping 해 온라인/인원 표시(best-effort).
+    [ObservableProperty]
+    private string _serverStatusText = "서버 상태 확인 중…";
+
+    // ── 운영자 공지/점검(원격 news.json, 미설정 시 숨김) ──
+    [ObservableProperty]
+    private bool _hasMaintenance;
+
+    [ObservableProperty]
+    private string? _maintenanceText;
+
+    [ObservableProperty]
+    private bool _hasNews;
+
+    [ObservableProperty]
+    private string? _newsText;
 
     // RAM 자동 토글 시 권장값으로 되돌린다(수동 입력은 자동 OFF 시 NumericUpDown 으로).
     partial void OnRamAutoChanged(bool value)
@@ -101,6 +129,73 @@ public partial class MainWindowViewModel : ViewModelBase
         var settings = LauncherSettings.Load();
         _ramAuto = settings.IsRamAuto;
         _maxRamMb = RamAdvisor.EffectiveMaxRamMb();
+        _serverHostOverride = settings.ServerHostOverride;
+
+        // 첫 실행이면 환영 화면으로 시작(디자이너 제외 — 디자이너는 Main 미리보기).
+        if (!Avalonia.Controls.Design.IsDesignMode && !settings.HasSeenWelcome)
+            _view = AppView.Welcome;
+
+        // 디자이너/테스트 환경에선 네트워크 호출 금지 — 실행 시에만 서버 상태 pill·공지 가동.
+        if (!Avalonia.Controls.Design.IsDesignMode)
+        {
+            _statusTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(30) };
+            _statusTimer.Tick += (_, _) => _ = RefreshServerStatusAsync();
+            _statusTimer.Start();
+            _ = RefreshServerStatusAsync(); // 즉시 1회
+            _ = LoadNewsAsync();            // 운영자 공지/점검(미설정 시 즉시 반환)
+        }
+    }
+
+    // 운영자 원격 공지/점검 로드(best-effort, 비차단). HERMA_NEWS_URL 미설정이면 즉시 반환(기능 off).
+    private async Task LoadNewsAsync()
+    {
+        if (string.IsNullOrWhiteSpace(LauncherConfig.NewsUrl))
+            return;
+        NewsFeed? feed;
+        try { feed = await NewsService.FetchAsync(LauncherConfig.NewsUrl, CancellationToken.None).ConfigureAwait(true); }
+        catch { feed = null; }
+        if (feed is null)
+            return;
+
+        if (feed.Maintenance is { Active: true } mt)
+        {
+            MaintenanceText = string.IsNullOrWhiteSpace(mt.Message) ? "서버 점검 중이에요." : mt.Message;
+            HasMaintenance = true;
+        }
+        if (feed.Latest is { } item)
+        {
+            NewsText = (item.Urgent ? "🔴 " : "📢 ") + item.Title;
+            HasNews = true;
+        }
+    }
+
+    // 환영 화면 '시작하기' — 본 적 있음으로 표시(저장)하고 메인으로. 저장 실패해도 진행(다음 실행에 또 보일 뿐).
+    [RelayCommand]
+    private void StartFromWelcome()
+    {
+        var s = LauncherSettings.Load();
+        s.HasSeenWelcome = true;
+        s.Save();
+        View = AppView.Main;
+    }
+
+    // 서버 상태 pill 갱신(best-effort, 비차단). override 주소 우선, 없으면 공개 ServerIp.
+    private async Task RefreshServerStatusAsync()
+    {
+        var host = ServerHostResolver.Normalize(LauncherSettings.Load().ServerHostOverride) ?? LauncherConfig.ServerIp;
+        ServerStatus? st;
+        try
+        {
+            st = await ServerPing.QueryStatusAsync(host, LauncherConfig.ServerPort, CancellationToken.None, 2500)
+                                 .ConfigureAwait(true);
+        }
+        catch
+        {
+            st = null; // ping 실패는 '오프라인' 표시로 흡수(흐름 비차단)
+        }
+        ServerStatusText = st is null
+            ? "🔴 서버 오프라인"
+            : st is { Players: int p, MaxPlayers: int m } ? $"🟢 온라인 · {p}/{m}명" : "🟢 온라인";
     }
 
     public string Title => "HERMA LAUNCHER";
@@ -137,6 +232,7 @@ public partial class MainWindowViewModel : ViewModelBase
     public bool IsMain => View == AppView.Main;
     public bool IsOfficialDone => View == AppView.OfficialDone;
     public bool IsSettings => View == AppView.Settings;
+    public bool IsWelcome => View == AppView.Welcome;
 
     private bool CanNavigate() => !IsBusy;
 
@@ -220,9 +316,14 @@ public partial class MainWindowViewModel : ViewModelBase
             {
                 RestoreRequested?.Invoke();
                 HasError = true;
-                StatusMessage = ranSeconds < InstantCrashWindowSeconds
-                    ? $"게임이 실행 직후 종료됐어요(크래시 의심, 코드 {exitCode}). 아래 '로그 열기'에서 game-*.log 로 원인을 확인하거나 다시 시도해 주세요."
-                    : $"게임이 비정상 종료됐어요(코드 {exitCode}). 아래 '로그 열기'에서 game-*.log·크래시 리포트를 확인할 수 있어요.";
+                // 게임 로그에서 흔한 원인을 한 가지 한국어 액션으로 분류(있으면 그걸 우선 안내, 없으면 일반 안내).
+                var hint = TryDiagnoseLatestGameLog();
+                if (hint is { } h)
+                    StatusMessage = $"{h.Title} {h.Action} (자세한 원인은 설정의 '진단 파일 만들기')";
+                else
+                    StatusMessage = ranSeconds < InstantCrashWindowSeconds
+                        ? $"게임이 실행 직후 종료됐어요(크래시 의심, 코드 {exitCode}). 설정의 '진단 파일 만들기'로 로그를 모아 디스코드에 보내거나 다시 시도해 주세요."
+                        : $"게임이 비정상 종료됐어요(코드 {exitCode}). 설정의 '진단 파일 만들기'로 로그를 한 파일로 묶어 확인·공유할 수 있어요.";
             }
             else
             {
@@ -290,6 +391,21 @@ public partial class MainWindowViewModel : ViewModelBase
     [RelayCommand]
     private void OpenLogFolder() => OpenPath(AppPaths.LogDir);
 
+    // 진단 파일(ZIP) 생성 — 흩어진 로그 + 시스템 정보를 한 파일로 묶어 폴더를 연다(디스코드 공유용).
+    // 크래시 메시지가 약속하는 '크래시 리포트'의 실제 구현(약속-구현 갭 해소).
+    [RelayCommand]
+    private void CreateDiagnostics()
+    {
+        var zip = DiagnosticsBundle.Create();
+        if (zip is null)
+        {
+            StatusMessage = "진단 파일 생성에 실패했어요. 대신 '로그 폴더 열기'로 로그를 확인해 주세요.";
+            return;
+        }
+        StatusMessage = "진단 파일을 만들었어요. 열린 폴더의 herma-진단-*.zip 을 디스코드에 올려 주세요.";
+        OpenPath(Path.GetDirectoryName(zip) ?? AppPaths.DataRoot);
+    }
+
     // ── 설정 화면(P3-2) ── CanNavigate(=!IsBusy)는 BackToMenu 와 공유.
     [RelayCommand(CanExecute = nameof(CanNavigate))]
     private void OpenSettings()
@@ -299,6 +415,7 @@ public partial class MainWindowViewModel : ViewModelBase
         RamAuto = settings.IsRamAuto;
         MaxRamMb = RamAdvisor.EffectiveMaxRamMb();
         AccountName = AccountCache.LastUsername();
+        ServerHostOverride = settings.ServerHostOverride;
         View = AppView.Settings;
     }
 
@@ -311,8 +428,16 @@ public partial class MainWindowViewModel : ViewModelBase
         clamped = Math.Clamp(clamped, RamAdvisor.MinRamMb, RamAdvisor.MaxRamMb);
         if (clamped != MaxRamMb)
             MaxRamMb = clamped;
+        // 서버 주소 정규화(공백/scheme/슬래시 제거). 빈 값이면 null(자동).
+        var normalizedHost = ServerHostResolver.Normalize(ServerHostOverride);
+        if (!string.Equals(normalizedHost, ServerHostOverride, StringComparison.Ordinal))
+            ServerHostOverride = normalizedHost;
+        // load-modify-save: VM 이 추적하지 않는 필드(HasSeenWelcome 등)를 보존(덮어쓰기 방지).
         // 저장 실패(파일 권한/사용 중) 시 사용자에게 알리고 설정 화면 유지(Codex UX-R1).
-        if (!new LauncherSettings { MaxRamMbOverride = RamAuto ? null : clamped }.Save())
+        var toSave = LauncherSettings.Load();
+        toSave.MaxRamMbOverride = RamAuto ? null : clamped;
+        toSave.ServerHostOverride = normalizedHost;
+        if (!toSave.Save())
         {
             StatusMessage = "설정 저장에 실패했어요(파일 권한/사용 중일 수 있어요). 잠시 후 다시 시도해 주세요.";
             return;
@@ -363,6 +488,21 @@ public partial class MainWindowViewModel : ViewModelBase
         if (string.IsNullOrWhiteSpace(path))
             return;
         Open(path);
+    }
+
+    // 최신 game-*.log 본문을 best-effort 로 읽어 흔한 실패 원인을 분류. 실패/매칭 없음 = null.
+    private static FailureDiagnosis.Hint? TryDiagnoseLatestGameLog()
+    {
+        try
+        {
+            var path = AppLog.LatestGameLogPath();
+            if (path is null || !File.Exists(path)) return null;
+            return FailureDiagnosis.Classify(File.ReadAllText(path));
+        }
+        catch
+        {
+            return null; // 진단은 보조 기능 — 실패해도 기본 안내로 폴백.
+        }
     }
 
     private static void Open(string target)

@@ -134,24 +134,32 @@ public sealed class PackwizService : IPackwizService
         progress.Report(StageUpdate.Of(LaunchStage.Packwiz, "모드 동기화 도구 내려받는 중…"));
         try
         {
-            using var http = new HttpClient();
-            using var resp = await http.GetAsync(BootstrapUrl, HttpCompletionOption.ResponseHeadersRead, ct)
-                                       .ConfigureAwait(false);
-            resp.EnsureSuccessStatusCode();
-
-            var tmp = AppPaths.BootstrapJar + ".tmp";
-            await using (var fs = File.Create(tmp))
-                await resp.Content.CopyToAsync(fs, ct).ConfigureAwait(false);
-
-            // 다운로드 무결성 검증 — 불일치면 폐기 + 실패(공급망 공격/손상 차단).
-            if (!await FileSha256MatchesAsync(tmp, BootstrapSha256, ct).ConfigureAwait(false))
+            // 일시적 네트워크 오류(5xx/연결 끊김)는 지수 백오프로 재시도(transient retry). 4xx/무결성 실패는 즉시 실패.
+            await RetryPolicy.ExecuteAsync(async (attempt, c) =>
             {
-                try { File.Delete(tmp); } catch { }
-                AppLog.Error(LaunchStage.Packwiz, "packwiz bootstrap 다운로드 무결성 검증 실패(해시 불일치)");
-                throw new LaunchStageException(LaunchStage.Packwiz,
-                    "모드 동기화 도구 무결성 검증에 실패했어요. 잠시 후 다시 시도해 주세요.");
-            }
-            File.Move(tmp, AppPaths.BootstrapJar, overwrite: true);
+                if (attempt > 1)
+                    progress.Report(StageUpdate.Of(LaunchStage.Packwiz, $"모드 동기화 도구 내려받는 중… (재시도 {attempt - 1})"));
+
+                using var http = new HttpClient();
+                using var resp = await http.GetAsync(BootstrapUrl, HttpCompletionOption.ResponseHeadersRead, c)
+                                           .ConfigureAwait(false);
+                resp.EnsureSuccessStatusCode();
+
+                var tmp = AppPaths.BootstrapJar + ".tmp";
+                await using (var fs = File.Create(tmp))
+                    await resp.Content.CopyToAsync(fs, c).ConfigureAwait(false);
+
+                // 다운로드 무결성 검증 — 불일치면 폐기 + 실패(공급망 공격/손상 차단, 재시도 안 함).
+                if (!await FileSha256MatchesAsync(tmp, BootstrapSha256, c).ConfigureAwait(false))
+                {
+                    try { File.Delete(tmp); } catch { }
+                    AppLog.Error(LaunchStage.Packwiz, "packwiz bootstrap 다운로드 무결성 검증 실패(해시 불일치)");
+                    throw new LaunchStageException(LaunchStage.Packwiz,
+                        "모드 동기화 도구 무결성 검증에 실패했어요. 잠시 후 다시 시도해 주세요.");
+                }
+                File.Move(tmp, AppPaths.BootstrapJar, overwrite: true);
+                return true;
+            }, IsTransientDownloadError, maxAttempts: 3, delayAsync: null, ct).ConfigureAwait(false);
         }
         catch (LaunchStageException) { throw; }
         catch (Exception ex) when (ex is not OperationCanceledException)
@@ -160,6 +168,15 @@ public sealed class PackwizService : IPackwizService
                 "모드 동기화 도구를 내려받지 못했어요. 네트워크를 확인하고 다시 시도해 주세요.", ex);
         }
     }
+
+    // 재시도할 가치가 있는 일시적 다운로드 오류인지: 5xx/네트워크 끊김(StatusCode null)·IO 는 transient,
+    // 4xx(404 등 구조적)·무결성(LaunchStageException) 은 즉시 실패.
+    private static bool IsTransientDownloadError(Exception ex) => ex switch
+    {
+        HttpRequestException h => h.StatusCode is null || (int)h.StatusCode.Value >= 500,
+        IOException => true,
+        _ => false,
+    };
 
     private static async Task<bool> FileSha256MatchesAsync(string path, string expectedHex, CancellationToken ct)
     {
