@@ -186,6 +186,8 @@
 ## POST-1.0 (1.0 범위 밖)
 - 단일인스턴스 기존창 활성화 IPC, 토큰 DPAPI/Keychain 전체암호화, 설정의 캐시삭제/모드팩복구 UI, CmlLibServices 전체 파일분리, Linux 지원.
 
+> **갱신(v1.0.2 시점)**: 위 중 **기존창 활성화 IPC 는 v1.0.0 에서 구현됨**(SingleInstanceSignal, Windows). 잔여 POST-1.0: DPAPI/Keychain 암호화, 모드팩복구 UI, CmlLibServices 파일분리, Linux. 현행 기능/백로그 SoT 는 [launcher-v1.0-feature-plan.md](launcher-v1.0-feature-plan.md).
+
 ---
 
 ## 진행 로그
