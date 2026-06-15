@@ -45,6 +45,8 @@ bash build-mac-app.sh publish/osx-arm64 publish/mac   # → HermaLauncher-macos-
 
 ## 구현 상태
 
+> **현재 릴리스: v1.0.2** — Windows + macOS(공증) 자동 업데이트 배포 중. v1.0 에서 신뢰·회복 기능군 추가. 상세 기능/검증 현황 SoT: [docs/launcher-v1.0-feature-plan.md](docs/launcher-v1.0-feature-plan.md).
+
 > **🎉 end-to-end 실증 완료** — 로컬 26.1.2 서버 + 런처로 실제 검증: 클릭 한 번 → 인증 → Java 25 설치 → 모드 동기화 → Fabric → quickPlayMultiplayer 자동 접속 → **월드 스폰**. (v0.1.5 부터 인증은 **온라인 정품 MS 전용** — MS 승인 완료, 오프라인/닉네임 UI 제거.) Xaero Minimap·Simple Voice Chat·Jade·Sodium 등 인게임 작동 확인.
 
 | 영역 | 상태 |
@@ -52,7 +54,8 @@ bash build-mac-app.sh publish/osx-arm64 publish/mac   # → HermaLauncher-macos-
 | packwiz 모드팩 (26.1.2, 77 모드 + 4 쉐이더팩 + 6 리소스팩 + 한국어 번역팩 + side 분류) | ✅ 완료 — Pages 라이브 + e2e 동기화 검증 + [모드 가이드](docs/mods-guide.md) |
 | 런처 풀 파이프라인 (UI·인증·Java·packwiz·Fabric·실행·자동접속) | ✅ **실 게임 실증** — 26.1.2 월드 접속 확인 (net10.0, 빌드 0/0). v0.1.5 게이밍 UI 리디자인(커스텀 크롬·2-컬럼·앱 아이콘·온라인 전용·실행 후 런처 자동 정리) |
 | 오프라인 로그인 | ◐ v0.1.5 부터 **UI 제거**(온라인 전용 전환) — 서비스 레이어 dormant 유지 |
-| 온라인 로그인 (정품 계정) | ✅ **시스템 브라우저**(요즘 공식 런처 방식, 크로스플랫폼) — [셋업 가이드](docs/online-login-setup.md). Azure 앱 1개(메인테이너) 공유. Mojang 앱 승인 후 동작 |
+| 온라인 로그인 (정품 계정) | ✅ **시스템 브라우저**(요즘 공식 런처 방식, 크로스플랫폼) — [셋업 가이드](docs/online-login-setup.md). Azure 앱 1개(메인테이너) 공유. **MS/Mojang 승인 완료 — 정식 동작**(v1.0.x 릴리스 bake). XSTS 거부(미성년·지역·프로필 없음·밴)는 한국어 안내로 분기 |
+| **v1.0 신뢰·회복 기능군** | ✅ v1.0.0~v1.0.2 배포 — 서버 주소 직접 입력(같은 LAN 다른 PC 호스트 접속), 진단 ZIP, 스마트 실패 진단(한국어), 2번째 실행 시 기존 창 활성화(Win), 전송 단계 재시도, 메인 서버 상태 pill, 첫 실행 환영, 운영자 공지/점검 배너(news.json, 기본 off). 상세 [feature-plan](docs/launcher-v1.0-feature-plan.md) |
 | **공식 런처 설치 (대체 경로)** | ✅ **실증** — 실기기에서 공식 런처에 'Hermaphrodite World' 프로필 정상 추가 확인. "공식 런처에 설치" 버튼이 Fabric+모드팩을 공식 `.minecraft`에 등록 → **정품 로그인 즉시(Mojang 승인 대기 0)**. 머지 로직 fixture + 실기기 검증(기존 프로필 보존, MS Store/standalone 양쪽). [가이드](docs/installer-setup.md) |
 | 자동 접속 (quickPlayMultiplayer) | ✅ **실증** — MC 26.1 구형 --server 제거 대응 |
 | Velopack 자동 업데이트 | ✅ **실증 완료** — 실설치 e2e(설치→감지→다운로드→0.1.3 swap) 검증(Windows). macOS 는 Developer ID 서명 후 활성(scaffold 완료) |
@@ -60,9 +63,9 @@ bash build-mac-app.sh publish/osx-arm64 publish/mac   # → HermaLauncher-macos-
 | 서버 스택 (Fabric 26.1.2 + 40 모드 + Java 25) | ✅ **실증** — Done(2.3s), Blastproof·LuckPerms·SVC 로드, 포트 바인딩 |
 | CI (GitHub Actions) | ✅ Launcher Build 통과 + Modpack Pages 배포 성공 |
 | macOS 빌드 (ad-hoc 서명, 미공증) | ✅ **CI 실증** — macos-14 러너가 osx-arm64 `.app` 빌드+`--deep` ad-hoc 서명+서명/zip 왕복 검증 통과, 아티팩트 `HermaLauncher-macos-arm64`(45MB) 생성. [친구용 설치 가이드](docs/macos-setup.md) |
-| macOS Apple 공증 | 🕓 최종 단계 보류 (결정 C) — Developer ID($99/년) 확보 후 서명 단계만 교체 |
+| macOS Apple 공증 | ✅ Developer ID 인증서 + notarytool 공증 — v1.0.x `osx-Setup.pkg` 공증·staple 출시(CI `launcher-build.yml` macos job, signcheck 게이트 통과) |
 
-> 미검증(외부 게이트): 실 온라인 MS 로그인(Azure 앱 Mojang 승인 대기 — 승인 후 자동 동작), macOS `.app` 실행은 친구 Mac 에서 검증(코드는 크로스플랫폼, Windows 에서 osx-arm64 크로스빌드까지 확인). Apple 공증은 최종 단계.
+> 미검증(런타임 게이트): v1.0.x 신규 UI **레이아웃**은 CI 테스트빌드로 육안 스모크됨. **런타임**(실 로그인→설치→접속 e2e, 같은 LAN '서버 주소 직접 입력' 실접속, 서버 pill 실 ping, 실 크래시 분류 정확도)은 실 환경 확인 권장 — 이상 시 roll-forward. 상세 [feature-plan](docs/launcher-v1.0-feature-plan.md).
 
 ## 라이선스
 [MIT](LICENSE) (런처 소스·스크립트·문서). 서드파티 모드는 각자 라이선스를 따르며 바이너리는 미포함(packwiz 메타데이터만).
