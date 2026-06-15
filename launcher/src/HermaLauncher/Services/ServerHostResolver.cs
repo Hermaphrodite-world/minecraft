@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace HermaLauncher.Services;
 
@@ -26,6 +27,18 @@ public static class ServerHostResolver
         if (localServerUp) return Source.Local;
         return Source.Public;
     }
+
+    // 상태 pill 이 "응답하는 host" 를 찾기 위해 ping 할 순서(launch 의 ResolveServerHostAsync 와 동일 우선순위).
+    //   override 있으면 그것만(사용자 명시 선택). 없으면 로컬(서버 켠 본인 PC) → 공개 IP.
+    //   이로써 pill 이 launch 해석과 drift 하지 않는다(같은 PC 호스트가 '오프라인'으로 오표시되던 문제 해소).
+    public static IReadOnlyList<string> StatusProbeOrder(string? overrideHost, string publicHost)
+    {
+        var ov = Normalize(overrideHost);
+        if (ov is not null) return new[] { ov };
+        return new[] { LoopbackHost, publicHost };
+    }
+
+    public const string LoopbackHost = "127.0.0.1";
 
     // 사용자 입력 host 정규화: 앞뒤 공백 제거 + 흔한 실수(scheme/슬래시/경로) 제거.
     // "192.168.0.5 ", "tcp://192.168.0.5", "192.168.0.5/" → "192.168.0.5". 빈/공백 → null.

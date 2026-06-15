@@ -37,4 +37,25 @@ public class ServerHostResolverTests
     [InlineData("   ")]
     public void Normalize_blank_is_null(string? raw)
         => Assert.Null(ServerHostResolver.Normalize(raw));
+
+    // 상태 pill probe 순서 — launch 해석과 동일 우선순위(localhost-first 누락 회귀 가드).
+    [Fact]
+    public void StatusProbeOrder_override_only()
+        => Assert.Equal(new[] { "192.168.0.5" },
+                        ServerHostResolver.StatusProbeOrder("192.168.0.5", "play.example.com"));
+
+    [Fact]
+    public void StatusProbeOrder_no_override_is_loopback_then_public()
+        => Assert.Equal(new[] { "127.0.0.1", "play.example.com" },
+                        ServerHostResolver.StatusProbeOrder(null, "play.example.com"));
+
+    [Fact]
+    public void StatusProbeOrder_blank_override_is_loopback_then_public()
+        => Assert.Equal(new[] { "127.0.0.1", "play.example.com" },
+                        ServerHostResolver.StatusProbeOrder("  ", "play.example.com"));
+
+    [Fact]
+    public void StatusProbeOrder_normalizes_override()
+        => Assert.Equal(new[] { "192.168.0.5" },
+                        ServerHostResolver.StatusProbeOrder("tcp://192.168.0.5/", "play.example.com"));
 }
