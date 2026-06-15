@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Threading;
@@ -113,6 +114,13 @@ public partial class MainWindowViewModel : ViewModelBase
     [ObservableProperty]
     private string? _newsText;
 
+    // 서버 MOTD(메인 화면). 서버 status 응답의 description — 운영자가 server.properties 로 한 줄 공지.
+    [ObservableProperty]
+    private bool _hasMotd;
+
+    [ObservableProperty]
+    private string? _motdText;
+
     // RAM 자동 토글 시 권장값으로 되돌린다(수동 입력은 자동 OFF 시 NumericUpDown 으로).
     partial void OnRamAutoChanged(bool value)
     {
@@ -208,9 +216,27 @@ public partial class MainWindowViewModel : ViewModelBase
         {
             st = null; // ping 실패는 '오프라인' 표시로 흡수(흐름 비차단)
         }
-        ServerStatusText = st is null
-            ? "🔴 서버 오프라인"
-            : st is { Players: int p, MaxPlayers: int m } ? $"🟢 온라인 · {p}/{m}명" : "🟢 온라인";
+        if (st is null)
+        {
+            ServerStatusText = "🔴 서버 오프라인";
+            HasMotd = false;
+            MotdText = null;
+        }
+        else
+        {
+            // 접속자 닉네임 일부를 칩에 덧붙임(최대 3명 + "+N") — "누가 있나" 사회적 넛지.
+            var who = "";
+            if (st.Sample.Count > 0)
+            {
+                var shown = string.Join(", ", st.Sample.Take(3));
+                who = st.Sample.Count > 3 ? $" ({shown} +{st.Sample.Count - 3})" : $" ({shown})";
+            }
+            ServerStatusText = st is { Players: int p, MaxPlayers: int m }
+                ? $"🟢 온라인 · {p}/{m}명{who}"
+                : $"🟢 온라인{who}";
+            MotdText = st.Motd;
+            HasMotd = !string.IsNullOrWhiteSpace(st.Motd);
+        }
     }
 
     public string Title => "HERMA LAUNCHER";
@@ -335,11 +361,11 @@ public partial class MainWindowViewModel : ViewModelBase
                 // 게임 로그에서 흔한 원인을 한 가지 한국어 액션으로 분류(있으면 그걸 우선 안내, 없으면 일반 안내).
                 var hint = TryDiagnoseLatestGameLog();
                 if (hint is { } h)
-                    StatusMessage = $"{h.Title} {h.Action} (자세한 원인은 설정의 '진단 파일 만들기')";
+                    StatusMessage = $"{h.Title} {h.Action} (자세한 원인은 아래 '진단 파일')";
                 else
                     StatusMessage = ranSeconds < InstantCrashWindowSeconds
-                        ? $"게임이 실행 직후 종료됐어요(크래시 의심, 코드 {exitCode}). 설정의 '진단 파일 만들기'로 로그를 모아 디스코드에 보내거나 다시 시도해 주세요."
-                        : $"게임이 비정상 종료됐어요(코드 {exitCode}). 설정의 '진단 파일 만들기'로 로그를 한 파일로 묶어 확인·공유할 수 있어요.";
+                        ? $"게임이 실행 직후 종료됐어요(크래시 의심, 코드 {exitCode}). 아래 '진단 파일'로 로그를 모아 디스코드에 보내거나 다시 시도해 주세요."
+                        : $"게임이 비정상 종료됐어요(코드 {exitCode}). 아래 '진단 파일'로 로그를 한 파일로 묶어 확인·공유할 수 있어요.";
             }
             else
             {

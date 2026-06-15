@@ -65,6 +65,10 @@
                     <TextBlock Text="어떻게 플레이할까요?" FontSize="20" FontWeight="Bold" />
                     <TextBlock Text="{Binding Subtitle}" FontSize="12.5"
                                Foreground="{StaticResource TextMuted}" />
+                    <!-- 서버 MOTD (server status description — 운영자가 server.properties 로 한 줄 공지) -->
+                    <TextBlock Text="{Binding MotdText}" IsVisible="{Binding HasMotd}"
+                               FontSize="12" Foreground="{StaticResource AccentCyan}"
+                               TextWrapping="Wrap" MaxLines="1" TextTrimming="CharacterEllipsis" Margin="0,3,0,0" />
                 </StackPanel>
 
                 <!-- 히어로 아트 (우, 헤더+카드 높이에 맞춤). ImageBrush 배경으로 깔아 이미지가
@@ -166,10 +170,10 @@
                     <Panel Grid.Row="1" Grid.Column="1" Width="140" Margin="12,8,0,0">
                         <Button Classes="ghost" Content="취소" Padding="18,8" HorizontalAlignment="Right"
                                 IsVisible="{Binding IsBusy}" Command="{Binding CancelCommand}" />
-                        <!-- 오류/크래시 시 진단 바로가기(P3-4). 폴더를 열어 launcher-*.log + game-*.log 를 함께
-                             찾을 수 있게 함(Codex UX-R2 — 크래시는 게임 로그가 핵심). 작업 중 아닐 때만(취소와 자리 공유). -->
-                        <Button Classes="ghost" Content="🗎  로그 열기" Padding="18,8" HorizontalAlignment="Right"
-                                IsVisible="{Binding CanShowErrorLog}" Command="{Binding OpenLogFolderCommand}" />
+                        <!-- 오류/크래시 시 진단 바로가기(P3-4). 크래시 메시지가 가리키는 '진단 파일'을 바로 여기서
+                             생성(로그+시스템정보 ZIP→폴더 열기) — 설정까지 안 가도 됨(약속-구현 갭 해소). 취소와 자리 공유. -->
+                        <Button Classes="ghost" Content="🧩  진단 파일" Padding="18,8" HorizontalAlignment="Right"
+                                IsVisible="{Binding CanShowErrorLog}" Command="{Binding CreateDiagnosticsCommand}" />
                     </Panel>
                 </Grid>
             </Grid>

@@ -24,7 +24,7 @@ public static class FailureDiagnosis
             new Hint("로그인 세션이 만료됐어요.", "설정에서 로그아웃 후 다시 플레이하면 재로그인됩니다.")),
         // 모드 불일치/누락 — 서버-클라 모드셋 차이.
         (new[] { "requires the following mod", "missing mods", "incompatible mod", "mismatched mod", "mod rejections", "needs the following mod" },
-            new Hint("서버와 모드 구성이 맞지 않아요.", "설정에서 '모드팩 복구'로 다시 동기화하거나, 잠시 후 다시 시도해 주세요.")),
+            new Hint("서버와 모드 구성이 맞지 않아요.", "다시 시도하면 모드가 자동으로 다시 동기화돼요. 계속되면 런처를 최신으로 업데이트하거나 디스코드로 알려 주세요.")),
         // 서버 접속 실패(네트워크).
         (new[] { "connection refused", "connection timed out", "annotatedconnectexception", "unknownhostexception", "failed to connect", "no further information" },
             new Hint("서버에 연결하지 못했어요.", "잠시 후 다시 시도하고, 같은 집/네트워크에서 서버를 켰다면 설정의 '서버 주소 직접 입력'에 서버 PC의 IP를 넣어 주세요.")),
