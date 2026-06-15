@@ -277,14 +277,33 @@
                     </StackPanel>
                 </Border>
 
-                <!-- 진단 -->
-                <Grid ColumnDefinitions="*,*">
-                    <Button Grid.Column="0" Classes="ghost" Content="🧩  진단 파일 만들기" Padding="0,11" Margin="0,0,6,0"
+                <!-- 플레이 / 편의 -->
+                <Border Background="{StaticResource PanelBg}" CornerRadius="12" Padding="16"
+                        BorderBrush="{StaticResource CardBorder}" BorderThickness="1">
+                    <StackPanel Spacing="9">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <TextBlock Grid.Column="0" Text="플레이" FontWeight="SemiBold" FontSize="14" />
+                            <TextBlock Grid.Column="1" Text="{Binding PlaytimeSummary}" FontSize="12.5"
+                                       Foreground="{StaticResource AccentCyan}" VerticalAlignment="Center" />
+                        </Grid>
+                        <CheckBox Content="게임 끝나도 런처 열어두기 (바로 다시 접속)" IsChecked="{Binding KeepLauncherOpen}" />
+                    </StackPanel>
+                </Border>
+
+                <!-- 진단 / 폴더 -->
+                <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto">
+                    <Button Grid.Row="0" Grid.Column="0" Classes="ghost" Content="🧩  진단 파일 만들기" Padding="0,11" Margin="0,0,3,3"
                             HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
                             Command="{Binding CreateDiagnosticsCommand}" />
-                    <Button Grid.Column="1" Classes="ghost" Content="🗎  로그 폴더 열기" Padding="0,11" Margin="6,0,0,0"
+                    <Button Grid.Row="0" Grid.Column="1" Classes="ghost" Content="🗎  로그 폴더 열기" Padding="0,11" Margin="3,0,0,3"
                             HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
                             Command="{Binding OpenLogFolderCommand}" />
+                    <Button Grid.Row="1" Grid.Column="0" Classes="ghost" Content="📁  게임 폴더 열기" Padding="0,11" Margin="0,3,3,0"
+                            HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                            Command="{Binding OpenGameFolderCommand}" />
+                    <Button Grid.Row="1" Grid.Column="1" Classes="ghost" Content="🖼  스크린샷 폴더" Padding="0,11" Margin="3,3,0,0"
+                            HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                            Command="{Binding OpenScreenshotsCommand}" />
                 </Grid>
 
                 <!-- 닫기 / 저장 -->
