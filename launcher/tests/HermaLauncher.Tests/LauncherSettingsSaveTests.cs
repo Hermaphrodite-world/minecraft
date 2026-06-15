@@ -34,4 +34,37 @@ public class LauncherSettingsSaveTests
         var missing = Path.Combine(Path.GetTempPath(), $"herma-missing-{Guid.NewGuid():N}.json");
         Assert.True(LauncherSettings.Load(missing).IsRamAuto); // override null = 자동
     }
+
+    [Fact]
+    public void ServerHostOverride_roundtrips_via_path()
+    {
+        var tmp = Path.Combine(Path.GetTempPath(), $"herma-settings-{Guid.NewGuid():N}.json");
+        try
+        {
+            Assert.True(new LauncherSettings { ServerHostOverride = "192.168.219.102" }.Save(tmp));
+            var back = LauncherSettings.Load(tmp);
+            Assert.Equal("192.168.219.102", back.ServerHostOverride);
+            Assert.True(back.HasServerHostOverride);
+        }
+        finally { try { File.Delete(tmp); } catch { /* best-effort */ } }
+    }
+
+    [Fact]
+    public void Both_ram_and_server_override_persist_together()
+    {
+        // SaveSettings 가 두 필드를 한 객체로 저장 — 한쪽 저장이 다른 쪽을 지우지 않는지 회귀 가드.
+        var tmp = Path.Combine(Path.GetTempPath(), $"herma-settings-{Guid.NewGuid():N}.json");
+        try
+        {
+            Assert.True(new LauncherSettings { MaxRamMbOverride = 6144, ServerHostOverride = "10.0.0.2" }.Save(tmp));
+            var back = LauncherSettings.Load(tmp);
+            Assert.Equal(6144, back.MaxRamMbOverride);
+            Assert.Equal("10.0.0.2", back.ServerHostOverride);
+        }
+        finally { try { File.Delete(tmp); } catch { /* best-effort */ } }
+    }
+
+    [Fact]
+    public void Default_has_no_server_override()
+        => Assert.False(new LauncherSettings().HasServerHostOverride);
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
@@ -19,6 +20,7 @@ using Velopack.Sources;
 using XboxAuthNet.Game.Accounts;
 using XboxAuthNet.Game.Authenticators;
 using XboxAuthNet.Game.Msal;
+using XboxAuthNet.XboxLive;
 
 namespace HermaLauncher.Services;
 
@@ -104,11 +106,59 @@ public sealed class CmlLibAuthService : IAuthService
         }
         catch (Exception ex)
         {
+            // XSTS XErr(미성년·지역·Xbox 프로필 부재·밴 등)면 전용 한국어 안내로 분기(기획서 §4.3).
+            var xerr = ExtractXErr(ex);
+            if (xerr is not null)
+            {
+                var mapped = XboxLoginError.MessageForXErr(xerr);
+                if (mapped is not null)
+                {
+                    AppLog.Warn(LaunchStage.Auth, $"Xbox 로그인 거부(XErr {xerr})");
+                    throw new LaunchStageException(LaunchStage.Auth, mapped, ex);
+                }
+                AppLog.Warn(LaunchStage.Auth, $"Xbox 로그인 실패(XErr {xerr}, 미매핑)");
+                throw new LaunchStageException(LaunchStage.Auth,
+                    $"Xbox 로그인에 실패했어요 (코드: {xerr}). 계정의 나이·지역·Xbox 프로필 상태를 확인하고 다시 시도해 주세요.", ex);
+            }
             var detail = ex is AggregateException agg
                 ? string.Join(" / ", agg.Flatten().InnerExceptions.Select(e => e.Message))
                 : ex.Message;
             throw new LaunchStageException(LaunchStage.Auth, "로그인에 실패했어요.\n" + detail, ex);
         }
+    }
+
+    // 예외 트리(AggregateException/InnerException)에서 XSTS XErr 코드를 찾는다. 없으면 null.
+    // XboxAuthException 의 Error/ErrorMessage/Redirect 필드를 우선 보고, 일반 예외는 Message 를 스캔.
+    private static string? ExtractXErr(Exception ex)
+    {
+        foreach (var e in FlattenExceptions(ex))
+        {
+            if (e is XboxAuthException xa)
+            {
+                var x = XboxLoginError.FindXErr(xa.Error)
+                        ?? XboxLoginError.FindXErr(xa.ErrorMessage)
+                        ?? XboxLoginError.FindXErr(xa.Redirect);
+                if (x is not null) return x;
+            }
+            var fromMsg = XboxLoginError.FindXErr(e.Message);
+            if (fromMsg is not null) return fromMsg;
+        }
+        return null;
+    }
+
+    private static IEnumerable<Exception> FlattenExceptions(Exception ex)
+    {
+        if (ex is AggregateException agg)
+        {
+            foreach (var inner in agg.Flatten().InnerExceptions)
+                foreach (var x in FlattenExceptions(inner))
+                    yield return x;
+            yield break;
+        }
+        yield return ex;
+        if (ex.InnerException is not null)
+            foreach (var x in FlattenExceptions(ex.InnerException))
+                yield return x;
     }
 
     // (5.5) SessionRefresh — proc.Start 직전 세션 재검증. 긴 설치 중 토큰 만료 대응(P1-1).
@@ -347,33 +397,56 @@ public sealed class CmlLibMinecraftService : IMinecraftService
                 Xuid = s.Xuid,
             };
 
-    // quickPlay 자동 접속 대상 host 해석. 로컬(127.0.0.1)에 서버가 떠 있으면 로컬, 아니면 공개 ServerIp.
-    //   호스트(서버 켠 PC)는 NAT 헤어핀 미지원 시 공개 IP 로 자기 자신을 못 들어가므로 로컬로 우회.
-    //   일반 친구 PC 는 로컬에 서버가 없어 probe 실패 → 공개 IP(무영향).
+    // quickPlay 자동 접속 대상 host 해석. 우선순위: (0) 사용자 지정 주소 → (1) 로컬 서버 감지 → (2) 공개 ServerIp.
+    //   (0) 설정 '서버 주소 직접 입력' — 같은 집/네트워크의 다른 PC 에서 서버를 켠 경우(NAT 헤어핀 미지원 →
+    //       공개 IP·localhost 둘 다 실패). 예: 서버=맥(192.168.x.y), 플레이=같은 LAN 의 윈도우 PC.
+    //   (1) 호스트(서버 켠 PC) 본인 — 자기 공개 IP 로 자기 서버에 못 들어가므로 로컬로 우회(P1-10).
+    //   (2) 일반 친구 PC — 위 둘 다 아니면 공개 ServerIp.
     private static async Task<string> ResolveServerHostAsync(IProgress<StageUpdate> progress, CancellationToken ct)
     {
-        // 호스트(서버 켠 PC) 우회: 로컬에 MC 서버가 떠 있으면 127.0.0.1. MC handshake 로 실제 MC 서버만 인정
-        // (P1-10 — 비-MC 프로세스가 같은 포트 점유 시 false-positive 제거).
-        if (await ServerPing.IsServerUpAsync("127.0.0.1", LauncherConfig.ServerPort, ct, timeoutMs: 700).ConfigureAwait(false))
-        {
-            progress.Report(StageUpdate.Of(LaunchStage.Launch, "이 PC에서 서버를 감지했어요 — 로컬(127.0.0.1)로 접속합니다."));
-            return "127.0.0.1";
-        }
+        var overrideHost = ServerHostResolver.Normalize(LauncherSettings.Load().ServerHostOverride);
 
-        // 공개 서버 사전 점검(P1-10) — 다운이어도 차단하지 않고 경고만(원클릭 약속 유지).
-        var host = LauncherConfig.ServerIp;
-        try
+        // override 가 있으면 로컬 probe 를 건너뛴다(명시 선택 최우선).
+        var localUp = overrideHost is null
+                      && await ServerPing.IsServerUpAsync("127.0.0.1", LauncherConfig.ServerPort, ct, timeoutMs: 700).ConfigureAwait(false);
+
+        switch (ServerHostResolver.Decide(overrideHost, localUp))
         {
-            if (!await ServerPing.IsServerUpAsync(host, LauncherConfig.ServerPort, ct, timeoutMs: 2000).ConfigureAwait(false))
-            {
-                AppLog.Warn(LaunchStage.Launch, $"서버 응답 없음: {host}:{LauncherConfig.ServerPort}");
-                progress.Report(StageUpdate.Of(LaunchStage.Launch,
-                    "서버가 응답하지 않아요(꺼져 있거나 점검 중일 수 있어요). 그래도 게임을 실행할게요."));
-            }
+            case ServerHostResolver.Source.UserOverride:
+                // 명시 선택이므로 ping 실패해도 사용한다(ping 이 막혀도 게임 접속은 될 수 있음) — 경고만 남김.
+                bool overrideUp;
+                try { overrideUp = await ServerPing.IsServerUpAsync(overrideHost!, LauncherConfig.ServerPort, ct, timeoutMs: 2000).ConfigureAwait(false); }
+                catch (OperationCanceledException) when (ct.IsCancellationRequested) { throw; }
+                catch { overrideUp = false; }
+                if (overrideUp)
+                    progress.Report(StageUpdate.Of(LaunchStage.Launch, $"설정에 지정한 서버 주소로 접속합니다: {overrideHost}"));
+                else
+                {
+                    AppLog.Warn(LaunchStage.Launch, $"지정 서버 응답 없음(그래도 사용): {overrideHost}:{LauncherConfig.ServerPort}");
+                    progress.Report(StageUpdate.Of(LaunchStage.Launch, $"설정에 지정한 서버 주소로 접속합니다: {overrideHost} (응답 확인은 안 됐어요)"));
+                }
+                return overrideHost!;
+
+            case ServerHostResolver.Source.Local:
+                progress.Report(StageUpdate.Of(LaunchStage.Launch, "이 PC에서 서버를 감지했어요 — 로컬(127.0.0.1)로 접속합니다."));
+                return "127.0.0.1";
+
+            default:
+                // 공개 서버 사전 점검(P1-10) — 다운이어도 차단하지 않고 경고만(원클릭 약속 유지).
+                var host = LauncherConfig.ServerIp;
+                try
+                {
+                    if (!await ServerPing.IsServerUpAsync(host, LauncherConfig.ServerPort, ct, timeoutMs: 2000).ConfigureAwait(false))
+                    {
+                        AppLog.Warn(LaunchStage.Launch, $"서버 응답 없음: {host}:{LauncherConfig.ServerPort}");
+                        progress.Report(StageUpdate.Of(LaunchStage.Launch,
+                            "서버에 연결하지 못했어요(꺼져 있거나 점검 중일 수 있어요). 같은 집·네트워크에서 서버를 켰다면 설정의 '서버 주소 직접 입력'에 서버 PC의 IP를 넣어 주세요. 그래도 게임은 실행할게요."));
+                    }
+                }
+                catch (OperationCanceledException) when (ct.IsCancellationRequested) { throw; }
+                catch { /* ping 실패는 무시하고 진행 */ }
+                return host;
         }
-        catch (OperationCanceledException) when (ct.IsCancellationRequested) { throw; }
-        catch { /* ping 실패는 무시하고 진행 */ }
-        return host;
     }
 }
 

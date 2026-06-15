@@ -125,6 +125,9 @@
                 <!-- 상태 칩 (전체 폭) -->
                 <WrapPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,16,0,0">
                     <Border Classes="chip" Margin="0,0,8,8">
+                        <TextBlock Text="{Binding ServerStatusText}" />
+                    </Border>
+                    <Border Classes="chip" Margin="0,0,8,8">
                         <TextBlock Text="{Binding VersionChip}" />
                     </Border>
                     <Border Classes="chip" Margin="0,0,8,8">
@@ -218,10 +221,27 @@
                     </StackPanel>
                 </Border>
 
+                <!-- 서버 주소 직접 입력(고급) — 같은 집/네트워크에서 서버를 켠 경우 자동 접속이 안 될 때만 -->
+                <Border Background="{StaticResource PanelBg}" CornerRadius="12" Padding="16"
+                        BorderBrush="{StaticResource CardBorder}" BorderThickness="1">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="서버 주소 직접 입력 (고급)" FontWeight="SemiBold" FontSize="14" />
+                        <TextBlock Text="보통은 비워 두세요(자동). 같은 집·네트워크의 다른 PC에서 서버를 켜서 자동 접속이 안 될 때만 서버 PC의 IP를 넣으세요."
+                                   FontSize="11.5" Foreground="{StaticResource TextMuted}" TextWrapping="Wrap" />
+                        <TextBox Text="{Binding ServerHostOverride}"
+                                 Watermark="비워 두면 자동 (예: 192.168.219.102)" />
+                    </StackPanel>
+                </Border>
+
                 <!-- 진단 -->
-                <Button Classes="ghost" Content="🗎  로그 폴더 열기" Padding="0,11"
-                        HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
-                        Command="{Binding OpenLogFolderCommand}" />
+                <Grid ColumnDefinitions="*,*">
+                    <Button Grid.Column="0" Classes="ghost" Content="🧩  진단 파일 만들기" Padding="0,11" Margin="0,0,6,0"
+                            HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                            Command="{Binding CreateDiagnosticsCommand}" />
+                    <Button Grid.Column="1" Classes="ghost" Content="🗎  로그 폴더 열기" Padding="0,11" Margin="6,0,0,0"
+                            HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                            Command="{Binding OpenLogFolderCommand}" />
+                </Grid>
 
                 <!-- 닫기 / 저장 -->
                 <Grid ColumnDefinitions="*,*" Margin="0,2,0,0">

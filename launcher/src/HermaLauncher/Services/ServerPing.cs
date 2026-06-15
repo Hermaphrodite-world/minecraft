@@ -55,6 +55,68 @@ public static class ServerPing
         catch { return false; }
     }
 
+    // 메인 화면 상태 pill 용 — status JSON 전체를 읽어 players/MOTD 를 파싱. 실패/비-MC = null. 취소 = throw.
+    public static async Task<ServerStatus?> QueryStatusAsync(string host, int port, CancellationToken ct, int timeoutMs = 2500)
+    {
+        try
+        {
+            var json = await ReadStatusJsonAsync(host, port, ct, timeoutMs).ConfigureAwait(false);
+            return json is null ? null : ServerStatus.Parse(json);
+        }
+        catch (OperationCanceledException) when (ct.IsCancellationRequested) { throw; }
+        catch { return null; }
+    }
+
+    // handshake + status request 후 응답 JSON 문자열 전체를 읽어 반환(없으면 null).
+    private static async Task<string?> ReadStatusJsonAsync(string host, int port, CancellationToken ct, int timeoutMs)
+    {
+        using var client = new TcpClient();
+        using var cts = CancellationTokenSource.CreateLinkedTokenSource(ct);
+        cts.CancelAfter(timeoutMs);
+        await client.ConnectAsync(host, port, cts.Token).ConfigureAwait(false);
+        using var stream = client.GetStream();
+
+        using (var hs = new MemoryStream())
+        {
+            WriteVarInt(hs, 0x00);
+            WriteVarInt(hs, -1);
+            WriteString(hs, host);
+            hs.WriteByte((byte)(port >> 8));
+            hs.WriteByte((byte)(port & 0xFF));
+            WriteVarInt(hs, 1);
+            await WritePacketAsync(stream, hs.ToArray(), cts.Token).ConfigureAwait(false);
+        }
+        using (var req = new MemoryStream())
+        {
+            WriteVarInt(req, 0x00);
+            await WritePacketAsync(stream, req.ToArray(), cts.Token).ConfigureAwait(false);
+        }
+
+        var len = await ReadVarIntAsync(stream, cts.Token).ConfigureAwait(false);
+        if (len <= 0 || len > (1 << 20)) return null;
+        var pid = await ReadVarIntAsync(stream, cts.Token).ConfigureAwait(false);
+        if (pid != 0x00) return null;
+        var jsonLen = await ReadVarIntAsync(stream, cts.Token).ConfigureAwait(false);
+        if (jsonLen <= 0 || jsonLen > (1 << 20)) return null;
+
+        var buf = await ReadExactAsync(stream, jsonLen, cts.Token).ConfigureAwait(false);
+        return buf is null ? null : Encoding.UTF8.GetString(buf);
+    }
+
+    // 정확히 count 바이트를 읽는다(부분 읽기 누적). 조기 EOF = null.
+    private static async Task<byte[]?> ReadExactAsync(Stream s, int count, CancellationToken ct)
+    {
+        var buf = new byte[count];
+        var read = 0;
+        while (read < count)
+        {
+            var n = await s.ReadAsync(buf.AsMemory(read, count - read), ct).ConfigureAwait(false);
+            if (n == 0) return null; // 조기 EOF
+            read += n;
+        }
+        return buf;
+    }
+
     // JSON 본문 선두의 비공백 바이트 1개를 읽는다(공백/개행 스킵, 최대 16바이트). EOF/초과 시 0.
     private static async Task<byte> ReadFirstNonWhitespaceAsync(Stream s, CancellationToken ct)
     {
