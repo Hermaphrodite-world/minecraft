@@ -17,6 +17,7 @@ public enum AppView
     Main,         // 두 경로 카드 + 상태/진행 (기본 화면)
     OfficialDone, // 공식 런처 설치 완료 — 전환 안내 전용 화면
     Settings,     // 설정/복구 — 계정·RAM·로그(P3-2)
+    Welcome,      // 첫 실행 환영 — 기대치 안내(1회성)
 }
 
 public partial class MainWindowViewModel : ViewModelBase
@@ -66,6 +67,7 @@ public partial class MainWindowViewModel : ViewModelBase
     [NotifyPropertyChangedFor(nameof(IsMain))]
     [NotifyPropertyChangedFor(nameof(IsOfficialDone))]
     [NotifyPropertyChangedFor(nameof(IsSettings))]
+    [NotifyPropertyChangedFor(nameof(IsWelcome))]
     [NotifyCanExecuteChangedFor(nameof(BackToMenuCommand))]
     private AppView _view = AppView.Main;
 
@@ -94,6 +96,19 @@ public partial class MainWindowViewModel : ViewModelBase
     [ObservableProperty]
     private string _serverStatusText = "서버 상태 확인 중…";
 
+    // ── 운영자 공지/점검(원격 news.json, 미설정 시 숨김) ──
+    [ObservableProperty]
+    private bool _hasMaintenance;
+
+    [ObservableProperty]
+    private string? _maintenanceText;
+
+    [ObservableProperty]
+    private bool _hasNews;
+
+    [ObservableProperty]
+    private string? _newsText;
+
     // RAM 자동 토글 시 권장값으로 되돌린다(수동 입력은 자동 OFF 시 NumericUpDown 으로).
     partial void OnRamAutoChanged(bool value)
     {
@@ -116,14 +131,52 @@ public partial class MainWindowViewModel : ViewModelBase
         _maxRamMb = RamAdvisor.EffectiveMaxRamMb();
         _serverHostOverride = settings.ServerHostOverride;
 
-        // 디자이너/테스트 환경에선 네트워크 호출 금지 — 실행 시에만 서버 상태 pill 가동.
+        // 첫 실행이면 환영 화면으로 시작(디자이너 제외 — 디자이너는 Main 미리보기).
+        if (!Avalonia.Controls.Design.IsDesignMode && !settings.HasSeenWelcome)
+            _view = AppView.Welcome;
+
+        // 디자이너/테스트 환경에선 네트워크 호출 금지 — 실행 시에만 서버 상태 pill·공지 가동.
         if (!Avalonia.Controls.Design.IsDesignMode)
         {
             _statusTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(30) };
             _statusTimer.Tick += (_, _) => _ = RefreshServerStatusAsync();
             _statusTimer.Start();
             _ = RefreshServerStatusAsync(); // 즉시 1회
+            _ = LoadNewsAsync();            // 운영자 공지/점검(미설정 시 즉시 반환)
         }
+    }
+
+    // 운영자 원격 공지/점검 로드(best-effort, 비차단). HERMA_NEWS_URL 미설정이면 즉시 반환(기능 off).
+    private async Task LoadNewsAsync()
+    {
+        if (string.IsNullOrWhiteSpace(LauncherConfig.NewsUrl))
+            return;
+        NewsFeed? feed;
+        try { feed = await NewsService.FetchAsync(LauncherConfig.NewsUrl, CancellationToken.None).ConfigureAwait(true); }
+        catch { feed = null; }
+        if (feed is null)
+            return;
+
+        if (feed.Maintenance is { Active: true } mt)
+        {
+            MaintenanceText = string.IsNullOrWhiteSpace(mt.Message) ? "서버 점검 중이에요." : mt.Message;
+            HasMaintenance = true;
+        }
+        if (feed.Latest is { } item)
+        {
+            NewsText = (item.Urgent ? "🔴 " : "📢 ") + item.Title;
+            HasNews = true;
+        }
+    }
+
+    // 환영 화면 '시작하기' — 본 적 있음으로 표시(저장)하고 메인으로. 저장 실패해도 진행(다음 실행에 또 보일 뿐).
+    [RelayCommand]
+    private void StartFromWelcome()
+    {
+        var s = LauncherSettings.Load();
+        s.HasSeenWelcome = true;
+        s.Save();
+        View = AppView.Main;
     }
 
     // 서버 상태 pill 갱신(best-effort, 비차단). override 주소 우선, 없으면 공개 ServerIp.
@@ -179,6 +232,7 @@ public partial class MainWindowViewModel : ViewModelBase
     public bool IsMain => View == AppView.Main;
     public bool IsOfficialDone => View == AppView.OfficialDone;
     public bool IsSettings => View == AppView.Settings;
+    public bool IsWelcome => View == AppView.Welcome;
 
     private bool CanNavigate() => !IsBusy;
 
@@ -378,13 +432,12 @@ public partial class MainWindowViewModel : ViewModelBase
         var normalizedHost = ServerHostResolver.Normalize(ServerHostOverride);
         if (!string.Equals(normalizedHost, ServerHostOverride, StringComparison.Ordinal))
             ServerHostOverride = normalizedHost;
-        // ※ 두 필드(RAM·서버주소)를 같은 객체로 저장 — 한쪽만 쓰면 다른 쪽이 지워진다.
+        // load-modify-save: VM 이 추적하지 않는 필드(HasSeenWelcome 등)를 보존(덮어쓰기 방지).
         // 저장 실패(파일 권한/사용 중) 시 사용자에게 알리고 설정 화면 유지(Codex UX-R1).
-        if (!new LauncherSettings
-        {
-            MaxRamMbOverride = RamAuto ? null : clamped,
-            ServerHostOverride = normalizedHost,
-        }.Save())
+        var toSave = LauncherSettings.Load();
+        toSave.MaxRamMbOverride = RamAuto ? null : clamped;
+        toSave.ServerHostOverride = normalizedHost;
+        if (!toSave.Save())
         {
             StatusMessage = "설정 저장에 실패했어요(파일 권한/사용 중일 수 있어요). 잠시 후 다시 시도해 주세요.";
             return;

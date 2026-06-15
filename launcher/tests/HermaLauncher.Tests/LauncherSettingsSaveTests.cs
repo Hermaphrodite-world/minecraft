@@ -67,4 +67,36 @@ public class LauncherSettingsSaveTests
     [Fact]
     public void Default_has_no_server_override()
         => Assert.False(new LauncherSettings().HasServerHostOverride);
+
+    [Fact]
+    public void HasSeenWelcome_defaults_false_and_roundtrips()
+    {
+        Assert.False(new LauncherSettings().HasSeenWelcome);
+        var tmp = Path.Combine(Path.GetTempPath(), $"herma-settings-{Guid.NewGuid():N}.json");
+        try
+        {
+            Assert.True(new LauncherSettings { HasSeenWelcome = true }.Save(tmp));
+            Assert.True(LauncherSettings.Load(tmp).HasSeenWelcome);
+        }
+        finally { try { File.Delete(tmp); } catch { /* best-effort */ } }
+    }
+
+    [Fact]
+    public void Save_preserves_unrelated_fields_on_load_modify_save()
+    {
+        // SaveSettings 의 load-modify-save 패턴 회귀 가드: RAM 만 바꿔 저장해도 HasSeenWelcome/서버주소 보존.
+        var tmp = Path.Combine(Path.GetTempPath(), $"herma-settings-{Guid.NewGuid():N}.json");
+        try
+        {
+            Assert.True(new LauncherSettings { HasSeenWelcome = true, ServerHostOverride = "10.0.0.9" }.Save(tmp));
+            var s = LauncherSettings.Load(tmp);
+            s.MaxRamMbOverride = 4096; // RAM 만 변경
+            Assert.True(s.Save(tmp));
+            var back = LauncherSettings.Load(tmp);
+            Assert.True(back.HasSeenWelcome);                    // 보존
+            Assert.Equal("10.0.0.9", back.ServerHostOverride);   // 보존
+            Assert.Equal(4096, back.MaxRamMbOverride);           // 변경 반영
+        }
+        finally { try { File.Delete(tmp); } catch { /* best-effort */ } }
+    }
 }

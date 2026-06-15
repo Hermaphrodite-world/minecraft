@@ -54,14 +54,15 @@
 |---|---|---|
 | **전송 단계 자동 재시도+백오프** | ✅ + 테스트 | [RetryPolicy.cs](launcher/src/HermaLauncher/Services/RetryPolicy.cs) — 지수 백오프(순수 util). [PackwizService.cs](launcher/src/HermaLauncher/Services/PackwizService.cs) bootstrap 다운로드에 배선: 5xx/연결끊김=재시도(최대 3회), 4xx/무결성 실패/취소=즉시 실패. 단위테스트 5(성공/재시도/구조적즉시실패/소진/취소). |
 | **메인 화면 라이브 서버 상태 pill** | ✅(파싱 테스트) + 🔬스모크 | [ServerStatus.cs](launcher/src/HermaLauncher/Services/ServerStatus.cs) status JSON 파싱(players.online/max + MOTD 문자열·컴포넌트, 테스트 8) + [ServerPing.QueryStatusAsync](launcher/src/HermaLauncher/Services/ServerPing.cs)(전체 JSON read, 기존 IsServerUpAsync launch 경로는 불변). VM 30초 타이머(디자이너/테스트 미가동)로 "🟢 온라인 · N/M명 / 🔴 오프라인" 칩 표시. **실 ping 결과·칩 렌더는 런타임 스모크 필요.** |
+| **첫 실행 환영 1화면** | ✅ + 🔬스모크 | [MainWindowViewModel](launcher/src/HermaLauncher/ViewModels/MainWindowViewModel.cs) AppView.Welcome + `LauncherSettings.HasSeenWelcome`(첫 실행 1회). '시작하기'→저장 후 Main. **SaveSettings 를 load-modify-save 로 리팩터**(HasSeenWelcome 등 VM 미추적 필드 보존 — 회귀 테스트 2). 화면 렌더 스모크 필요. |
+| **공지/패치노트 패널 + 점검 배너** | ✅(파싱 테스트) + 🔬스모크 | [NewsFeed.cs](launcher/src/HermaLauncher/Services/NewsFeed.cs)(파싱 테스트 10) + [NewsService.cs](launcher/src/HermaLauncher/Services/NewsService.cs)(원격 fetch best-effort) + `LauncherConfig.NewsUrl`(env `HERMA_NEWS_URL`). **기본 OFF(미설정 시 graceful 숨김 — 푸터 링크 패턴)** → 운영자가 GitHub Pages 에 `news.json` 올리고 env 주입 시 활성. 메인 헤더에 점검(빨강)·공지(시안) 배너. 실 fetch·렌더 스모크 필요. |
 
 ### ⏳ MEDIUM — 남음 (신중 진행 — 런타임 검증 필요)
 
 - **Windows 토큰 DPAPI 암호화** (M) — **보류**: 토큰 캐시(accounts.json)는 XboxAuthNet 이 직접 평문 JSON 으로 읽고 쓴다. 파일을 암호화하면 XboxAuthNet read 가 깨지므로 read 전 복호/ write 후 암호화 wrap 이 필요한데, **실패 시 로그인 자체가 깨진다(전 사용자 재로그인). 런타임 인증 검증 불가 상태에서 blind ship 금지.** %APPDATA% ACL 이 이미 동일 사용자 보호를 제공(기존 결정). 실 인증 검증 가능 시 진행.
 - **실패-제안 모드팩 복구** (M) — **보류**: mods/ + 마커 삭제로 재동기화 유도하나, **packwiz-installer 의 설치 manifest 를 함께 비워야 실제 재다운로드가 일어나는지(아니면 "이미 설치됨"으로 no-op)** 를 런타임으로 확인해야 함(다운로드-존재판정 stub masking 위험). manifest 위치/동작 실측 후 진행.
 - **손상 파일 자가복구 surface** (S) — ServerList 가 이미 손상 시 .bak 백업 후 재작성으로 auto-recover 중 → 수동 복원 surface 는 한계효용 낮음. 보류.
-- **첫 실행 환영 1화면** (S) — AppView + settings 플래그(저위험 additive). 다음 후보.
-- **공지/패치노트 패널** (M) + **점검 배너** (S) — GitHub Pages `news.json` 원격 fetch(어드민 서버 0). 운영자-comms 앵커지만 런처 최초 범용 원격 HTTP fetch 신규 인프라 → 별도 집중 턴 권장.
+- **공지 unread 배지 / 본문 상세** (S) — 현재는 최신 공지 제목 배너만. `LastSeenNewsId` 비교 unread 표시 + 본문 detail 은 후속.
 
 ### LOW
 
@@ -81,9 +82,9 @@
 
 ## 변경 파일 요약 (이번 세션)
 
-신규(서비스): `ServerHostResolver.cs`, `FailureDiagnosis.cs`, `DiagnosticsBundle.cs`, `XboxLoginError.cs`, `SingleInstanceSignal.cs`, `RetryPolicy.cs`, `ServerStatus.cs`.
-신규(테스트): `ServerHostResolverTests`, `FailureDiagnosisTests`, `DiagnosticsBundleTests`, `XboxLoginErrorTests`, `SingleInstanceSignalTests`, `RetryPolicyTests`, `ServerStatusTests`.
+신규(서비스): `ServerHostResolver.cs`, `FailureDiagnosis.cs`, `DiagnosticsBundle.cs`, `XboxLoginError.cs`, `SingleInstanceSignal.cs`, `RetryPolicy.cs`, `ServerStatus.cs`, `NewsFeed.cs`, `NewsService.cs`.
+신규(테스트): `ServerHostResolverTests`, `FailureDiagnosisTests`, `DiagnosticsBundleTests`, `XboxLoginErrorTests`, `SingleInstanceSignalTests`, `RetryPolicyTests`, `ServerStatusTests`, `NewsFeedTests`.
 수정: `Services/LauncherSettings.cs`(+ServerHostOverride), `Services/AppLog.cs`(+LatestGameLogPath), `Services/CmlLibServices.cs`(ResolveServerHostAsync + XSTS catch), `Services/PackwizService.cs`(bootstrap 다운로드 retry), `Services/ServerPing.cs`(+QueryStatusAsync), `ViewModels/MainWindowViewModel.cs`(서버주소·진단·크래시힌트·상태 pill 타이머), `Views/MainWindow.axaml`(서버주소 필드·진단 버튼·상태 칩), `Program.cs`(활성화 신호), `App.axaml.cs`(ActivateMainWindow), `LauncherSettingsSaveTests.cs`(+3).
 
-**검증**: `dotnet build` 경고 0/오류 0, `dotnet test` **76/76 통과**. XboxAuthNet XSTS 예외 계약은 어셈블리 리플렉션으로 사전 검증.
+**검증**: `dotnet build` 경고 0/오류 0, `dotnet test` **88/88 통과**. XboxAuthNet XSTS 예외 계약은 어셈블리 리플렉션으로 사전 검증.
 **미검증(사용자 영역, 런타임 스모크 필요)**: ① 설정 화면 신규 UI 육안(서버주소 필드·진단 버튼) ② 실제 LAN에서 override 접속 e2e ③ 실제 크래시 로그 분류기 정확도 ④ 2번째 실행 시 창이 실제로 전면화되는지(IPC 신호 전달은 테스트 검증됨, 창 포커스 시각 동작은 미검증) ⑤ 실제 XSTS 거부 계정으로 한국어 메시지 표출.
