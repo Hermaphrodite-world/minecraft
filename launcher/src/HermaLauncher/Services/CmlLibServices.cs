@@ -268,7 +268,9 @@ public sealed class CmlLibMinecraftService : IMinecraftService
         var proc = await _launcher.BuildProcessAsync(_fabricVersionId, option, ct).ConfigureAwait(false);
         // 게임 stdout/stderr 를 game-*.log 로 캡처(P0/P1-7) — MC 자체 로그 init 전 조기 크래시 진단용(macOS 실사례).
         // redirect 설정 실패(UseShellExecute 충돌 등) 시 캡처 생략 — 런치 흐름 비차단.
-        var captureAttached = TryEnableGameLogCapture(proc);
+        // ★ writer 를 out 으로 받아, start 실패/취소(Exited 미발화) 경로에서 직접 Dispose 한다
+        //   (코드리뷰: 시작 전 예외 시 game-*.log StreamWriter 파일핸들 누수 — Exited 만으론 안 닫힘).
+        var captureAttached = TryEnableGameLogCapture(proc, out var captureWriter);
         try
         {
             ct.ThrowIfCancellationRequested(); // build 후 start 직전 마지막 취소 가드(취소했는데 게임이 뜨는 race 방지)
@@ -280,24 +282,28 @@ public sealed class CmlLibMinecraftService : IMinecraftService
                 try { proc.BeginOutputReadLine(); proc.BeginErrorReadLine(); } catch { /* 캡처 best-effort */ }
             }
             AppLog.Info(LaunchStage.Running, $"게임 실행 시작 (pid={proc.Id}, 캡처={captureAttached})");
-            return proc; // 성공 — 핸들은 호출자(런처 모니터)가 소유/Dispose
+            return proc; // 성공 — 핸들은 호출자(런처 모니터)가 소유/Dispose. writer 는 proc.Exited 가 Dispose.
         }
         catch (Exception ex) when (ex is Win32Exception or InvalidOperationException or ObjectDisposedException)
         {
+            captureWriter?.Dispose(); // 시작 실패 → Exited 미발화 → writer 가 안 닫히므로 직접 정리
             proc.Dispose();
             throw new LaunchStageException(LaunchStage.Launch, "게임 실행에 실패했어요. 다시 시도해 주세요.", ex);
         }
         catch
         {
-            proc.Dispose(); // 취소(start 전) / start 실패 등 — 핸들 정리 후 전파
+            captureWriter?.Dispose(); // 취소(start 전) 등도 동일 — 캡처 writer 핸들 누수 방지
+            proc.Dispose(); // 핸들 정리 후 전파
             throw;
         }
     }
 
-    // 게임 프로세스 stdout/stderr 를 game-*.log 로 redirect. 성공 시 true(호출자가 BeginReadLine).
-    // 실패(예: UseShellExecute 충돌)면 false → 캡처 없이 런치 계속(비차단).
-    private static bool TryEnableGameLogCapture(Process proc)
+    // 게임 프로세스 stdout/stderr 를 game-*.log 로 redirect. 성공 시 true + writer(out, 호출자가 시작
+    // 실패/취소 경로에서 Dispose 책임). 성공 시작 경로에선 proc.Exited 가 writer 를 Dispose 한다.
+    // 실패(예: UseShellExecute 충돌)면 false + writer=null → 캡처 없이 런치 계속(비차단).
+    private static bool TryEnableGameLogCapture(Process proc, out StreamWriter? writer)
     {
+        writer = null;
         try
         {
             proc.StartInfo.UseShellExecute = false;
@@ -306,21 +312,24 @@ public sealed class CmlLibMinecraftService : IMinecraftService
             proc.StartInfo.StandardOutputEncoding = Encoding.UTF8;
             proc.StartInfo.StandardErrorEncoding = Encoding.UTF8;
 
-            var writer = new StreamWriter(AppLog.NewGameLogPath(), append: false, new UTF8Encoding(false)) { AutoFlush = true };
+            var w = new StreamWriter(AppLog.NewGameLogPath(), append: false, new UTF8Encoding(false)) { AutoFlush = true };
             var sync = new object();
             void Append(string? line)
             {
                 if (line is null) return;
-                lock (sync) { try { writer.WriteLine(line); } catch { /* 게임 종료 직후 등 */ } }
+                lock (sync) { try { w.WriteLine(line); } catch { /* 게임 종료 직후 등 */ } }
             }
             proc.OutputDataReceived += (_, e) => Append(e.Data);
             proc.ErrorDataReceived += (_, e) => Append(e.Data);
             proc.EnableRaisingEvents = true;
-            proc.Exited += (_, _) => { lock (sync) { try { writer.Flush(); writer.Dispose(); } catch { } } };
+            proc.Exited += (_, _) => { lock (sync) { try { w.Flush(); w.Dispose(); } catch { } } };
+            writer = w; // 호출자가 시작 실패 경로에서 Dispose 할 수 있도록 노출
             return true;
         }
         catch
         {
+            writer?.Dispose(); // 부분 생성된 writer 정리
+            writer = null;
             return false; // redirect 불가 → 캡처 생략
         }
     }
