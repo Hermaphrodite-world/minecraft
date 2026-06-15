@@ -61,7 +61,9 @@ public static class ServerList
             servers.Items.RemoveAll(t =>
                 t is NbtCompound c && HostOf(c.GetString("ip")).Equals(host, StringComparison.OrdinalIgnoreCase));
 
-            // 이미 동일 name+ip 가 있으면(앞에서 제거됐을 것이므로 보통 없음) 중복 방지.
+            // 위에서 같은 host 항목을 모두 제거했으니, 우리 항목을 맨 앞(Insert 0)에 새로 추가한다.
+            // (dedup 키는 host 한정 — name/port 는 비교하지 않음. 코드리뷰: 기존 'name+ip 중복방지' 주석은 실제
+            //  로직과 불일치라 정정.)
             var entry = new NbtCompound();
             entry.Children.Add(new NbtString { Name = "name", Value = displayName });
             entry.Children.Add(new NbtString { Name = "ip", Value = ip });
