@@ -6,7 +6,7 @@
         mc:Ignorable="d" d:DesignWidth="940" d:DesignHeight="640"
         x:Class="HermaLauncher.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
-        Width="940" Height="486"
+        Width="940" Height="520"
         CanResize="False"
         WindowStartupLocation="CenterScreen"
         Background="{StaticResource WindowBg}"
@@ -41,8 +41,8 @@
             </StackPanel>
         </Grid>
 
-        <!-- ── Content ── -->
-        <Panel Grid.Row="1">
+        <!-- ── Content ── (ClipToBounds: 어떤 화면도 푸터/타이틀바 위로 그려지지 않게 백스톱) -->
+        <Panel Grid.Row="1" ClipToBounds="True">
 
             <!-- Main: 두 카드 + 히어로 + 칩 + 진행 -->
             <Grid IsVisible="{Binding IsMain}" Margin="24,4,24,18" VerticalAlignment="Center"
@@ -161,14 +161,16 @@
                                          FontSize="13" Foreground="#D2D2DE" VerticalAlignment="Center" />
                     <ProgressBar Grid.Row="1" Grid.Column="0" Margin="0,8,0,0" Minimum="0" Maximum="100"
                                  Value="{Binding Progress}" IsIndeterminate="{Binding IsIndeterminate}" />
-                    <Button Grid.Row="1" Grid.Column="1" Classes="ghost" Content="취소"
-                            Margin="12,8,0,0" Padding="18,8"
-                            IsVisible="{Binding IsBusy}" Command="{Binding CancelCommand}" />
-                    <!-- 오류/크래시 시 진단 바로가기(P3-4). 폴더를 열어 launcher-*.log + game-*.log 를 함께
-                         찾을 수 있게 함(Codex UX-R2 — 크래시는 게임 로그가 핵심). 작업 중 아닐 때만(취소와 자리 공유). -->
-                    <Button Grid.Row="1" Grid.Column="1" Classes="ghost" Content="🗎  로그 열기"
-                            Margin="12,8,0,0" Padding="18,8"
-                            IsVisible="{Binding CanShowErrorLog}" Command="{Binding OpenLogFolderCommand}" />
+                    <!-- 버튼 슬롯: 폭(140)을 항상 예약 → 취소/로그 버튼이 나타나거나 사라져도 진행바 폭이
+                         바뀌지 않는다(버튼 토글 시 UI 밀림 제거). 버튼은 슬롯 안에서 우측 정렬로 토글. -->
+                    <Panel Grid.Row="1" Grid.Column="1" Width="140" Margin="12,8,0,0">
+                        <Button Classes="ghost" Content="취소" Padding="18,8" HorizontalAlignment="Right"
+                                IsVisible="{Binding IsBusy}" Command="{Binding CancelCommand}" />
+                        <!-- 오류/크래시 시 진단 바로가기(P3-4). 폴더를 열어 launcher-*.log + game-*.log 를 함께
+                             찾을 수 있게 함(Codex UX-R2 — 크래시는 게임 로그가 핵심). 작업 중 아닐 때만(취소와 자리 공유). -->
+                        <Button Classes="ghost" Content="🗎  로그 열기" Padding="18,8" HorizontalAlignment="Right"
+                                IsVisible="{Binding CanShowErrorLog}" Command="{Binding OpenLogFolderCommand}" />
+                    </Panel>
                 </Grid>
             </Grid>
 
@@ -223,9 +225,10 @@
                         Command="{Binding BackToMenuCommand}" />
             </StackPanel>
 
-            <!-- 설정 / 복구 (P3-2: 계정 재설정 · RAM · 로그) -->
-            <StackPanel IsVisible="{Binding IsSettings}" VerticalAlignment="Center"
-                        HorizontalAlignment="Center" MaxWidth="480" Spacing="13" Margin="24,8">
+            <!-- 설정 / 복구 (P3-2). 내용이 고정 창 높이를 넘으면 스크롤 — 푸터(Row2) 겹침 방지. -->
+            <ScrollViewer IsVisible="{Binding IsSettings}" VerticalScrollBarVisibility="Auto"
+                          HorizontalScrollBarVisibility="Disabled">
+                <StackPanel HorizontalAlignment="Center" MaxWidth="480" Spacing="13" Margin="24,8,24,16">
                 <TextBlock Text="설정" FontSize="22" FontWeight="Bold" HorizontalAlignment="Center" />
 
                 <!-- 계정 -->
@@ -288,7 +291,8 @@
                     <Button Grid.Column="1" Classes="play" Content="저장" Margin="6,0,0,0"
                             Command="{Binding SaveSettingsCommand}" />
                 </Grid>
-            </StackPanel>
+                </StackPanel>
+            </ScrollViewer>
         </Panel>
 
         <!-- ── Footer nav (스텁) ── -->
