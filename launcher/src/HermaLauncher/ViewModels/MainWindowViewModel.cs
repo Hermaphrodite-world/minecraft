@@ -179,15 +179,22 @@ public partial class MainWindowViewModel : ViewModelBase
         View = AppView.Main;
     }
 
-    // 서버 상태 pill 갱신(best-effort, 비차단). override 주소 우선, 없으면 공개 ServerIp.
+    // 서버 상태 pill 갱신(best-effort, 비차단). launch 와 동일 우선순위로 host 를 ping:
+    //   override → 로컬(서버 켠 본인 PC) → 공개 IP. 첫 응답 host 를 '온라인'으로 표시(drift 방지).
     private async Task RefreshServerStatusAsync()
     {
-        var host = ServerHostResolver.Normalize(LauncherSettings.Load().ServerHostOverride) ?? LauncherConfig.ServerIp;
-        ServerStatus? st;
+        ServerStatus? st = null;
         try
         {
-            st = await ServerPing.QueryStatusAsync(host, LauncherConfig.ServerPort, CancellationToken.None, 2500)
-                                 .ConfigureAwait(true);
+            foreach (var host in ServerHostResolver.StatusProbeOrder(
+                         LauncherSettings.Load().ServerHostOverride, LauncherConfig.ServerIp))
+            {
+                // 로컬 probe 는 짧게(루프백 즉시 응답/거부), 원격은 넉넉히.
+                var timeoutMs = host == ServerHostResolver.LoopbackHost ? 700 : 2500;
+                st = await ServerPing.QueryStatusAsync(host, LauncherConfig.ServerPort, CancellationToken.None, timeoutMs)
+                                     .ConfigureAwait(true);
+                if (st is not null) break; // 응답한 host 발견 → 온라인
+            }
         }
         catch
         {
