@@ -19,6 +19,7 @@ public enum AppView
     OfficialDone, // 공식 런처 설치 완료 — 전환 안내 전용 화면
     Settings,     // 설정/복구 — 계정·RAM·로그(P3-2)
     Welcome,      // 첫 실행 환영 — 기대치 안내(1회성)
+    About,        // 런처 정보 — 버전/라이선스(읽기 전용)
 }
 
 public partial class MainWindowViewModel : ViewModelBase
@@ -73,6 +74,7 @@ public partial class MainWindowViewModel : ViewModelBase
     [NotifyPropertyChangedFor(nameof(IsOfficialDone))]
     [NotifyPropertyChangedFor(nameof(IsSettings))]
     [NotifyPropertyChangedFor(nameof(IsWelcome))]
+    [NotifyPropertyChangedFor(nameof(IsAbout))]
     [NotifyCanExecuteChangedFor(nameof(BackToMenuCommand))]
     private AppView _view = AppView.Main;
 
@@ -128,6 +130,20 @@ public partial class MainWindowViewModel : ViewModelBase
 
     [ObservableProperty]
     private string? _playtimeSummary;
+
+    // 온라인 넛지(메인 PLAY 카드) — 접속자 있으면 "지금 N명 플레이 중" 강조.
+    [ObservableProperty]
+    private bool _isAnyoneOnline;
+
+    [ObservableProperty]
+    private string? _onlineNudgeText;
+
+    // 긴급 공지(news urgent) — 일반 공지보다 눈에 띄는 배너로 분리.
+    [ObservableProperty]
+    private bool _hasUrgentNews;
+
+    [ObservableProperty]
+    private string? _urgentNewsText;
 
     // RAM 자동 토글 시 권장값으로 되돌린다(수동 입력은 자동 OFF 시 NumericUpDown 으로).
     partial void OnRamAutoChanged(bool value)
@@ -188,8 +204,17 @@ public partial class MainWindowViewModel : ViewModelBase
         }
         if (feed.Latest is { } item)
         {
-            NewsText = (item.Urgent ? "🔴 " : "📢 ") + item.Title;
-            HasNews = true;
+            // 긴급 공지는 일반 공지보다 눈에 띄는 별도 배너로. 일반 공지는 시안 배너.
+            if (item.Urgent)
+            {
+                UrgentNewsText = string.IsNullOrWhiteSpace(item.Body) ? item.Title : $"{item.Title} — {item.Body}";
+                HasUrgentNews = true;
+            }
+            else
+            {
+                NewsText = "📢 " + item.Title;
+                HasNews = true;
+            }
         }
     }
 
@@ -229,9 +254,13 @@ public partial class MainWindowViewModel : ViewModelBase
             ServerStatusText = "🔴 서버 오프라인";
             HasMotd = false;
             MotdText = null;
+            IsAnyoneOnline = false;
+            OnlineNudgeText = null;
         }
         else
         {
+            IsAnyoneOnline = st.Players is int pc && pc > 0;
+            OnlineNudgeText = IsAnyoneOnline ? $"지금 {st.Players}명 플레이 중 — 같이 해요!" : null;
             // 접속자 닉네임 일부를 칩에 덧붙임(최대 3명 + "+N") — "누가 있나" 사회적 넛지.
             var who = "";
             if (st.Sample.Count > 0)
@@ -282,6 +311,12 @@ public partial class MainWindowViewModel : ViewModelBase
     public bool IsOfficialDone => View == AppView.OfficialDone;
     public bool IsSettings => View == AppView.Settings;
     public bool IsWelcome => View == AppView.Welcome;
+    public bool IsAbout => View == AppView.About;
+
+    // ── 런처 정보(About) — 읽기 전용 표시값 ──
+    public string AboutVersions => $"Minecraft {LauncherConfig.MinecraftVersion} · Fabric {LauncherConfig.FabricLoaderVersion}";
+    public string AboutDataPath => AppPaths.DataRoot;
+    public string AboutLicense => "MIT 라이선스. 오픈소스 사용: CmlLib.Core · Velopack · Avalonia · CommunityToolkit.Mvvm.";
 
     private bool CanNavigate() => !IsBusy;
 
@@ -514,6 +549,10 @@ public partial class MainWindowViewModel : ViewModelBase
                           + (settings.LastPlayedUtc is { } u ? $" · 마지막 {u.ToLocalTime():M월 d일}" : "");
         View = AppView.Settings;
     }
+
+    // 런처 정보(About) 화면 열기 — 읽기 전용(설정에서 진입). CanNavigate(=!IsBusy) 공유.
+    [RelayCommand(CanExecute = nameof(CanNavigate))]
+    private void OpenAbout() => View = AppView.About;
 
     [RelayCommand]
     private void SaveSettings()
