@@ -32,6 +32,25 @@ public class ServerStatusTests
         Assert.NotNull(st);
         Assert.Null(st!.Players);
         Assert.Null(st.MaxPlayers);
+        Assert.Empty(st.Sample); // 항상 비-null
+    }
+
+    [Fact]
+    public void Parses_player_sample_names()
+    {
+        var st = ServerStatus.Parse(
+            "{\"players\":{\"online\":2,\"max\":20,\"sample\":[{\"name\":\"철수\",\"id\":\"a\"},{\"name\":\"영희\",\"id\":\"b\"}]}}");
+        Assert.NotNull(st);
+        Assert.Equal(2, st!.Players);
+        Assert.Equal(new[] { "철수", "영희" }, st.Sample);
+    }
+
+    [Fact]
+    public void Sample_skips_nameless_entries()
+    {
+        var st = ServerStatus.Parse("{\"players\":{\"online\":1,\"max\":5,\"sample\":[{\"id\":\"x\"},{\"name\":\"  \"},{\"name\":\"민수\"}]}}");
+        Assert.NotNull(st);
+        Assert.Equal(new[] { "민수" }, st!.Sample);
     }
 
     [Theory]

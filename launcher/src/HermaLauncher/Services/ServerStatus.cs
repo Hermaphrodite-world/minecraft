@@ -1,10 +1,12 @@
+using System.Collections.Generic;
 using System.Text;
 using System.Text.Json;
 
 namespace HermaLauncher.Services;
 
-// Minecraft Server List Ping status JSON 의 파싱 결과(메인 화면 상태 pill 용). 모두 best-effort/nullable.
-public sealed record ServerStatus(int? Players, int? MaxPlayers, string? Motd)
+// Minecraft Server List Ping status JSON 의 파싱 결과(메인 화면 상태 pill 용). 모두 best-effort.
+// Sample = players.sample[].name (접속자 닉네임 일부 — 서버가 채울 때만, 다수 시 잘릴 수 있음). 빈 리스트 가능(null 아님).
+public sealed record ServerStatus(int? Players, int? MaxPlayers, string? Motd, IReadOnlyList<string> Sample)
 {
     // status JSON → ServerStatus. 형식 불일치/빈 입력 = null(억지 추정 금지).
     public static ServerStatus? Parse(string? json)
@@ -17,14 +19,27 @@ public sealed record ServerStatus(int? Players, int? MaxPlayers, string? Motd)
             if (root.ValueKind != JsonValueKind.Object) return null;
 
             int? online = null, max = null;
+            var sample = new List<string>();
             if (root.TryGetProperty("players", out var players) && players.ValueKind == JsonValueKind.Object)
             {
                 if (players.TryGetProperty("online", out var o) && o.TryGetInt32(out var ov)) online = ov;
                 if (players.TryGetProperty("max", out var m) && m.TryGetInt32(out var mv)) max = mv;
+                if (players.TryGetProperty("sample", out var s) && s.ValueKind == JsonValueKind.Array)
+                {
+                    foreach (var p in s.EnumerateArray())
+                    {
+                        if (p.ValueKind == JsonValueKind.Object &&
+                            p.TryGetProperty("name", out var n) && n.ValueKind == JsonValueKind.String)
+                        {
+                            var nm = n.GetString();
+                            if (!string.IsNullOrWhiteSpace(nm)) sample.Add(nm!.Trim());
+                        }
+                    }
+                }
             }
 
             string? motd = root.TryGetProperty("description", out var d) ? ExtractMotd(d) : null;
-            return new ServerStatus(online, max, motd);
+            return new ServerStatus(online, max, motd, sample);
         }
         catch
         {

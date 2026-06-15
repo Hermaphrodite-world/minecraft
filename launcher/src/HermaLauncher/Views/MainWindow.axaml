@@ -50,6 +50,12 @@
 
                 <!-- 헤더 텍스트 (좌) -->
                 <StackPanel Grid.Row="0" Grid.Column="0" Spacing="3" Margin="2,0,0,14">
+                    <!-- 긴급 공지 (news urgent) — 가장 눈에 띄게 상단 -->
+                    <Border IsVisible="{Binding HasUrgentNews}" Background="#3A1E1E" CornerRadius="8"
+                            Padding="10,7" Margin="0,0,0,6" BorderBrush="#7A3A3A" BorderThickness="1">
+                        <TextBlock Text="{Binding UrgentNewsText}" FontSize="12.5" FontWeight="SemiBold"
+                                   Foreground="#FFC9C9" TextWrapping="Wrap" />
+                    </Border>
                     <!-- 점검 배너 (운영자 maintenance.active 시) -->
                     <Border IsVisible="{Binding HasMaintenance}" Background="#3A1E1E" CornerRadius="8"
                             Padding="10,7" Margin="0,0,0,6" BorderBrush="#5A2A2A" BorderThickness="1">
@@ -65,6 +71,10 @@
                     <TextBlock Text="어떻게 플레이할까요?" FontSize="20" FontWeight="Bold" />
                     <TextBlock Text="{Binding Subtitle}" FontSize="12.5"
                                Foreground="{StaticResource TextMuted}" />
+                    <!-- 서버 MOTD (server status description — 운영자가 server.properties 로 한 줄 공지) -->
+                    <TextBlock Text="{Binding MotdText}" IsVisible="{Binding HasMotd}"
+                               FontSize="12" Foreground="{StaticResource AccentCyan}"
+                               TextWrapping="Wrap" MaxLines="1" TextTrimming="CharacterEllipsis" Margin="0,3,0,0" />
                 </StackPanel>
 
                 <!-- 히어로 아트 (우, 헤더+카드 높이에 맞춤). ImageBrush 배경으로 깔아 이미지가
@@ -101,6 +111,11 @@
                             <TextBlock Grid.Row="1" Margin="0,16,0,0" VerticalAlignment="Top"
                                        Text="마이크로소프트 정품 계정으로 로그인하고, 모드팩을 동기화한 뒤 서버에 자동 접속합니다."
                                        FontSize="12" Foreground="{StaticResource TextMuted}" TextWrapping="Wrap" />
+                            <!-- 온라인 넛지 — 접속자 있으면 강조(같이 하자) -->
+                            <TextBlock Grid.Row="1" VerticalAlignment="Bottom" Margin="0,0,0,2"
+                                       IsVisible="{Binding IsAnyoneOnline}" Text="{Binding OnlineNudgeText}"
+                                       FontSize="12" FontWeight="SemiBold"
+                                       Foreground="{StaticResource AccentCyan}" TextWrapping="Wrap" />
 
                             <Button Grid.Row="2" Classes="play" Content="▶  PLAY"
                                     Margin="0,16,0,0" Command="{Binding PlayCommand}" />
@@ -166,10 +181,10 @@
                     <Panel Grid.Row="1" Grid.Column="1" Width="140" Margin="12,8,0,0">
                         <Button Classes="ghost" Content="취소" Padding="18,8" HorizontalAlignment="Right"
                                 IsVisible="{Binding IsBusy}" Command="{Binding CancelCommand}" />
-                        <!-- 오류/크래시 시 진단 바로가기(P3-4). 폴더를 열어 launcher-*.log + game-*.log 를 함께
-                             찾을 수 있게 함(Codex UX-R2 — 크래시는 게임 로그가 핵심). 작업 중 아닐 때만(취소와 자리 공유). -->
-                        <Button Classes="ghost" Content="🗎  로그 열기" Padding="18,8" HorizontalAlignment="Right"
-                                IsVisible="{Binding CanShowErrorLog}" Command="{Binding OpenLogFolderCommand}" />
+                        <!-- 오류/크래시 시 진단 바로가기(P3-4). 크래시 메시지가 가리키는 '진단 파일'을 바로 여기서
+                             생성(로그+시스템정보 ZIP→폴더 열기) — 설정까지 안 가도 됨(약속-구현 갭 해소). 취소와 자리 공유. -->
+                        <Button Classes="ghost" Content="🧩  진단 파일" Padding="18,8" HorizontalAlignment="Right"
+                                IsVisible="{Binding CanShowErrorLog}" Command="{Binding CreateDiagnosticsCommand}" />
                     </Panel>
                 </Grid>
             </Grid>
@@ -273,15 +288,39 @@
                     </StackPanel>
                 </Border>
 
-                <!-- 진단 -->
-                <Grid ColumnDefinitions="*,*">
-                    <Button Grid.Column="0" Classes="ghost" Content="🧩  진단 파일 만들기" Padding="0,11" Margin="0,0,6,0"
+                <!-- 플레이 / 편의 -->
+                <Border Background="{StaticResource PanelBg}" CornerRadius="12" Padding="16"
+                        BorderBrush="{StaticResource CardBorder}" BorderThickness="1">
+                    <StackPanel Spacing="9">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <TextBlock Grid.Column="0" Text="플레이" FontWeight="SemiBold" FontSize="14" />
+                            <TextBlock Grid.Column="1" Text="{Binding PlaytimeSummary}" FontSize="12.5"
+                                       Foreground="{StaticResource AccentCyan}" VerticalAlignment="Center" />
+                        </Grid>
+                        <CheckBox Content="게임 끝나도 런처 열어두기 (바로 다시 접속)" IsChecked="{Binding KeepLauncherOpen}" />
+                    </StackPanel>
+                </Border>
+
+                <!-- 진단 / 폴더 -->
+                <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto">
+                    <Button Grid.Row="0" Grid.Column="0" Classes="ghost" Content="🧩  진단 파일 만들기" Padding="0,11" Margin="0,0,3,3"
                             HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
                             Command="{Binding CreateDiagnosticsCommand}" />
-                    <Button Grid.Column="1" Classes="ghost" Content="🗎  로그 폴더 열기" Padding="0,11" Margin="6,0,0,0"
+                    <Button Grid.Row="0" Grid.Column="1" Classes="ghost" Content="🗎  로그 폴더 열기" Padding="0,11" Margin="3,0,0,3"
                             HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
                             Command="{Binding OpenLogFolderCommand}" />
+                    <Button Grid.Row="1" Grid.Column="0" Classes="ghost" Content="📁  게임 폴더 열기" Padding="0,11" Margin="0,3,3,0"
+                            HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                            Command="{Binding OpenGameFolderCommand}" />
+                    <Button Grid.Row="1" Grid.Column="1" Classes="ghost" Content="🖼  스크린샷 폴더" Padding="0,11" Margin="3,3,0,0"
+                            HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                            Command="{Binding OpenScreenshotsCommand}" />
                 </Grid>
+
+                <!-- 런처 정보 -->
+                <Button Classes="ghost" Content="ⓘ  런처 정보" Padding="0,11"
+                        HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                        Command="{Binding OpenAboutCommand}" />
 
                 <!-- 닫기 / 저장 -->
                 <Grid ColumnDefinitions="*,*" Margin="0,2,0,0">
@@ -293,6 +332,28 @@
                 </Grid>
                 </StackPanel>
             </ScrollViewer>
+
+            <!-- 런처 정보 (About — 읽기 전용) -->
+            <StackPanel IsVisible="{Binding IsAbout}" VerticalAlignment="Center"
+                        HorizontalAlignment="Center" MaxWidth="460" Spacing="14" Margin="24">
+                <TextBlock Text="런처 정보" FontSize="22" FontWeight="Bold" HorizontalAlignment="Center" />
+                <Border Background="{StaticResource PanelBg}" CornerRadius="12" Padding="18"
+                        BorderBrush="{StaticResource CardBorder}" BorderThickness="1">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="{Binding LauncherVersionLabel}" FontWeight="SemiBold" FontSize="14"
+                                   Foreground="{StaticResource AccentCyan}" />
+                        <TextBlock Text="{Binding AboutVersions}" FontSize="12.5" Foreground="{StaticResource TextMuted}" />
+                        <TextBlock Text="{Binding ServerLabel}" FontSize="12.5" Foreground="{StaticResource TextMuted}" />
+                        <SelectableTextBlock Text="{Binding AboutDataPath}" FontSize="11.5"
+                                             Foreground="{StaticResource TextMuted}" TextWrapping="Wrap" />
+                    </StackPanel>
+                </Border>
+                <TextBlock Text="{Binding AboutLicense}" FontSize="11.5" Foreground="{StaticResource TextMuted}"
+                           TextWrapping="Wrap" HorizontalAlignment="Center" TextAlignment="Center" />
+                <Button Classes="ghost" Content="닫기" Padding="0,12"
+                        HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                        Command="{Binding BackToMenuCommand}" />
+            </StackPanel>
         </Panel>
 
         <!-- ── Footer nav (스텁) ── -->

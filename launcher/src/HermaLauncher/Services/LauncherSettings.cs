@@ -19,6 +19,13 @@ public sealed class LauncherSettings
     // 첫 실행 환영 화면을 봤는지(1회성). false = 다음 실행 시 환영 화면 표시.
     public bool HasSeenWelcome { get; set; }
 
+    // 정상 종료(코드 0) 후 런처를 닫지 않고 유지(반복 재접속 편의). 기본 false(현행: 자동 닫기).
+    public bool KeepLauncherOpen { get; set; }
+
+    // 이 서버 누적 플레이 시간(초) + 마지막 플레이(표시용). 로컬·단일 사용자 기록(서버/계정 DB 아님).
+    public long TotalPlaytimeSeconds { get; set; }
+    public DateTime? LastPlayedUtc { get; set; }
+
     [JsonIgnore]
     public bool IsRamAuto => MaxRamMbOverride is null or <= 0;
 

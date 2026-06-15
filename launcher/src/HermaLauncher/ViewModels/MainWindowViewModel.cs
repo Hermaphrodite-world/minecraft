@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Threading;
@@ -18,6 +19,7 @@ public enum AppView
     OfficialDone, // 공식 런처 설치 완료 — 전환 안내 전용 화면
     Settings,     // 설정/복구 — 계정·RAM·로그(P3-2)
     Welcome,      // 첫 실행 환영 — 기대치 안내(1회성)
+    About,        // 런처 정보 — 버전/라이선스(읽기 전용)
 }
 
 public partial class MainWindowViewModel : ViewModelBase
@@ -72,6 +74,7 @@ public partial class MainWindowViewModel : ViewModelBase
     [NotifyPropertyChangedFor(nameof(IsOfficialDone))]
     [NotifyPropertyChangedFor(nameof(IsSettings))]
     [NotifyPropertyChangedFor(nameof(IsWelcome))]
+    [NotifyPropertyChangedFor(nameof(IsAbout))]
     [NotifyCanExecuteChangedFor(nameof(BackToMenuCommand))]
     private AppView _view = AppView.Main;
 
@@ -112,6 +115,35 @@ public partial class MainWindowViewModel : ViewModelBase
 
     [ObservableProperty]
     private string? _newsText;
+
+    // 서버 MOTD(메인 화면). 서버 status 응답의 description — 운영자가 server.properties 로 한 줄 공지.
+    [ObservableProperty]
+    private bool _hasMotd;
+
+    [ObservableProperty]
+    private string? _motdText;
+
+    // ── 설정 QoL ──
+    // 게임 끝나도 런처 유지(정상 종료 후 닫지 않음). 플레이타임 요약(읽기 전용 표시).
+    [ObservableProperty]
+    private bool _keepLauncherOpen;
+
+    [ObservableProperty]
+    private string? _playtimeSummary;
+
+    // 온라인 넛지(메인 PLAY 카드) — 접속자 있으면 "지금 N명 플레이 중" 강조.
+    [ObservableProperty]
+    private bool _isAnyoneOnline;
+
+    [ObservableProperty]
+    private string? _onlineNudgeText;
+
+    // 긴급 공지(news urgent) — 일반 공지보다 눈에 띄는 배너로 분리.
+    [ObservableProperty]
+    private bool _hasUrgentNews;
+
+    [ObservableProperty]
+    private string? _urgentNewsText;
 
     // RAM 자동 토글 시 권장값으로 되돌린다(수동 입력은 자동 OFF 시 NumericUpDown 으로).
     partial void OnRamAutoChanged(bool value)
@@ -172,8 +204,17 @@ public partial class MainWindowViewModel : ViewModelBase
         }
         if (feed.Latest is { } item)
         {
-            NewsText = (item.Urgent ? "🔴 " : "📢 ") + item.Title;
-            HasNews = true;
+            // 긴급 공지는 일반 공지보다 눈에 띄는 별도 배너로. 일반 공지는 시안 배너.
+            if (item.Urgent)
+            {
+                UrgentNewsText = string.IsNullOrWhiteSpace(item.Body) ? item.Title : $"{item.Title} — {item.Body}";
+                HasUrgentNews = true;
+            }
+            else
+            {
+                NewsText = "📢 " + item.Title;
+                HasNews = true;
+            }
         }
     }
 
@@ -208,9 +249,31 @@ public partial class MainWindowViewModel : ViewModelBase
         {
             st = null; // ping 실패는 '오프라인' 표시로 흡수(흐름 비차단)
         }
-        ServerStatusText = st is null
-            ? "🔴 서버 오프라인"
-            : st is { Players: int p, MaxPlayers: int m } ? $"🟢 온라인 · {p}/{m}명" : "🟢 온라인";
+        if (st is null)
+        {
+            ServerStatusText = "🔴 서버 오프라인";
+            HasMotd = false;
+            MotdText = null;
+            IsAnyoneOnline = false;
+            OnlineNudgeText = null;
+        }
+        else
+        {
+            IsAnyoneOnline = st.Players is int pc && pc > 0;
+            OnlineNudgeText = IsAnyoneOnline ? $"지금 {st.Players}명 플레이 중 — 같이 해요!" : null;
+            // 접속자 닉네임 일부를 칩에 덧붙임(최대 3명 + "+N") — "누가 있나" 사회적 넛지.
+            var who = "";
+            if (st.Sample.Count > 0)
+            {
+                var shown = string.Join(", ", st.Sample.Take(3));
+                who = st.Sample.Count > 3 ? $" ({shown} +{st.Sample.Count - 3})" : $" ({shown})";
+            }
+            ServerStatusText = st is { Players: int p, MaxPlayers: int m }
+                ? $"🟢 온라인 · {p}/{m}명{who}"
+                : $"🟢 온라인{who}";
+            MotdText = st.Motd;
+            HasMotd = !string.IsNullOrWhiteSpace(st.Motd);
+        }
     }
 
     public string Title => "HERMA LAUNCHER";
@@ -248,6 +311,12 @@ public partial class MainWindowViewModel : ViewModelBase
     public bool IsOfficialDone => View == AppView.OfficialDone;
     public bool IsSettings => View == AppView.Settings;
     public bool IsWelcome => View == AppView.Welcome;
+    public bool IsAbout => View == AppView.About;
+
+    // ── 런처 정보(About) — 읽기 전용 표시값 ──
+    public string AboutVersions => $"Minecraft {LauncherConfig.MinecraftVersion} · Fabric {LauncherConfig.FabricLoaderVersion}";
+    public string AboutDataPath => AppPaths.DataRoot;
+    public string AboutLicense => "MIT 라이선스. 오픈소스 사용: CmlLib.Core · Velopack · Avalonia · CommunityToolkit.Mvvm.";
 
     private bool CanNavigate() => !IsBusy;
 
@@ -326,6 +395,7 @@ public partial class MainWindowViewModel : ViewModelBase
             IsGameRunning = false;
             var ranSeconds = (DateTime.Now - startedAt).TotalSeconds;
             AppLog.Info(LaunchStage.Running, $"게임 종료 (코드={exitCode}, 실행 {ranSeconds:F0}s)");
+            RecordPlaytime(ranSeconds); // 누적 플레이타임(시계 역행/이상치는 0으로 흡수)
 
             // P1-7: 즉시 크래시뿐 아니라 한참 뒤 비정상 종료도 진단 보존(로그 버튼 + 재시도 안내).
             if (exitCode != 0)
@@ -335,17 +405,38 @@ public partial class MainWindowViewModel : ViewModelBase
                 // 게임 로그에서 흔한 원인을 한 가지 한국어 액션으로 분류(있으면 그걸 우선 안내, 없으면 일반 안내).
                 var hint = TryDiagnoseLatestGameLog();
                 if (hint is { } h)
-                    StatusMessage = $"{h.Title} {h.Action} (자세한 원인은 설정의 '진단 파일 만들기')";
+                    StatusMessage = $"{h.Title} {h.Action} (자세한 원인은 아래 '진단 파일')";
                 else
                     StatusMessage = ranSeconds < InstantCrashWindowSeconds
-                        ? $"게임이 실행 직후 종료됐어요(크래시 의심, 코드 {exitCode}). 설정의 '진단 파일 만들기'로 로그를 모아 디스코드에 보내거나 다시 시도해 주세요."
-                        : $"게임이 비정상 종료됐어요(코드 {exitCode}). 설정의 '진단 파일 만들기'로 로그를 한 파일로 묶어 확인·공유할 수 있어요.";
+                        ? $"게임이 실행 직후 종료됐어요(크래시 의심, 코드 {exitCode}). 아래 '진단 파일'로 로그를 모아 디스코드에 보내거나 다시 시도해 주세요."
+                        : $"게임이 비정상 종료됐어요(코드 {exitCode}). 아래 '진단 파일'로 로그를 한 파일로 묶어 확인·공유할 수 있어요.";
+            }
+            else if (LauncherSettings.Load().KeepLauncherOpen)
+            {
+                // 정상 종료 + '런처 유지' 옵션 → 닫지 않고 복원(바로 재접속 가능).
+                RestoreRequested?.Invoke();
+                ResetStatus();
             }
             else
             {
-                CloseRequested?.Invoke(); // 정상 종료(코드 0) → 런처 닫기
+                CloseRequested?.Invoke(); // 정상 종료(코드 0) → 런처 닫기(기본)
             }
         }
+    }
+
+    // 누적 플레이타임 기록(best-effort, 비차단). 시계 역행/이상치는 0초로 흡수(PlaytimeTracker).
+    private static void RecordPlaytime(double ranSeconds)
+    {
+        var delta = PlaytimeTracker.DeltaSeconds(ranSeconds);
+        if (delta <= 0) return;
+        try
+        {
+            var s = LauncherSettings.Load();
+            s.TotalPlaytimeSeconds += delta;
+            s.LastPlayedUtc = DateTime.UtcNow;
+            s.Save();
+        }
+        catch { /* 기록 실패는 무시 */ }
     }
 
     // 대체 경로: 공식 마인크래프트 런처에 모드팩 프로필 설치(정품 로그인, Mojang 승인 대기 없음).
@@ -408,6 +499,26 @@ public partial class MainWindowViewModel : ViewModelBase
     [RelayCommand]
     private void OpenLogFolder() => OpenPath(AppPaths.LogDir);
 
+    // 게임 폴더(instance/) 열기 — 세이브/설정 찾기.
+    [RelayCommand]
+    private void OpenGameFolder() => OpenPath(AppPaths.GameDir);
+
+    // 스크린샷 폴더 열기(디스코드 공유). 없으면 만들어 열고, 실패 시 게임 폴더 폴백.
+    [RelayCommand]
+    private void OpenScreenshots()
+    {
+        try
+        {
+            var dir = Path.Combine(AppPaths.GameDir, "screenshots");
+            Directory.CreateDirectory(dir);
+            OpenPath(dir);
+        }
+        catch
+        {
+            OpenPath(AppPaths.GameDir);
+        }
+    }
+
     // 진단 파일(ZIP) 생성 — 흩어진 로그 + 시스템 정보를 한 파일로 묶어 폴더를 연다(디스코드 공유용).
     // 크래시 메시지가 약속하는 '크래시 리포트'의 실제 구현(약속-구현 갭 해소).
     [RelayCommand]
@@ -433,8 +544,15 @@ public partial class MainWindowViewModel : ViewModelBase
         MaxRamMb = RamAdvisor.EffectiveMaxRamMb();
         AccountName = AccountCache.LastUsername();
         ServerHostOverride = settings.ServerHostOverride;
+        KeepLauncherOpen = settings.KeepLauncherOpen;
+        PlaytimeSummary = PlaytimeTracker.FormatTotal(settings.TotalPlaytimeSeconds)
+                          + (settings.LastPlayedUtc is { } u ? $" · 마지막 {u.ToLocalTime():M월 d일}" : "");
         View = AppView.Settings;
     }
+
+    // 런처 정보(About) 화면 열기 — 읽기 전용(설정에서 진입). CanNavigate(=!IsBusy) 공유.
+    [RelayCommand(CanExecute = nameof(CanNavigate))]
+    private void OpenAbout() => View = AppView.About;
 
     [RelayCommand]
     private void SaveSettings()
@@ -454,6 +572,7 @@ public partial class MainWindowViewModel : ViewModelBase
         var toSave = LauncherSettings.Load();
         toSave.MaxRamMbOverride = RamAuto ? null : clamped;
         toSave.ServerHostOverride = normalizedHost;
+        toSave.KeepLauncherOpen = KeepLauncherOpen;
         if (!toSave.Save())
         {
             StatusMessage = "설정 저장에 실패했어요(파일 권한/사용 중일 수 있어요). 잠시 후 다시 시도해 주세요.";

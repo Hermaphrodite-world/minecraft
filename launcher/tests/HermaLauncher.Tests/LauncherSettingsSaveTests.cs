@@ -69,6 +69,21 @@ public class LauncherSettingsSaveTests
         => Assert.False(new LauncherSettings().HasServerHostOverride);
 
     [Fact]
+    public void KeepLauncherOpen_and_playtime_roundtrip()
+    {
+        Assert.False(new LauncherSettings().KeepLauncherOpen); // 기본 닫기
+        var tmp = Path.Combine(Path.GetTempPath(), $"herma-settings-{Guid.NewGuid():N}.json");
+        try
+        {
+            Assert.True(new LauncherSettings { KeepLauncherOpen = true, TotalPlaytimeSeconds = 7200 }.Save(tmp));
+            var back = LauncherSettings.Load(tmp);
+            Assert.True(back.KeepLauncherOpen);
+            Assert.Equal(7200, back.TotalPlaytimeSeconds);
+        }
+        finally { try { File.Delete(tmp); } catch { /* best-effort */ } }
+    }
+
+    [Fact]
     public void HasSeenWelcome_defaults_false_and_roundtrips()
     {
         Assert.False(new LauncherSettings().HasSeenWelcome);
