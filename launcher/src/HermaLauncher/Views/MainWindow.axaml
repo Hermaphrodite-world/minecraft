@@ -223,9 +223,10 @@
                         Command="{Binding BackToMenuCommand}" />
             </StackPanel>
 
-            <!-- 설정 / 복구 (P3-2: 계정 재설정 · RAM · 로그) -->
-            <StackPanel IsVisible="{Binding IsSettings}" VerticalAlignment="Center"
-                        HorizontalAlignment="Center" MaxWidth="480" Spacing="13" Margin="24,8">
+            <!-- 설정 / 복구 (P3-2). 내용이 고정 창 높이를 넘으면 스크롤 — 푸터(Row2) 겹침 방지. -->
+            <ScrollViewer IsVisible="{Binding IsSettings}" VerticalScrollBarVisibility="Auto"
+                          HorizontalScrollBarVisibility="Disabled">
+                <StackPanel HorizontalAlignment="Center" MaxWidth="480" Spacing="13" Margin="24,8,24,16">
                 <TextBlock Text="설정" FontSize="22" FontWeight="Bold" HorizontalAlignment="Center" />
 
                 <!-- 계정 -->
@@ -288,7 +289,8 @@
                     <Button Grid.Column="1" Classes="play" Content="저장" Margin="6,0,0,0"
                             Command="{Binding SaveSettingsCommand}" />
                 </Grid>
-            </StackPanel>
+                </StackPanel>
+            </ScrollViewer>
         </Panel>
 
         <!-- ── Footer nav (스텁) ── -->

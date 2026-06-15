@@ -29,6 +29,10 @@ public partial class MainWindowViewModel : ViewModelBase
     // 메인 화면 서버 상태 pill 주기 갱신(30초). 디자이너/테스트 환경에선 미가동(네트워크 호출 방지).
     private readonly DispatcherTimer? _statusTimer;
 
+    // 단계별 소요시간 로깅용(진단 — 어느 단계가 느린지). Play 시작 시 리셋. OnStageUpdate 는 UI 스레드 단일 호출.
+    private LaunchStage? _lastStage;
+    private DateTime _lastStageAt;
+
     // 게임 시작 후 이 시간 안에 비정상 종료하면 '인스턴트 크래시'로 보고 런처를 복원해 에러를 보여준다.
     // 그 이후 종료(정상 플레이 종료)는 조용히 런처만 닫는다(마크가 자체 크래시 화면을 띄우는 구간).
     private const int InstantCrashWindowSeconds = 90;
@@ -155,7 +159,11 @@ public partial class MainWindowViewModel : ViewModelBase
         try { feed = await NewsService.FetchAsync(LauncherConfig.NewsUrl, CancellationToken.None).ConfigureAwait(true); }
         catch { feed = null; }
         if (feed is null)
+        {
+            // URL 은 설정됐는데 못 받았거나 형식 오류 — 운영자 진단용(1회/실행, flood 아님).
+            AppLog.Warn(LaunchStage.Idle, "공지(news.json) 불러오기 실패 또는 형식 오류: " + LauncherConfig.NewsUrl);
             return;
+        }
 
         if (feed.Maintenance is { Active: true } mt)
         {
@@ -267,6 +275,7 @@ public partial class MainWindowViewModel : ViewModelBase
         HasError = false;
         Progress = 0;
         IsIndeterminate = true;
+        _lastStage = null; // 단계 타이밍 측정 리셋
         _cts = new CancellationTokenSource();
 
         var progress = new Progress<StageUpdate>(OnStageUpdate);
@@ -348,6 +357,7 @@ public partial class MainWindowViewModel : ViewModelBase
         HasError = false;
         Progress = 0;
         IsIndeterminate = true;
+        _lastStage = null; // 단계 타이밍 측정 리셋
         _cts = new CancellationTokenSource();
 
         var progress = new Progress<StageUpdate>(OnStageUpdate);
@@ -527,23 +537,43 @@ public partial class MainWindowViewModel : ViewModelBase
 
     private void OnStageUpdate(StageUpdate u)
     {
+        // 단계 전환 시 직전 단계 소요시간 기록(진단 — 어느 단계가 느린지/매번 받는지 추후 확인용).
+        if (u.Stage != _lastStage)
+        {
+            if (_lastStage is { } prev)
+                AppLog.Info(prev, $"단계 완료 ({(DateTime.Now - _lastStageAt).TotalMilliseconds:F0}ms)");
+            _lastStage = u.Stage;
+            _lastStageAt = DateTime.Now;
+        }
+
         // 모든 단계/오류를 로그 파일에 기록(P0) — 진단 SoT.
         if (u.IsError) AppLog.Error(u.Stage, u.Message);
         else AppLog.Info(u.Stage, u.Message);
 
+        var step = LaunchSteps.StepOf(u.Stage);
+
         // Progress<T> 콜백은 캡처된 UI 컨텍스트에서 호출되나, 안전하게 디스패치.
         Dispatcher.UIThread.Post(() =>
         {
-            StatusMessage = u.Message;
+            // 단계 번호 접두("[N/5]")로 어디까지 왔는지 표시(에러/비단계 메시지는 그대로).
+            StatusMessage = step is int s && !u.IsError ? $"[{s}/{LaunchSteps.Total}] {u.Message}" : u.Message;
             HasError = u.IsError;
-            if (u.Fraction is { } f)
+
+            if (step is int sv && !u.IsError && IsBusy)
+            {
+                // 결정형 진행: 단계 경계 + (있으면) 단계 내 파일 진행률 → 무한 회전 제거, 실제로 차오름.
+                IsIndeterminate = false;
+                var within = u.Fraction is { } f ? Math.Clamp(f, 0, 1) : 0;
+                Progress = (sv - 1 + within) / LaunchSteps.Total * 100;
+            }
+            else if (u.Fraction is { } f2)
             {
                 IsIndeterminate = false;
-                Progress = Math.Clamp(f, 0, 1) * 100;
+                Progress = Math.Clamp(f2, 0, 1) * 100; // Running(1.0) 등 비단계 진행률
             }
             else
             {
-                IsIndeterminate = !u.IsError && IsBusy;
+                IsIndeterminate = !u.IsError && IsBusy; // 시작 직후 등 단계 미정 구간만 회전
             }
         });
     }
