@@ -41,7 +41,7 @@ public class LaunchOrchestratorTests
     {
         public Task<string> EnsureJavaAsync(IProgress<StageUpdate> p, CancellationToken ct)
         { log.Add("ensureJava"); return Task.FromResult("java"); }
-        public Task<Process> LaunchAsync(AuthSession s, IProgress<StageUpdate> p, CancellationToken ct)
+        public Task<Process> LaunchAsync(AuthSession s, ServerEndpoint endpoint, IProgress<StageUpdate> p, CancellationToken ct)
         { log.Add("launch"); return Task.FromResult(Process.GetCurrentProcess()); }
     }
 

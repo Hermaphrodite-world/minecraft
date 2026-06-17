@@ -115,16 +115,23 @@ public sealed class OfficialLauncherInstaller
                       .ConfigureAwait(false);
         ct.ThrowIfCancellationRequested();
 
-        // (4b) 첫 설치 기본 쉐이더/리소스팩 적용 → 공식 런처가 이 herma gameDir 로 실행 시 첫 화면부터 적용.
-        ClientDefaults.ApplyAll(gameDir, progress);
+        // (4a) 자동접속 endpoint 해석 → 서버목록을 quickPlay 와 동일 주소(override=LAN IP 등)로 등록.
+        //   공식 런처 경로엔 quickPlay 가 없지만, 같은 LAN 의 다른 PC 가 서버목록 항목으로 닿게 하려면 동일 해석 필요.
+        var endpoint = await ServerEndpointResolver.ResolveAsync(progress, ct).ConfigureAwait(false);
+        ct.ThrowIfCancellationRequested();
+
+        // (4b) 첫 설치 기본 쉐이더/리소스팩 적용 + 서버목록(endpoint 주소) 등록 → 공식 런처 첫 화면부터 적용.
+        ClientDefaults.ApplyAll(gameDir, endpoint, progress);
 
         // (5) 프로필 머지 — 스탠드얼론 + MS Store 런처 프로필 파일 모두에 반영(Codex#7 P0).
         progress.Report(StageUpdate.Of(LaunchStage.Launch, "공식 런처 프로필 등록 중…"));
         WriteProfile(mcDir, gameDir, versionId);
 
+        var shownAddress = string.IsNullOrWhiteSpace(endpoint.Host)
+            ? $"{LauncherConfig.ServerIp}:{LauncherConfig.ServerPort}" : endpoint.Address;
         progress.Report(StageUpdate.Of(LaunchStage.Running,
             $"완료! 공식 마인크래프트 런처를 열고 좌하단에서 '{ProfileName}' 프로필을 선택해 플레이하세요. " +
-            $"멀티플레이 서버: {LauncherConfig.ServerIp}:{LauncherConfig.ServerPort}", 1.0));
+            $"멀티플레이 서버: {shownAddress}", 1.0));
     }
 
     // 공식 런처 표준 경로(운영체제별). 디렉토리가 존재해야 "런처 설치됨" 으로 본다

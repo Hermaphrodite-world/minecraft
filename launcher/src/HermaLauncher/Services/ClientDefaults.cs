@@ -21,10 +21,17 @@ public static class ClientDefaults
     private const string MarkerFile = "herma_launcher_applied.txt";
 
     // 런처 Play / 공식 런처 installer 양 경로의 단일 진입점 — packwiz 동기화 후 호출.
-    public static void ApplyAll(string gameDir, IProgress<StageUpdate>? progress = null)
+    //   endpoint: 자동접속 대상(오케스트레이터가 해석). servers.dat 항목을 quickPlay 와 "동일 주소"로 등록한다.
+    //   ★ 이전 버그: 공개 IP(LauncherConfig.ServerIp) 로만 등록 → 같은 LAN 의 다른 PC 가 서버목록 항목으론 못 닿음.
+    //     endpoint.Host(override=LAN IP / 로컬 / 공개) 로 등록해 quickPlay 와 일치시킨다.
+    public static void ApplyAll(string gameDir, ServerEndpoint endpoint, IProgress<StageUpdate>? progress = null)
     {
-        ServerList.Ensure(gameDir, LauncherConfig.ServerListName,
-                          LauncherConfig.ServerIp, LauncherConfig.ServerPort, progress);
+        // 방어: endpoint.Host 가 비면 공개 IP 로 폴백(서버목록 등록이 깨지지 않도록).
+        var host = string.IsNullOrWhiteSpace(endpoint.Host) ? LauncherConfig.ServerIp : endpoint.Host;
+        var port = endpoint.Port > 0 ? endpoint.Port : LauncherConfig.ServerPort;
+        AppLog.Info(LaunchStage.Packwiz,
+            $"[servers.dat] 등록 주소 = {host}:{port} (source={endpoint.Source}) — quickPlay 인자와 동일해야 정상");
+        ServerList.Ensure(gameDir, LauncherConfig.ServerListName, host, port, progress);
         EnsureDefaultShader(gameDir, progress);
         EnsureDefaultResourcePacks(gameDir, progress);
     }

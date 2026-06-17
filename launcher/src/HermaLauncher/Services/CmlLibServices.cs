@@ -287,16 +287,22 @@ public sealed class CmlLibMinecraftService : IMinecraftService
         }
     }
 
-    public async Task<Process> LaunchAsync(AuthSession session, IProgress<StageUpdate> progress, CancellationToken ct)
+    public async Task<Process> LaunchAsync(AuthSession session, ServerEndpoint endpoint, IProgress<StageUpdate> progress, CancellationToken ct)
     {
         if (_fabricVersionId is null)
             throw new LaunchStageException(LaunchStage.Fabric, "설치 단계가 완료되지 않았어요.");
 
         progress.Report(StageUpdate.Of(LaunchStage.Launch, "게임 실행 준비 중…"));
 
-        // 서버를 켠 본인 PC(호스트)는 NAT 헤어핀 미지원 시 자기 공개 IP 로 자기 서버에 못 들어간다.
-        // → 접속 직전 127.0.0.1:port 짧은 TCP probe. 로컬에 서버가 떠 있으면 로컬로, 아니면 공개 ServerIp.
-        var host = await ResolveServerHostAsync(progress, ct).ConfigureAwait(false);
+        // 자동접속 대상은 오케스트레이터가 이미 한 번 해석한 endpoint(servers.dat 등록과 동일 주소 — 불일치 방지).
+        // 방어: 어떤 이유로든 endpoint.Host 가 비면 공개 IP 로(런치는 막지 않음).
+        var quickPlayAddress = string.IsNullOrWhiteSpace(endpoint.Host)
+            ? $"{LauncherConfig.ServerIp}:{LauncherConfig.ServerPort}"
+            : endpoint.Address;
+        AppLog.Info(LaunchStage.Launch,
+            $"[launch] quickPlay 인자 = '--quickPlayMultiplayer {quickPlayAddress}' (source={endpoint.Source}, " +
+            $"런처 TCP도달={(endpoint.TcpReachable ? "성공" : "실패")}/{endpoint.ProbeMs}ms). " +
+            "이 주소로 접속이 안 되면 game-*.log 의 quickPlay 결과와 위 도달 진단을 대조하세요.");
 
         var option = new MLaunchOption
         {
@@ -310,7 +316,7 @@ public sealed class CmlLibMinecraftService : IMinecraftService
             ExtraGameArguments = new[]
             {
                 new MArgument("--quickPlayMultiplayer"),
-                new MArgument($"{host}:{LauncherConfig.ServerPort}"),
+                new MArgument(quickPlayAddress),
             },
         };
 
@@ -397,57 +403,7 @@ public sealed class CmlLibMinecraftService : IMinecraftService
                 Xuid = s.Xuid,
             };
 
-    // quickPlay 자동 접속 대상 host 해석. 우선순위: (0) 사용자 지정 주소 → (1) 로컬 서버 감지 → (2) 공개 ServerIp.
-    //   (0) 설정 '서버 주소 직접 입력' — 같은 집/네트워크의 다른 PC 에서 서버를 켠 경우(NAT 헤어핀 미지원 →
-    //       공개 IP·localhost 둘 다 실패). 예: 서버=맥(192.168.x.y), 플레이=같은 LAN 의 윈도우 PC.
-    //   (1) 호스트(서버 켠 PC) 본인 — 자기 공개 IP 로 자기 서버에 못 들어가므로 로컬로 우회(P1-10).
-    //   (2) 일반 친구 PC — 위 둘 다 아니면 공개 ServerIp.
-    private static async Task<string> ResolveServerHostAsync(IProgress<StageUpdate> progress, CancellationToken ct)
-    {
-        var overrideHost = ServerHostResolver.Normalize(LauncherSettings.Load().ServerHostOverride);
-
-        // override 가 있으면 로컬 probe 를 건너뛴다(명시 선택 최우선).
-        var localUp = overrideHost is null
-                      && await ServerPing.IsServerUpAsync("127.0.0.1", LauncherConfig.ServerPort, ct, timeoutMs: 700).ConfigureAwait(false);
-
-        switch (ServerHostResolver.Decide(overrideHost, localUp))
-        {
-            case ServerHostResolver.Source.UserOverride:
-                // 명시 선택이므로 ping 실패해도 사용한다(ping 이 막혀도 게임 접속은 될 수 있음) — 경고만 남김.
-                bool overrideUp;
-                try { overrideUp = await ServerPing.IsServerUpAsync(overrideHost!, LauncherConfig.ServerPort, ct, timeoutMs: 2000).ConfigureAwait(false); }
-                catch (OperationCanceledException) when (ct.IsCancellationRequested) { throw; }
-                catch { overrideUp = false; }
-                if (overrideUp)
-                    progress.Report(StageUpdate.Of(LaunchStage.Launch, $"설정에 지정한 서버 주소로 접속합니다: {overrideHost}"));
-                else
-                {
-                    AppLog.Warn(LaunchStage.Launch, $"지정 서버 응답 없음(그래도 사용): {overrideHost}:{LauncherConfig.ServerPort}");
-                    progress.Report(StageUpdate.Of(LaunchStage.Launch, $"설정에 지정한 서버 주소로 접속합니다: {overrideHost} (응답 확인은 안 됐어요)"));
-                }
-                return overrideHost!;
-
-            case ServerHostResolver.Source.Local:
-                progress.Report(StageUpdate.Of(LaunchStage.Launch, "이 PC에서 서버를 감지했어요 — 로컬(127.0.0.1)로 접속합니다."));
-                return "127.0.0.1";
-
-            default:
-                // 공개 서버 사전 점검(P1-10) — 다운이어도 차단하지 않고 경고만(원클릭 약속 유지).
-                var host = LauncherConfig.ServerIp;
-                try
-                {
-                    if (!await ServerPing.IsServerUpAsync(host, LauncherConfig.ServerPort, ct, timeoutMs: 2000).ConfigureAwait(false))
-                    {
-                        AppLog.Warn(LaunchStage.Launch, $"서버 응답 없음: {host}:{LauncherConfig.ServerPort}");
-                        progress.Report(StageUpdate.Of(LaunchStage.Launch,
-                            "서버에 연결하지 못했어요(꺼져 있거나 점검 중일 수 있어요). 같은 집·네트워크에서 서버를 켰다면 설정의 '서버 주소 직접 입력'에 서버 PC의 IP를 넣어 주세요. 그래도 게임은 실행할게요."));
-                    }
-                }
-                catch (OperationCanceledException) when (ct.IsCancellationRequested) { throw; }
-                catch { /* ping 실패는 무시하고 진행 */ }
-                return host;
-        }
-    }
+    // (quickPlay host 해석은 ServerEndpointResolver 로 이관 — servers.dat 등록과 동일 주소를 쓰도록 단일 SoT.)
 }
 
 // (1) Velopack 자체 업데이트. Program.Main 첫 줄의 VelopackApp.Build().Run() 과 짝.
