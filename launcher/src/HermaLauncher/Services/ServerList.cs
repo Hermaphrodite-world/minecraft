@@ -71,7 +71,8 @@ public static class ServerList
             servers.ElementId = 10; // 항목이 생겼으니 compound 타입 보장
 
             Nbt.WriteFile(path, root);
-            progress?.Report(StageUpdate.Of(LaunchStage.Packwiz, $"서버 목록에 '{displayName}' 등록"));
+            AppLog.Info(LaunchStage.Packwiz, $"[servers.dat] '{displayName}' → ip='{ip}' 기록 완료 (path={path})");
+            progress?.Report(StageUpdate.Of(LaunchStage.Packwiz, $"서버 목록에 '{displayName}' 등록 ({ip})"));
         }
         catch (Exception ex)
         {

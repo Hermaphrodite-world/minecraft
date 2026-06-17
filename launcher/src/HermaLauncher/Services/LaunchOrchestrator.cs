@@ -58,15 +58,20 @@ public sealed class LaunchOrchestrator
             await _packwiz.RunAsync(javaPath, LauncherConfig.PackTomlUrl, progress, ct).ConfigureAwait(false);
             ct.ThrowIfCancellationRequested();
 
-            // (4b) 첫 실행 기본 쉐이더/리소스팩 적용. 이미 설정돼 있으면 보존 — best-effort.
-            ClientDefaults.ApplyAll(AppPaths.GameDir, progress);
+            // (4a) 자동접속 endpoint 를 "한 번" 해석 — servers.dat 등록(4b)과 quickPlay(6)가 같은 주소를 쓰게 한다.
+            //   (이전 버그: servers.dat=공개IP, quickPlay=override 로 불일치 → 같은 LAN 다른 PC 가 서버목록으론 못 닿음.)
+            var endpoint = await ServerEndpointResolver.ResolveAsync(progress, ct).ConfigureAwait(false);
+            ct.ThrowIfCancellationRequested();
+
+            // (4b) 첫 실행 기본 쉐이더/리소스팩 적용 + 서버목록(endpoint 주소) 등록. 이미 설정돼 있으면 보존 — best-effort.
+            ClientDefaults.ApplyAll(AppPaths.GameDir, endpoint, progress);
 
             // (5.5) 세션 재검증 — 긴 설치 동안 토큰이 만료됐을 수 있어 proc.Start 직전 갱신(best-effort).
             session = await _auth.RevalidateAsync(session, progress, ct).ConfigureAwait(false);
             ct.ThrowIfCancellationRequested();
 
-            // (5)+(6) Fabric 설치 + ServerIp 주입 실행 (토큰은 직전 인증/재검증에서 확보)
-            var game = await _minecraft.LaunchAsync(session, progress, ct).ConfigureAwait(false);
+            // (5)+(6) Fabric 설치 + endpoint(quickPlay) 주입 실행 (토큰은 직전 인증/재검증에서 확보)
+            var game = await _minecraft.LaunchAsync(session, endpoint, progress, ct).ConfigureAwait(false);
 
             progress.Report(StageUpdate.Of(LaunchStage.Running, "게임을 실행했어요. 즐겜!", 1.0));
             return game;
