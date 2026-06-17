@@ -519,6 +519,22 @@ public partial class MainWindowViewModel : ViewModelBase
         }
     }
 
+    // 설계도(Litematica .litematic) 폴더 열기 — 친구끼리 설계도 파일 공유/넣기. 없으면 만들어 열고, 실패 시 게임 폴더 폴백.
+    [RelayCommand]
+    private void OpenSchematics()
+    {
+        try
+        {
+            var dir = Path.Combine(AppPaths.GameDir, "schematics");
+            Directory.CreateDirectory(dir);
+            OpenPath(dir);
+        }
+        catch
+        {
+            OpenPath(AppPaths.GameDir);
+        }
+    }
+
     // 진단 파일(ZIP) 생성 — 흩어진 로그 + 시스템 정보를 한 파일로 묶어 폴더를 연다(디스코드 공유용).
     // 크래시 메시지가 약속하는 '크래시 리포트'의 실제 구현(약속-구현 갭 해소).
     [RelayCommand]
