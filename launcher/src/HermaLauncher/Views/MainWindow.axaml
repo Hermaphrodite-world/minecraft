@@ -36,6 +36,11 @@
             </StackPanel>
             <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="4"
                         Margin="0,0,12,0" VerticalAlignment="Center">
+                <!-- 트레이로 숨기기(완전 최소화) — 작업표시줄에서도 사라지고 트레이에 상주(접속 알림 유지).
+                     트레이가 실제로 떠 있을 때만 노출(트레이 없이 숨기면 복원 불가). -->
+                <Button Classes="chrome" x:Name="TrayBtn" Content="▾"
+                        IsVisible="{Binding IsTrayAvailable}"
+                        ToolTip.Tip="트레이로 숨기기 (백그라운드로 보내기 · 접속 알림 유지)" />
                 <Button Classes="chrome" x:Name="MinBtn" Content="—" />
                 <Button Classes="chrome close" x:Name="CloseBtn" Content="✕" />
             </StackPanel>
@@ -298,6 +303,7 @@
                                        Foreground="{StaticResource AccentCyan}" VerticalAlignment="Center" />
                         </Grid>
                         <CheckBox Content="게임 끝나도 런처 열어두기 (바로 다시 접속)" IsChecked="{Binding KeepLauncherOpen}" />
+                        <CheckBox Content="친구가 접속하면 알림 받기 (트레이/최소화 중에도)" IsChecked="{Binding NotifyOnJoin}" />
                     </StackPanel>
                 </Border>
 

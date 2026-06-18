@@ -31,6 +31,16 @@ public partial class MainWindowViewModel : ViewModelBase
     // 메인 화면 서버 상태 pill 주기 갱신(30초). 디자이너/테스트 환경에선 미가동(네트워크 호출 방지).
     private readonly DispatcherTimer? _statusTimer;
 
+    // 접속 알림용 — 폴링마다 ServerStatus 를 받아 '새로 들어온 사람'을 산출(인원수 순증 트리거, 본인 제외).
+    private readonly PresenceTracker _presence = new();
+
+    // 런처 창이 지금 사용자 앞에 떠 있나(활성·정상·표시). View(MainWindow)가 갱신해 준다 —
+    // 접속 토스트는 창이 foreground 가 아닐 때만(최소화/트레이 숨김/뒤로 가림) 띄워 중복을 피한다.
+    public bool IsWindowForeground { get; set; } = true;
+
+    // 접속 알림 요청(App 이 구독 → ITrayService.Notify). VM 은 트레이를 직접 모름(MVVM/조립 경계 유지).
+    public event Action<string>? JoinNotificationRequested;
+
     // 단계별 소요시간 로깅용(진단 — 어느 단계가 느린지). Play 시작 시 리셋. OnStageUpdate 는 UI 스레드 단일 호출.
     private LaunchStage? _lastStage;
     private DateTime _lastStageAt;
@@ -41,6 +51,7 @@ public partial class MainWindowViewModel : ViewModelBase
 
     // 런처 창 제어 요청(View 가 구독해 WindowState/Close 처리 — VM 은 창을 직접 모름, MVVM 경계 유지).
     public event Action? MinimizeRequested;
+    public event Action? HideToTrayRequested; // 트레이로 숨김(작업표시줄에서도 제거). 게임 시작 시 사용.
     public event Action? RestoreRequested;
     public event Action? CloseRequested;
 
@@ -128,6 +139,15 @@ public partial class MainWindowViewModel : ViewModelBase
     [ObservableProperty]
     private bool _keepLauncherOpen;
 
+    // 친구 접속 시 OS 알림(토스트). 기본 켜짐(opt-out).
+    [ObservableProperty]
+    private bool _notifyOnJoin = true;
+
+    // 트레이 아이콘이 실제로 떠 있나(App 이 조립 후 설정). false 면 '트레이로 숨기기' 버튼을 숨긴다 —
+    // 트레이 없이 숨기면 복원 수단이 사라져 앱이 보이지 않게 갇힘(Codex HIGH).
+    [ObservableProperty]
+    private bool _isTrayAvailable;
+
     [ObservableProperty]
     private string? _playtimeSummary;
 
@@ -166,6 +186,7 @@ public partial class MainWindowViewModel : ViewModelBase
         _ramAuto = settings.IsRamAuto;
         _maxRamMb = RamAdvisor.EffectiveMaxRamMb();
         _serverHostOverride = settings.ServerHostOverride;
+        _notifyOnJoin = settings.NotifyOnJoin;
 
         // 첫 실행이면 환영 화면으로 시작(디자이너 제외 — 디자이너는 Main 미리보기).
         if (!Avalonia.Controls.Design.IsDesignMode && !settings.HasSeenWelcome)
@@ -256,9 +277,18 @@ public partial class MainWindowViewModel : ViewModelBase
             MotdText = null;
             IsAnyoneOnline = false;
             OnlineNudgeText = null;
+            _presence.Reset(); // 오프라인 → 베이스라인 비움(다음 온라인 복귀 시 스팸 방지).
         }
         else
         {
+            // 접속 알림: '새로 들어온 사람' 산출(베이스라인/본인 제외/인원수 순증 트리거는 PresenceTracker 가 처리).
+            // 상태 추적은 항상(설정 off 여도) 갱신해 베이스라인을 최신으로 유지 — 토스트만 게이트한다.
+            // selfOnlineHint=IsGameRunning: 익명/부분 sample 서버에서도 '내가 접속한 슬롯'을 빼 자기 접속을
+            //   친구 접속으로 오인하지 않게(Codex MEDIUM). sample 에 내 닉네임이 있으면 그것으로도 제외.
+            var joined = _presence.Update(st.Sample, st.Players, AccountCache.LastUsername(), IsGameRunning);
+            if (NotifyOnJoin && !IsWindowForeground && PresenceTracker.FormatJoinMessage(joined) is { } joinMsg)
+                JoinNotificationRequested?.Invoke(joinMsg);
+
             IsAnyoneOnline = st.Players is int pc && pc > 0;
             OnlineNudgeText = IsAnyoneOnline ? $"지금 {st.Players}명 플레이 중 — 같이 해요!" : null;
             // 접속자 닉네임 일부를 칩에 덧붙임(최대 3명 + "+N") — "누가 있나" 사회적 넛지.
@@ -376,7 +406,12 @@ public partial class MainWindowViewModel : ViewModelBase
         var startedAt = DateTime.Now;
         using (game)
         {
-            MinimizeRequested?.Invoke();
+            // 게임 실행 중엔 트레이로 숨겨 비켜준다(작업표시줄에서도 제거 + 접속 알림은 트레이로 계속).
+            // 트레이 미가용(미지원/실패)이면 최소화로 폴백 — 복원 수단(작업표시줄)을 잃지 않게.
+            if (IsTrayAvailable)
+                HideToTrayRequested?.Invoke();
+            else
+                MinimizeRequested?.Invoke();
             int exitCode;
             try
             {
@@ -561,6 +596,7 @@ public partial class MainWindowViewModel : ViewModelBase
         AccountName = AccountCache.LastUsername();
         ServerHostOverride = settings.ServerHostOverride;
         KeepLauncherOpen = settings.KeepLauncherOpen;
+        NotifyOnJoin = settings.NotifyOnJoin;
         PlaytimeSummary = PlaytimeTracker.FormatTotal(settings.TotalPlaytimeSeconds)
                           + (settings.LastPlayedUtc is { } u ? $" · 마지막 {u.ToLocalTime():M월 d일}" : "");
         View = AppView.Settings;
@@ -589,6 +625,7 @@ public partial class MainWindowViewModel : ViewModelBase
         toSave.MaxRamMbOverride = RamAuto ? null : clamped;
         toSave.ServerHostOverride = normalizedHost;
         toSave.KeepLauncherOpen = KeepLauncherOpen;
+        toSave.NotifyOnJoin = NotifyOnJoin;
         if (!toSave.Save())
         {
             StatusMessage = "설정 저장에 실패했어요(파일 권한/사용 중일 수 있어요). 잠시 후 다시 시도해 주세요.";
