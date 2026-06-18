@@ -22,6 +22,10 @@ public sealed class LauncherSettings
     // 정상 종료(코드 0) 후 런처를 닫지 않고 유지(반복 재접속 편의). 기본 false(현행: 자동 닫기).
     public bool KeepLauncherOpen { get; set; }
 
+    // 친구가 서버에 접속하면 OS 알림(토스트)으로 알려줌. 기본 true(opt-out). 창이 앞에 떠 있을 땐 억제.
+    // (JSON 에 키가 없는 구버전 설정 파일도 이 초기값 true 를 유지 — System.Text.Json 은 누락 속성을 덮지 않음.)
+    public bool NotifyOnJoin { get; set; } = true;
+
     // 이 서버 누적 플레이 시간(초) + 마지막 플레이(표시용). 로컬·단일 사용자 기록(서버/계정 DB 아님).
     public long TotalPlaytimeSeconds { get; set; }
     public DateTime? LastPlayedUtc { get; set; }
