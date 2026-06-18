@@ -45,7 +45,7 @@ bash build-mac-app.sh publish/osx-arm64 publish/mac   # → HermaLauncher-macos-
 
 ## 구현 상태
 
-> **현재 릴리스: v1.0.2** — Windows + macOS(공증) 자동 업데이트 배포 중. v1.0 에서 신뢰·회복 기능군 추가. 상세 기능/검증 현황 SoT: [docs/launcher-v1.0-feature-plan.md](docs/launcher-v1.0-feature-plan.md).
+> **현재 릴리스: v1.2.0** — Windows + macOS(공증) 자동 업데이트 배포 중. v1.0=신뢰·회복, v1.1=presence·QoL, v1.2=트레이 숨기기 + 친구 접속 알림(Win/macOS 토스트). 상세 기능/검증 현황 SoT: [docs/launcher-v1.0-feature-plan.md](docs/launcher-v1.0-feature-plan.md).
 
 > **🎉 end-to-end 실증 완료** — 로컬 26.1.2 서버 + 런처로 실제 검증: 클릭 한 번 → 인증 → Java 25 설치 → 모드 동기화 → Fabric → quickPlayMultiplayer 자동 접속 → **월드 스폰**. (v0.1.5 부터 인증은 **온라인 정품 MS 전용** — MS 승인 완료, 오프라인/닉네임 UI 제거.) Xaero Minimap·Simple Voice Chat·Jade·Sodium 등 인게임 작동 확인.
 
@@ -56,6 +56,8 @@ bash build-mac-app.sh publish/osx-arm64 publish/mac   # → HermaLauncher-macos-
 | 오프라인 로그인 | ◐ v0.1.5 부터 **UI 제거**(온라인 전용 전환) — 서비스 레이어 dormant 유지 |
 | 온라인 로그인 (정품 계정) | ✅ **시스템 브라우저**(요즘 공식 런처 방식, 크로스플랫폼) — [셋업 가이드](docs/online-login-setup.md). Azure 앱 1개(메인테이너) 공유. **MS/Mojang 승인 완료 — 정식 동작**(v1.0.x 릴리스 bake). XSTS 거부(미성년·지역·프로필 없음·밴)는 한국어 안내로 분기 |
 | **v1.0 신뢰·회복 기능군** | ✅ v1.0.0~v1.0.2 배포 — 서버 주소 직접 입력(같은 LAN 다른 PC 호스트 접속), 진단 ZIP, 스마트 실패 진단(한국어), 2번째 실행 시 기존 창 활성화(Win), 전송 단계 재시도, 메인 서버 상태 pill, 첫 실행 환영, 운영자 공지/점검 배너(news.json, 기본 off). 상세 [feature-plan](docs/launcher-v1.0-feature-plan.md) |
+| **v1.1 presence·QoL** | ✅ v1.1.0~v1.1.2 배포 — 온라인 접속자명/MOTD/넛지, 플레이타임, 게임 끝나도 런처 유지, 게임·스크린샷·설계도(Litematica) 폴더 열기, 크래시 진단 버튼, 긴급공지 배너, About 화면 |
+| **v1.2 트레이 + 접속 알림** | ✅ v1.2.0 배포 — 트레이로 숨기기(완전 최소화 + 게임 중 트레이 상주), 친구 접속 시 Windows/macOS 네이티브 토스트(설정 토글, 기본 켜짐). 트레이/토스트 런타임은 실기기 육안 스모크 권장 |
 | **공식 런처 설치 (대체 경로)** | ✅ **실증** — 실기기에서 공식 런처에 'Hermaphrodite World' 프로필 정상 추가 확인. "공식 런처에 설치" 버튼이 Fabric+모드팩을 공식 `.minecraft`에 등록 → **정품 로그인 즉시(Mojang 승인 대기 0)**. 머지 로직 fixture + 실기기 검증(기존 프로필 보존, MS Store/standalone 양쪽). [가이드](docs/installer-setup.md) |
 | 자동 접속 (quickPlayMultiplayer) | ✅ **실증** — MC 26.1 구형 --server 제거 대응 |
 | Velopack 자동 업데이트 | ✅ **실증 완료** — 실설치 e2e(설치→감지→다운로드→0.1.3 swap) 검증(Windows). macOS 는 Developer ID 서명 후 활성(scaffold 완료) |
