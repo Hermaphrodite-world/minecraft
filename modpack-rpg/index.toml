@@ -303,3 +303,7 @@ metafile = true
 file = "mods/yungs-better-dungeons.pw.toml"
 hash = "1496ffa30020676979e65921b91e583a2fdc77e50001e2ed55f99edf1a0ae880"
 metafile = true
+
+[[files]]
+file = "resourcepacks/herma-korean.zip"
+hash = "33d152c8834884092ab9157257377ab0f1838959df3cbc0a045df822e5fae163"

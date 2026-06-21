@@ -10,8 +10,10 @@ try: sys.stdout.reconfigure(encoding='utf-8', errors='replace')
 except Exception: pass
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))   # translations/
-SRC = os.path.join(ROOT, 'herma-ko')
-OUT = os.path.normpath(os.path.join(ROOT, '..', 'modpack', 'resourcepacks', 'herma-korean.zip'))
+# 팩 파라미터화(env) — 기본 Fabric 보존. RPG: HERMA_PACK_SRC=herma-ko-rpg HERMA_PACK_DIR=modpack-rpg
+SRC = os.path.join(ROOT, os.environ.get('HERMA_PACK_SRC', 'herma-ko'))
+OUT = os.path.normpath(os.path.join(ROOT, '..', os.environ.get('HERMA_PACK_DIR', 'modpack'),
+                                    'resourcepacks', 'herma-korean.zip'))
 
 files = []
 for r, _, fs in os.walk(SRC):

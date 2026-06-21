@@ -1,0 +1,12 @@
+{
+  "appleskin.configuration.maxHudOverlayFlashAlpha.tooltip": "가장 잘 보일 때의 깜빡이는 아이콘 알파 값 (1.0 = 완전 불투명, 0.0 = 완전 투명)",
+  "appleskin.configuration.showFoodExhaustionHudUnderlay.tooltip": "켜면 허기 바 뒤에 음식 소진도를 진행 바로 표시합니다",
+  "appleskin.configuration.showFoodHealthHudOverlay.tooltip": "켜면 음식으로 회복되는 예상 체력을 체력 바에 표시합니다",
+  "appleskin.configuration.showFoodStatsInDebugOverlay.tooltip": "켜면 디버그 화면에 허기, 포만감, 소진도 수치를 표시합니다",
+  "appleskin.configuration.showFoodValuesHudOverlay.tooltip": "켜면 현재 들고 있는 음식으로 회복되는 허기(showSaturationHudOverlay가 켜져 있으면 포만감도)를 표시합니다",
+  "appleskin.configuration.showFoodValuesHudOverlayWhenOffhand.tooltip": "켜면 보조 손에 든 음식에도 허기/포만감/체력 오버레이를 표시합니다",
+  "appleskin.configuration.showFoodValuesInTooltip.tooltip": "켜면 음식을 들고 SHIFT를 누르는 동안 툴팁에 허기와 포만감 수치를 표시합니다",
+  "appleskin.configuration.showFoodValuesInTooltipAlways.tooltip": "켜면 SHIFT를 누르지 않아도 음식 툴팁에 허기와 포만감 수치를 자동으로 표시합니다",
+  "appleskin.configuration.showSaturationHudOverlay.tooltip": "켜면 현재 포만감 수치를 허기 바 위에 겹쳐 표시합니다",
+  "appleskin.configuration.showVanillaAnimationsOverlay.tooltip": "켜면 체력/허기 오버레이가 마인크래프트의 아이콘 애니메이션에 맞춰 흔들립니다"
+}

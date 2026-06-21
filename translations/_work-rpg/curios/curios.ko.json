@@ -1,0 +1,9 @@
+{
+  "commands.curios.drop.success": "%s 슬롯의 아이템을 %s에게 떨어뜨렸습니다",
+  "commands.curios.dropAll.success": "모든 슬롯의 아이템을 %s에게 떨어뜨렸습니다",
+  "commands.curios.replace.success": "%s 슬롯을 %s에 대해 %s(으)로 교체했습니다",
+  "curios.networking.failed": "Curios 네트워크 오류",
+  "curios.tooltip.inactive": "비활성 슬롯",
+  "gui.curios.page": "%d / %d 쪽",
+  "gui.curios.toggle.cosmetics": "장식 전환"
+}

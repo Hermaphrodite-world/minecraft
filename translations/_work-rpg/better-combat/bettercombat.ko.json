@@ -1,0 +1,14 @@
+{
+  "text.autoconfig.bettercombat.option.client.firstPersonAnimations": "1인칭 플레이어 애니메이션",
+  "text.autoconfig.bettercombat.option.client.firstPersonAnimations.@Tooltip": "표시할 공격 플레이어 애니메이션입니다. 커스텀 카메라 모드를 사용하는 경우에만 변경을 권장합니다.",
+  "text.autoconfig.bettercombat.option.client.isShowingWeaponTrails": "무기 휘두름 궤적 표시",
+  "text.autoconfig.bettercombat.option.client.isShowingWeaponTrails.@Tooltip": "모든 시점에서 공격 시 무기 궤적 입자를 렌더링합니다",
+  "text.autoconfig.bettercombat.option.client.isSwingThruGrassSmart": "스마트 풀 통과 휘두름",
+  "text.autoconfig.bettercombat.option.client.isSwingThruGrassSmart.@Tooltip": "공격 범위 내에 적이 있을 때만 풀을 통과해 휘두릅니다",
+  "text.autoconfig.bettercombat.option.client.isTooltipAttackRangeReformat": "아이템 툴팁: 기본 범위 재포맷",
+  "text.autoconfig.bettercombat.option.client.isTooltipAttackRangeReformat.@Tooltip": "엔티티 상호작용 거리를 공격 범위로 포맷합니다",
+  "text.autoconfig.bettercombat.option.client.legAnimationThreshold": "다리 애니메이션 끄기",
+  "text.autoconfig.bettercombat.option.client.legAnimationThreshold.@Tooltip": "실험적: 이 속도를 넘어 달릴 때 다리 애니메이션을 끕니다",
+  "text.autoconfig.bettercombat.option.client.mineWithWeaponWhitelist": "무기로 채굴 화이트리스트",
+  "text.autoconfig.bettercombat.option.client.mineWithWeaponWhitelist.@Tooltip": "이 정규식과 일치하는 ID 를 가진 무기는 '무기로 채굴'이 꺼져 있어도 항상 블록을 채굴할 수 있습니다"
+}

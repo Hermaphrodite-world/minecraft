@@ -37,6 +37,20 @@ server/.fabric/
 
 # ── 번역 작업: 소스(_work)·도구·결과(herma-ko)는 커밋, jar 캐시만 무시 ──
 translations/_jars/
+translations/_jars-rpg/
+
+# ── 서버(RPG) 런타임 데이터 — server-rpg 도 동일 정책 ──
+server-rpg/world/
+server-rpg/world_nether/
+server-rpg/world_the_end/
+server-rpg/logs/
+server-rpg/crash-reports/
+server-rpg/libraries/
+server-rpg/mods/
+server-rpg/*.jar
+server-rpg/eula.txt
+server-rpg/run.sh
+server-rpg/run.bat
 
 # ── 기타 ──
 .DS_Store

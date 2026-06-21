@@ -1,0 +1,14 @@
+{
+  "text.autoconfig.bettercombat.option.client.firstPersonAnimations": "First-person player animations",
+  "text.autoconfig.bettercombat.option.client.firstPersonAnimations.@Tooltip": "Attack player animations to be shown. Only recommended to change if custom camera mods in use.",
+  "text.autoconfig.bettercombat.option.client.isShowingWeaponTrails": "Show weapon swing trails",
+  "text.autoconfig.bettercombat.option.client.isShowingWeaponTrails.@Tooltip": "Render weapon trail particles for attacks in all perspectives",
+  "text.autoconfig.bettercombat.option.client.isSwingThruGrassSmart": "Smart swing through grass",
+  "text.autoconfig.bettercombat.option.client.isSwingThruGrassSmart.@Tooltip": "Only swing through grass if there are enemies in attack range",
+  "text.autoconfig.bettercombat.option.client.isTooltipAttackRangeReformat": "Item tooltip: reformat vanilla range",
+  "text.autoconfig.bettercombat.option.client.isTooltipAttackRangeReformat.@Tooltip": "Format Entity Interaction Range to Attack Range",
+  "text.autoconfig.bettercombat.option.client.legAnimationThreshold": "Disable leg animations",
+  "text.autoconfig.bettercombat.option.client.legAnimationThreshold.@Tooltip": "EXPERIMENTAL: Disable leg animations while running over this speed",
+  "text.autoconfig.bettercombat.option.client.mineWithWeaponWhitelist": "Mine with weapon whitelist",
+  "text.autoconfig.bettercombat.option.client.mineWithWeaponWhitelist.@Tooltip": "Weapons with an ID that matches this regex can always mine blocks, even when 'Mine with weapons' is disabled"
+}

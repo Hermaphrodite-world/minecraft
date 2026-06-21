@@ -9,8 +9,8 @@ try: sys.stdout.reconfigure(encoding='utf-8', errors='replace')
 except Exception: pass
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-WORK = os.path.join(ROOT, '_work')
-PACK = os.path.join(ROOT, 'herma-ko')
+WORK = os.path.join(ROOT, os.environ.get('HERMA_WORK', '_work'))
+PACK = os.path.join(ROOT, os.environ.get('HERMA_PACK_SRC', 'herma-ko'))
 # 서식 코드(§a/&a)는 번역자가 정당하게 변경 가능 → 비교에서 제외.
 # 누락 시 깨지는 format-critical 플레이스홀더(%s/%d/%f/%1$s/{0}/{name})만 검사.
 PH = re.compile(r'%(?:\d+\$)?[sdf]|%%|\{\d*\}|\{[a-zA-Z_]+\}')

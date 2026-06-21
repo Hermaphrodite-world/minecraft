@@ -1,0 +1,9 @@
+{
+  "pack": {
+    "pack_format": 34,
+    "supported_formats": [34, 255],
+    "min_format": 34,
+    "max_format": 255,
+    "description": "§aHerma RPG §f한국어 번역 보충팩\n§71.21.1 RPG 모드 한국어화"
+  }
+}

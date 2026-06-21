@@ -10,15 +10,19 @@ NONE/PARTIAL 41개 모드 JAR 을 받아(캐시) 네임스페이스별 en_us / k
   translations/herma-ko/assets/<ns>/lang/ko_kr.json  기존 ko 시드(있으면)
 출력: ASCII only (Windows cp949 콘솔 회피).
 """
-import sys, os, re, json, io, zipfile, urllib.request, concurrent.futures as cf
+import sys, os, re, json, io, glob, zipfile, urllib.request, concurrent.futures as cf
 try: sys.stdout.reconfigure(encoding='utf-8', errors='replace')
 except Exception: pass
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # translations/
-JARS = os.path.join(ROOT, '_jars')
-WORK = os.path.join(ROOT, '_work')
-PACK = os.path.join(ROOT, 'herma-ko')
-MODS = os.path.normpath(os.path.join(ROOT, '..', 'modpack', 'mods'))
+# 팩 파라미터화(env) — 기본값은 26.1.2 Fabric 팩(기존 동작 보존). RPG 팩은 아래 env 로 분리:
+#   HERMA_PACK_DIR=modpack-rpg HERMA_JARS=_jars-rpg HERMA_WORK=_work-rpg
+#   HERMA_PACK_SRC=herma-ko-rpg HERMA_AUTODISCOVER=1
+PACK_DIR = os.environ.get('HERMA_PACK_DIR', 'modpack')
+JARS = os.path.join(ROOT, os.environ.get('HERMA_JARS', '_jars'))
+WORK = os.path.join(ROOT, os.environ.get('HERMA_WORK', '_work'))
+PACK = os.path.join(ROOT, os.environ.get('HERMA_PACK_SRC', 'herma-ko'))
+MODS = os.path.normpath(os.path.join(ROOT, '..', PACK_DIR, 'mods'))
 for d in (JARS, WORK, PACK): os.makedirs(d, exist_ok=True)
 
 NEED = [
@@ -100,6 +104,11 @@ def process(slug):
         return (slug, total_missing, ns_report, None)
     except Exception as e:
         return (slug, 0, [], str(e)[:60])
+
+# HERMA_AUTODISCOVER=1 이면 NEED 무시하고 팩의 모든 모드를 대상으로(RPG 팩 등 신규 팩용).
+if os.environ.get('HERMA_AUTODISCOVER'):
+    NEED = sorted(os.path.basename(p)[:-len('.pw.toml')]
+                  for p in glob.glob(os.path.join(MODS, '*.pw.toml')))
 
 with cf.ThreadPoolExecutor(max_workers=10) as ex:
     results = list(ex.map(process, NEED))

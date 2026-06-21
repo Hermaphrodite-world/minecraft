@@ -1,0 +1,12 @@
+{
+  "gui.refinedstorage.crafting_grid.press_shift_cmd_to_only_show_items_used_in_crafting": "SHIFT + CMD 를 누르면 제작법에 사용되는 아이템만 표시됩니다.",
+  "gui.refinedstorage.grid.cmd_click_to_autocraft": "CMD + 클릭으로 자동 제작",
+  "gui.refinedstorage.priority.storage_help.alt_click_to_modify_extract_priority": "ALT + 클릭으로 추출 우선순위를 변경합니다.",
+  "gui.refinedstorage.priority.storage_help.click_to_modify_insert_extract_priority": "클릭으로 삽입/추출 우선순위를 변경합니다.",
+  "gui.refinedstorage.priority.storage_help.cmd_click_to_modify_insert_priority": "CMD + 클릭으로 삽입 우선순위를 변경합니다.",
+  "gui.refinedstorage.priority.storage_help.ctrl_click_to_modify_insert_priority": "CTRL + 클릭으로 삽입 우선순위를 변경합니다.",
+  "item.refinedstorage.controller.not_needed_because_energy_is_not_required": "Refined Storage 가 에너지 없이 작동하도록 설정되어 있습니다. 이 장치는 필요 없으며 아무 효과도 없습니다 - 정보 표시용으로만 보입니다.",
+  "item.refinedstorage.regulator_upgrade.cleared_configuration": "설정을 초기화했습니다.",
+  "text.autoconfig.refinedstorage.option.requireEnergy": "에너지 필요",
+  "text.autoconfig.refinedstorage.option.requireEnergy.tooltip": "네트워크와 아이템이 작동하는 데 에너지가 필요한지 여부입니다. false 인 경우 네트워크는 작동하는 데 컨트롤러가 필요하지 않습니다."
+}

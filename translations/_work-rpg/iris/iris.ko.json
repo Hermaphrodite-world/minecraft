@@ -1,0 +1,8 @@
+{
+  "iris.keybind.wireframe": "와이어프레임 (싱글플레이 전용)",
+  "iris.load.failure.generic": "Iris가 셰이더를 불러오는 중 문제가 발생했습니다. Iris 개발자에게 제보해 주세요. ",
+  "iris.load.failure.shader": "셰이더팩을 불러오지 못했습니다! 셰이더 개발자에게 오류를 제보해 주세요. ",
+  "iris.shaders.debug.restartNoDebug": "셰이더 디버깅이 켜졌습니다. NeoForge에서는 OpenGL 디버깅을 지원하지 않습니다.",
+  "options.iris.colorSpace": "색 공간",
+  "options.iris.colorSpace.sodium_tooltip": "화면을 변환할 색 공간입니다. 셰이더팩 위에 적용됩니다. 잘 모르겠으면 SRGB를 사용하세요."
+}
