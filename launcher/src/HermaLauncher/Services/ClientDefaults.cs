@@ -24,14 +24,19 @@ public static class ClientDefaults
     //   endpoint: 자동접속 대상(오케스트레이터가 해석). servers.dat 항목을 quickPlay 와 "동일 주소"로 등록한다.
     //   ★ 이전 버그: 공개 IP(LauncherConfig.ServerIp) 로만 등록 → 같은 LAN 의 다른 PC 가 서버목록 항목으론 못 닿음.
     //     endpoint.Host(override=LAN IP / 로컬 / 공개) 로 등록해 quickPlay 와 일치시킨다.
-    public static void ApplyAll(string gameDir, ServerEndpoint endpoint, IProgress<StageUpdate>? progress = null)
+    //   registerServer=false(베타 모드): servers.dat 등록을 생략한다(멀티 자동접속 미사용 — 싱글플레이 테스트).
+    //     쉐이더/리소스팩(번역 보충팩 포함) 적용은 베타에서도 그대로 수행.
+    public static void ApplyAll(string gameDir, ServerEndpoint endpoint, IProgress<StageUpdate>? progress = null, bool registerServer = true)
     {
-        // 방어: endpoint.Host 가 비면 공개 IP 로 폴백(서버목록 등록이 깨지지 않도록).
-        var host = string.IsNullOrWhiteSpace(endpoint.Host) ? LauncherConfig.ServerIp : endpoint.Host;
-        var port = endpoint.Port > 0 ? endpoint.Port : LauncherConfig.ServerPort;
-        AppLog.Info(LaunchStage.Packwiz,
-            $"[servers.dat] 등록 주소 = {host}:{port} (source={endpoint.Source}) — quickPlay 인자와 동일해야 정상");
-        ServerList.Ensure(gameDir, LauncherConfig.ServerListName, host, port, progress);
+        if (registerServer)
+        {
+            // 방어: endpoint.Host 가 비면 공개 IP 로 폴백(서버목록 등록이 깨지지 않도록).
+            var host = string.IsNullOrWhiteSpace(endpoint.Host) ? LauncherConfig.ServerIp : endpoint.Host;
+            var port = endpoint.Port > 0 ? endpoint.Port : LauncherConfig.ServerPort;
+            AppLog.Info(LaunchStage.Packwiz,
+                $"[servers.dat] 등록 주소 = {host}:{port} (source={endpoint.Source}) — quickPlay 인자와 동일해야 정상");
+            ServerList.Ensure(gameDir, LauncherConfig.ServerListName, host, port, progress);
+        }
         EnsureDefaultShader(gameDir, progress);
         EnsureDefaultResourcePacks(gameDir, progress);
     }

@@ -54,24 +54,42 @@ public sealed class LaunchOrchestrator
             var javaPath = await _minecraft.EnsureJavaAsync(progress, ct).ConfigureAwait(false);
             ct.ThrowIfCancellationRequested();
 
+            // 베타 채널(설정): 베타 모드팩으로 동기화하고, 서버 상태 미동기화 단계라 멀티 자동접속/서버목록 등록을
+            //   생략한다(게임 실행까지만 — 싱글플레이로 신규 모드 테스트). 기본 false = 정식 채널.
+            var beta = LauncherSettings.Load().BetaMode;
+            var packTomlUrl = beta ? LauncherConfig.BetaPackTomlUrl : LauncherConfig.PackTomlUrl;
+
             // (4) packwiz 동기화 — (3)에서 얻은 java 재사용. bootstrap jar 는 PackwizService 가 자동 확보.
-            await _packwiz.RunAsync(javaPath, LauncherConfig.PackTomlUrl, progress, ct).ConfigureAwait(false);
+            await _packwiz.RunAsync(javaPath, packTomlUrl, progress, ct).ConfigureAwait(false);
             ct.ThrowIfCancellationRequested();
 
             // (4a) 자동접속 endpoint 를 "한 번" 해석 — servers.dat 등록(4b)과 quickPlay(6)가 같은 주소를 쓰게 한다.
             //   (이전 버그: servers.dat=공개IP, quickPlay=override 로 불일치 → 같은 LAN 다른 PC 가 서버목록으론 못 닿음.)
-            var endpoint = await ServerEndpointResolver.ResolveAsync(progress, ct).ConfigureAwait(false);
+            //   베타: 자동접속 미사용이라 해석 생략(미사용 폴백 endpoint).
+            ServerEndpoint endpoint;
+            if (beta)
+            {
+                progress.Report(StageUpdate.Of(LaunchStage.Launch,
+                    "베타 채널 — 멀티 서버 자동접속은 생략해요(서버 준비 전). 게임이 뜨면 싱글플레이로 새 모드를 확인하세요."));
+                endpoint = ServerEndpoint.PublicFallback; // 미사용(아래 registerServer:false / autoConnect:false)
+            }
+            else
+            {
+                endpoint = await ServerEndpointResolver.ResolveAsync(progress, ct).ConfigureAwait(false);
+            }
             ct.ThrowIfCancellationRequested();
 
-            // (4b) 첫 실행 기본 쉐이더/리소스팩 적용 + 서버목록(endpoint 주소) 등록. 이미 설정돼 있으면 보존 — best-effort.
-            ClientDefaults.ApplyAll(AppPaths.GameDir, endpoint, progress);
+            // (4b) 첫 실행 기본 쉐이더/리소스팩(번역 보충팩 포함) 적용 + 서버목록(endpoint 주소) 등록.
+            //   베타: registerServer:false 로 servers.dat 등록만 생략(쉐이더/리소스팩은 적용). best-effort.
+            ClientDefaults.ApplyAll(AppPaths.GameDir, endpoint, progress, registerServer: !beta);
 
             // (5.5) 세션 재검증 — 긴 설치 동안 토큰이 만료됐을 수 있어 proc.Start 직전 갱신(best-effort).
             session = await _auth.RevalidateAsync(session, progress, ct).ConfigureAwait(false);
             ct.ThrowIfCancellationRequested();
 
             // (5)+(6) Fabric 설치 + endpoint(quickPlay) 주입 실행 (토큰은 직전 인증/재검증에서 확보)
-            var game = await _minecraft.LaunchAsync(session, endpoint, progress, ct).ConfigureAwait(false);
+            //   베타: autoConnect:false 로 quickPlay 생략(메인 메뉴 실행).
+            var game = await _minecraft.LaunchAsync(session, endpoint, progress, ct, autoConnect: !beta).ConfigureAwait(false);
 
             progress.Report(StageUpdate.Of(LaunchStage.Running, "게임을 실행했어요. 즐겜!", 1.0));
             return game;

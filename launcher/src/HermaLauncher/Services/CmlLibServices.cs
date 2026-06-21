@@ -287,22 +287,39 @@ public sealed class CmlLibMinecraftService : IMinecraftService
         }
     }
 
-    public async Task<Process> LaunchAsync(AuthSession session, ServerEndpoint endpoint, IProgress<StageUpdate> progress, CancellationToken ct)
+    public async Task<Process> LaunchAsync(AuthSession session, ServerEndpoint endpoint, IProgress<StageUpdate> progress, CancellationToken ct, bool autoConnect = true)
     {
         if (_fabricVersionId is null)
             throw new LaunchStageException(LaunchStage.Fabric, "설치 단계가 완료되지 않았어요.");
 
         progress.Report(StageUpdate.Of(LaunchStage.Launch, "게임 실행 준비 중…"));
 
-        // 자동접속 대상은 오케스트레이터가 이미 한 번 해석한 endpoint(servers.dat 등록과 동일 주소 — 불일치 방지).
-        // 방어: 어떤 이유로든 endpoint.Host 가 비면 공개 IP 로(런치는 막지 않음).
-        var quickPlayAddress = string.IsNullOrWhiteSpace(endpoint.Host)
-            ? $"{LauncherConfig.ServerIp}:{LauncherConfig.ServerPort}"
-            : endpoint.Address;
-        AppLog.Info(LaunchStage.Launch,
-            $"[launch] quickPlay 인자 = '--quickPlayMultiplayer {quickPlayAddress}' (source={endpoint.Source}, " +
-            $"런처 TCP도달={(endpoint.TcpReachable ? "성공" : "실패")}/{endpoint.ProbeMs}ms). " +
-            "이 주소로 접속이 안 되면 game-*.log 의 quickPlay 결과와 위 도달 진단을 대조하세요.");
+        // ★ MC 26.1 은 구형 --server/--port 인자를 제거함 → 모던 quickPlayMultiplayer 로 1-클릭 자동 접속.
+        //   autoConnect=false(베타 모드): quickPlay 를 생략하고 메인 메뉴로 실행(서버 상태 미동기화 — 싱글플레이 테스트).
+        MArgument[] extraGameArgs;
+        if (autoConnect)
+        {
+            // 자동접속 대상은 오케스트레이터가 이미 한 번 해석한 endpoint(servers.dat 등록과 동일 주소 — 불일치 방지).
+            // 방어: 어떤 이유로든 endpoint.Host 가 비면 공개 IP 로(런치는 막지 않음).
+            var quickPlayAddress = string.IsNullOrWhiteSpace(endpoint.Host)
+                ? $"{LauncherConfig.ServerIp}:{LauncherConfig.ServerPort}"
+                : endpoint.Address;
+            AppLog.Info(LaunchStage.Launch,
+                $"[launch] quickPlay 인자 = '--quickPlayMultiplayer {quickPlayAddress}' (source={endpoint.Source}, " +
+                $"런처 TCP도달={(endpoint.TcpReachable ? "성공" : "실패")}/{endpoint.ProbeMs}ms). " +
+                "이 주소로 접속이 안 되면 game-*.log 의 quickPlay 결과와 위 도달 진단을 대조하세요.");
+            extraGameArgs = new[]
+            {
+                new MArgument("--quickPlayMultiplayer"),
+                new MArgument(quickPlayAddress),
+            };
+        }
+        else
+        {
+            AppLog.Info(LaunchStage.Launch,
+                "[launch] 베타 모드 — quickPlay 자동접속 생략. 메인 메뉴로 실행(싱글플레이로 신규 모드 테스트).");
+            extraGameArgs = Array.Empty<MArgument>();
+        }
 
         var option = new MLaunchOption
         {
@@ -312,12 +329,7 @@ public sealed class CmlLibMinecraftService : IMinecraftService
             //    런치 인자 구성에서 그 값이 메인 클래스 토큰으로 잘못 들어가 게임이 즉시 종료된다
             //    (macOS 실측: `java.lang.ClassNotFoundException: Herma Launcher`). Windows 는 DockName=null
             //    이라 영향 없음. dock 라벨보다 실행이 우선이므로 제거.
-            // ★ MC 26.1 은 구형 --server/--port 인자를 제거함 → 모던 quickPlayMultiplayer 로 1-클릭 자동 접속.
-            ExtraGameArguments = new[]
-            {
-                new MArgument("--quickPlayMultiplayer"),
-                new MArgument(quickPlayAddress),
-            },
+            ExtraGameArguments = extraGameArgs,
         };
 
         // 이미 EnsureJavaAsync 에서 설치 완료 → build only.

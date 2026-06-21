@@ -143,6 +143,10 @@ public partial class MainWindowViewModel : ViewModelBase
     [ObservableProperty]
     private bool _notifyOnJoin = true;
 
+    // 베타 채널: 베타 모드팩으로 실행(멀티 자동접속 생략, 싱글플레이 테스트). 기본 꺼짐(정식 채널).
+    [ObservableProperty]
+    private bool _betaMode;
+
     // 트레이 아이콘이 실제로 떠 있나(App 이 조립 후 설정). false 면 '트레이로 숨기기' 버튼을 숨긴다 —
     // 트레이 없이 숨기면 복원 수단이 사라져 앱이 보이지 않게 갇힘(Codex HIGH).
     [ObservableProperty]
@@ -187,6 +191,7 @@ public partial class MainWindowViewModel : ViewModelBase
         _maxRamMb = RamAdvisor.EffectiveMaxRamMb();
         _serverHostOverride = settings.ServerHostOverride;
         _notifyOnJoin = settings.NotifyOnJoin;
+        _betaMode = settings.BetaMode;
 
         // 첫 실행이면 환영 화면으로 시작(디자이너 제외 — 디자이너는 Main 미리보기).
         if (!Avalonia.Controls.Design.IsDesignMode && !settings.HasSeenWelcome)
@@ -597,6 +602,7 @@ public partial class MainWindowViewModel : ViewModelBase
         ServerHostOverride = settings.ServerHostOverride;
         KeepLauncherOpen = settings.KeepLauncherOpen;
         NotifyOnJoin = settings.NotifyOnJoin;
+        BetaMode = settings.BetaMode;
         PlaytimeSummary = PlaytimeTracker.FormatTotal(settings.TotalPlaytimeSeconds)
                           + (settings.LastPlayedUtc is { } u ? $" · 마지막 {u.ToLocalTime():M월 d일}" : "");
         View = AppView.Settings;
@@ -626,6 +632,7 @@ public partial class MainWindowViewModel : ViewModelBase
         toSave.ServerHostOverride = normalizedHost;
         toSave.KeepLauncherOpen = KeepLauncherOpen;
         toSave.NotifyOnJoin = NotifyOnJoin;
+        toSave.BetaMode = BetaMode;
         if (!toSave.Save())
         {
             StatusMessage = "설정 저장에 실패했어요(파일 권한/사용 중일 수 있어요). 잠시 후 다시 시도해 주세요.";

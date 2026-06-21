@@ -26,6 +26,10 @@ public sealed class LauncherSettings
     // (JSON 에 키가 없는 구버전 설정 파일도 이 초기값 true 를 유지 — System.Text.Json 은 누락 속성을 덮지 않음.)
     public bool NotifyOnJoin { get; set; } = true;
 
+    // 베타 채널: ON 이면 베타 모드팩(LauncherConfig.BetaPackTomlUrl)으로 동기화·실행. 기본 false(정식 채널).
+    //   ※ 서버 상태 미동기화 단계라 베타는 멀티 자동접속/servers.dat 등록을 생략 → 게임 실행까지만, 싱글플레이 테스트.
+    public bool BetaMode { get; set; }
+
     // 이 서버 누적 플레이 시간(초) + 마지막 플레이(표시용). 로컬·단일 사용자 기록(서버/계정 DB 아님).
     public long TotalPlaytimeSeconds { get; set; }
     public DateTime? LastPlayedUtc { get; set; }

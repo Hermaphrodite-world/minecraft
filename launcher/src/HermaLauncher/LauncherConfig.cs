@@ -17,6 +17,12 @@ public static class LauncherConfig
     // GitHub Pages(modpack-pages.yml 이 modpack/ 를 배포) 기준. Pages 활성화 필요(공개 레포 또는 유료).
     public const string PackTomlUrl = "https://hermaphrodite-world.github.io/minecraft/pack.toml";
 
+    // 베타 채널 pack URL — 'beta' 브랜치(raw)에서 동기화. 설정의 베타 모드 ON 시 PackTomlUrl 대신 사용.
+    // main 미머지라 prod(정식 Pages) 무영향. 베타 테스터용. ※ 현재 서버 상태 미동기화 단계라 베타는
+    //   멀티 자동접속/서버목록 등록을 생략하고 게임만 실행한다(싱글플레이로 신규 모드 테스트).
+    public const string BetaPackTomlUrl =
+        "https://raw.githubusercontent.com/Hermaphrodite-world/minecraft/beta/modpack/pack.toml";
+
     // 서버 자동 접속 (모드구성: ServerIp 1차 경로).
     // 재빌드 없이 환경변수로 덮어쓰기 가능: HERMA_SERVER_IP (로컬 테스트=127.0.0.1).
     public static readonly string ServerIp =
