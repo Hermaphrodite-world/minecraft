@@ -1,0 +1,15 @@
+{
+  "hardcorerevival.configuration.allowAcceptingFate": "Allow Accepting Fate",
+  "hardcorerevival.configuration.allowAcceptingFate.tooltip": "Set to false to remove the Accept your Fate button and force players to wait out the timer.",
+  "hardcorerevival.configuration.disableInLonelyMultiplayer": "Disable in Lonely Multiplayer",
+  "hardcorerevival.configuration.disableInLonelyMultiplayer.tooltip": "If true, Hardcore Revival will not be active when playing alone in multiplayer.",
+  "hardcorerevival.configuration.disableInSingleplayer": "Disable in Singleplayer",
+  "hardcorerevival.configuration.disableInSingleplayer.tooltip": "If true, Hardcore Revival will not be active in singleplayer.",
+  "hardcorerevival.configuration.instantDeathEntityTypes": "Instant Death Entity Types",
+  "hardcorerevival.configuration.instantDeathEntityTypes.tooltip": "The source entity types that kill a player instantly, without a K.O. period.",
+  "hardcorerevival.configuration.instantDeathSources": "Instant Death Sources",
+  "hardcorerevival.configuration.instantDeathSources.tooltip": "The damage sources that kill a player instantly, without a K.O. period.",
+  "hardcorerevival.configuration.title": "Hardcore Revival",
+  "stat.hardcorerevival.players_revived": "Players Revived",
+  "stat.hardcorerevival.times_rescued": "Times Rescued"
+}

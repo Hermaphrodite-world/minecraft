@@ -1,0 +1,8 @@
+{
+  "commands.config.reload.success": "Successfully reloaded the given config!",
+  "commands.config.reload_all.success": "All Atlas Configs successfully reloaded!",
+  "options.atlas_config.button": "Atlas Configs",
+  "text.config.false": "False",
+  "text.config.true": "True",
+  "title.atlas_config.name": "Atlas Core"
+}

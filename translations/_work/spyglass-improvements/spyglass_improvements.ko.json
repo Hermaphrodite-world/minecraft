@@ -1,0 +1,5 @@
+{
+  "options.spyglass-improvements.extraZoom": "추가 확대: %s",
+  "options.spyglass-improvements.forceSpyglass": "망원경 강제 사용: %s",
+  "options.spyglass-improvements.forceSpyglass.tooltip": "인벤토리에 망원경이 없어도 망원경 키를 사용할 수 있게 합니다."
+}

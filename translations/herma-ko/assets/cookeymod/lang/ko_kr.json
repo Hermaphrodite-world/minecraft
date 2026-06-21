@@ -1,0 +1,6 @@
+{
+  "options.cookeymod.misc.force100PercentRecharge": "100% 재충전 강제",
+  "options.cookeymod.misc.force100PercentRecharge.tooltip.0": "공격이 빗나간 뒤 무기 재사용 대기시간을",
+  "options.cookeymod.misc.force100PercentRecharge.tooltip.1": "항상 100%까지 재충전하도록 강제합니다. 이는",
+  "options.cookeymod.misc.force100PercentRecharge.tooltip.2": "Combat Tests에서 조준과 타이밍 개선에 도움이 될 수 있습니다."
+}

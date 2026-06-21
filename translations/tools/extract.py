@@ -101,8 +101,9 @@ def process(slug):
     except Exception as e:
         return (slug, 0, [], str(e)[:60])
 
+TARGETS = sys.argv[1:] or NEED   # 인자로 slug 지정 가능(신규 모드 배치). 없으면 기본 NEED.
 with cf.ThreadPoolExecutor(max_workers=10) as ex:
-    results = list(ex.map(process, NEED))
+    results = list(ex.map(process, TARGETS))
 
 results.sort(key=lambda r: -r[1])
 grand = 0

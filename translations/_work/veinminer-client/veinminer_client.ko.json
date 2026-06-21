@@ -1,0 +1,15 @@
+{
+  "key.category.veinminer_client.keybinds": "Veinminer",
+  "key.veinminer_client.config": "클라이언트 설정 열기",
+  "key.veinminer_client.hold": "Veinmining(누르고 있기)",
+  "key.veinminer_client.toggle": "Veinmining(토글)",
+  "veinminer.disabled.subtitle": "이 서버에는 Veinminer가 설치되어 있지 않거나 클라이언트 애드온을 허용하지 않습니다",
+  "veinminer.disabled.title": "Veinminer 비활성화됨",
+  "veinminer.notavailable.subtitle": "싱글플레이에서 사용하려면 기본 Veinminer 모드를 설치하세요! https://modrinth.com/mod/veinminer",
+  "veinminer.notavailable.title": "Veinminer 사용 불가",
+  "veinminer.shape.flat": "평면",
+  "veinminer.shape.normal": "일반",
+  "veinminer.shape.tunnel_1x1": "터널 1x1",
+  "veinminer.shape.tunnel_2x2": "터널 2x2",
+  "veinminer.shape.tunnel_3x3": "터널 3x3"
+}

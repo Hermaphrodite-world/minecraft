@@ -1,0 +1,9 @@
+{
+  "kleeslabs.configuration.disabledCompat": "비활성화된 호환성",
+  "kleeslabs.configuration.disabledCompat.tooltip": "호환성을 비활성화할 모드의 ID입니다.",
+  "kleeslabs.configuration.dumpSlabs": "디버그용 반 블록 덤프",
+  "kleeslabs.configuration.dumpSlabs.tooltip": "개발 목적입니다. true로 설정하면 세계 로드 시 KleeSlabs가 이름에 'slab'이 포함된 아이템 목록을 덤프합니다.",
+  "kleeslabs.configuration.mode": "모드",
+  "kleeslabs.configuration.mode.tooltip": "KleeSlabs가 ALWAYS, ONLY_WHEN_SNEAKING 또는 ONLY_WHEN_NOT_SNEAKING 중 언제 작동할지 제어합니다",
+  "kleeslabs.configuration.title": "KleeSlabs"
+}

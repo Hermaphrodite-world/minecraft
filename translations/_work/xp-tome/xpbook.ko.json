@@ -1,0 +1,10 @@
+{
+  "item.xpbook.xp_book": "구버전 - 우클릭하여 변환",
+  "item.xpbook.xp_tome": "XP 고서",
+  "xpbook.tooltip.retrieve.max": "우클릭하여 모든 XP 회수",
+  "xpbook.tooltip.retrieve.next": "우클릭하여 최대 1레벨의 XP 회수",
+  "xpbook.tooltip.retrieve.orb": "XP 구슬 생성",
+  "xpbook.tooltip.store.max": "웅크리기 + 우클릭으로 가능한 만큼 XP 저장",
+  "xpbook.tooltip.store.previous": "웅크리기 + 우클릭으로 최대 1레벨의 XP 저장",
+  "xpbook.tooltip.stored_xp": "%1$s/%2$s XP 저장됨"
+}

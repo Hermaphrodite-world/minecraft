@@ -1,0 +1,15 @@
+{
+  "key.category.veinminer_client.keybinds": "Veinminer",
+  "key.veinminer_client.config": "Open Client Settings",
+  "key.veinminer_client.hold": "Veinmining (Hold)",
+  "key.veinminer_client.toggle": "Veinmining (Toggle)",
+  "veinminer.disabled.subtitle": "This server does not have Veinminer installed or disallowed the client addon",
+  "veinminer.disabled.title": "Veinminer Disabled",
+  "veinminer.notavailable.subtitle": "Install the base Veinminer mod to use it in singleplayer! https://modrinth.com/mod/veinminer",
+  "veinminer.notavailable.title": "Veinminer Not Available",
+  "veinminer.shape.flat": "Flat",
+  "veinminer.shape.normal": "Normal",
+  "veinminer.shape.tunnel_1x1": "Tunnel 1x1",
+  "veinminer.shape.tunnel_2x2": "Tunnel 2x2",
+  "veinminer.shape.tunnel_3x3": "Tunnel 3x3"
+}

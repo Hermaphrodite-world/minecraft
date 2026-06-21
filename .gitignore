@@ -44,3 +44,7 @@ Thumbs.db
 *.log
 /tmp/
 launcher/tools/_*.png
+
+# 번역 배치 스캐폴딩(일회성)
+translations/_work/_batches/
+translations/_work/_batches*.json

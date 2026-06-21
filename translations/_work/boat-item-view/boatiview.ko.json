@@ -1,0 +1,13 @@
+{
+  "boatiview.configuration.client": "Boat Item View 클라이언트",
+  "boatiview.configuration.section.boatiview.client.toml": "클라이언트 설정",
+  "boatiview.configuration.section.boatiview.client.toml.title": "클라이언트 설정",
+  "boatiview.configuration.show_hands": "움직이는 보트에서 아이템 표시",
+  "boatiview.configuration.show_hands.tooltip": "보트가 움직이는 동안 손에 든 아이템을 렌더링할지 토글합니다",
+  "boatiview.configuration.title": "Boat Item View",
+  "boatiview.configuration.whitelisted_items": "움직이는 보트에 표시할 아이템",
+  "boatiview.configuration.whitelisted_items.tooltip": "손에 계속 표시될 아이템입니다. Mod ID 뒤에 문자 '*'를 추가하면 해당 모드의 모든 아이템이 포함됩니다. 예: 'modid:*'. '*' 문자 앞에 Mod ID를 지정하지 않으면 모든 아이템이 포함됩니다. 예: '*'",
+  "text.autoconfig.boatiview.option.clientConfig.show_hands": "움직이는 보트에서 아이템 표시",
+  "text.autoconfig.boatiview.option.clientConfig.whitelisted_items": "움직이는 보트에 표시할 아이템",
+  "text.autoconfig.boatiview.title": "Boat Item View"
+}
