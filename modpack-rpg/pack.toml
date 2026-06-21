@@ -1,12 +1,12 @@
 name = "Hermaphrodite RPG"
 author = "Hermaphrodite-world"
-version = "0.1.2"
+version = "0.1.3"
 pack-format = "packwiz:1.1.0"
 
 [index]
 file = "index.toml"
 hash-format = "sha256"
-hash = "6561b87d379ea477c740dc7b3ed5ebf186b7bfd38df7ed061d52b14f4dcd63a8"
+hash = "77fe1f5806c26f11454d6dde74d972bc0f73236eeb916650127609409589bd9e"
 
 [versions]
 minecraft = "1.21.1"
