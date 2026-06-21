@@ -1,0 +1,13 @@
+name = "Stack to Nearby Chests"
+filename = "stack-to-nearby-chests-mc26.1.1-0.5.16.jar"
+side = "client"
+
+[download]
+url = "https://cdn.modrinth.com/data/HtGckJVc/versions/zdq2yHRh/stack-to-nearby-chests-mc26.1.1-0.5.16.jar"
+hash-format = "sha512"
+hash = "1412f75fd58e47a9a9f7761277bf03bd979bb764c427feb4ff59fec2a1fe983fa8d9e9d8b6dd6c1ad73e2a0b01382085845d206e016269cbb7b20ae20d66a17d"
+
+[update]
+[update.modrinth]
+mod-id = "HtGckJVc"
+version = "zdq2yHRh"

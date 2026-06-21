@@ -25,6 +25,25 @@ RES="fresh-animations fresh-animations-extensions complementary-reimagined \
 complementary-unbound bsl-shaders sildurs-vibrant-shaders \
 better-leaves default-dark-mode nautilus3d vanilla-connected-glass"
 
+# RPG/던전/창고 (2026-06-21 추가, 근거: docs/research/2026-06-20-multimode-magic-rpg.md)
+# 창고=Refined Storage(디지털 저장망) + 던전/구조물/월드젠/몹/NPC/전투편의. 전부 MC 26.1.2 Fabric 라이브 검증.
+RPG="refined-storage waystones travelersbackpack lootr \
+dungeons-and-taverns moogs-voyager-structures structory structory-towers towns-and-towers explorify \
+terralith incendium nullscape \
+friends-and-foes illager-invasion mutant-monsters minecraft-comes-alive-reborn edf-remastered \
+combatify cut-through"
+# 편의성 확장 (2026-06-21, "괜찮은 건 다" — vanilla+/QoL/RPG, MC 26.1.2 Fabric 검증)
+CONV="farmers-delight-refabricated more-delight cooking-for-blockheads ecologics wilder-wild fish-of-thieves \
+universal-bone-meal trample-no-more stellarity \
+veinminer veinminer-client easy-anvils enchanting-infuser grind-enchantments advanced-netherite tool-stats \
+held-item-info building-wands armor-statues spyglass-improvements max-health-fix first-person-model boat-item-view \
+netherportalfix hardcore-revival double-doors sparsestructures kleeslabs bl4cks-sit client-tweaks chatpatches \
+emotecraft villager-names-serilum overflowing-bars invmove \
+shulkerboxtooltip easy-shulker-boxes universal-graves stack-to-nearby-chests xp-tome inventoryhudplus simple-copper-pipes \
+promenade mes-moogs-end-structures respawnable-pets shoulder-surfing-reloaded no-chat-reports moreculling \
+macaws-furniture macaws-doors macaws-bridges macaws-roofs macaws-fences-and-walls macaws-windows macaws-trapdoors \
+macaws-paintings diagonal-fences"
+
 ok=0; fail=0; failed=""
 add() {
   for m in $1; do
@@ -43,6 +62,13 @@ echo "### CORE ###"; add "$CORE"
 echo "### ADD ###"; add "$ADD"
 echo "### SERVER ###"; add "$SERVER"
 echo "### RES ###"; add "$RES"
+echo "### RPG ###"; add "$RPG"
+echo "### CONV ###"; add "$CONV"
+
+# side 교정: Modrinth env 선언 기준으로 both 오감지를 server/client 로 좁힘 (fix-sides.py).
+# 멱등 + 명시 side 는 미수정. RPG/CONV 신규분만 대상(원본 큐레이션 보호).
+echo "### fix sides ###"
+python fix-sides.py $RPG $CONV 2>/dev/null || python3 fix-sides.py $RPG $CONV
 
 echo
 echo "===== SUMMARY: ok=$ok fail=$fail ====="

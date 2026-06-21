@@ -1,0 +1,13 @@
+name = "Building Wands"
+filename = "wands-3.1.0.jar"
+side = "both"
+
+[download]
+url = "https://cdn.modrinth.com/data/XkisZUfp/versions/N2CtXUMy/wands-3.1.0.jar"
+hash-format = "sha512"
+hash = "d8d0d55035bff7cb7748cff0bb100a39f2d511384cf2db195f3cc659a4d96991f75bc87efac48ecf2f43751112dfbcd209117eabf09d679eec3d825f07ca3b74"
+
+[update]
+[update.modrinth]
+mod-id = "XkisZUfp"
+version = "N2CtXUMy"

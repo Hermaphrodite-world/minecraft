@@ -1,0 +1,13 @@
+name = "Spyglass Improvements"
+filename = "spyglass_improvements-1.5.13+mc26.1.2+fabric.jar"
+side = "client"
+
+[download]
+url = "https://cdn.modrinth.com/data/Z6ykjRlM/versions/WYxSecea/spyglass_improvements-1.5.13%2Bmc26.1.2%2Bfabric.jar"
+hash-format = "sha512"
+hash = "0a0f53aa0290c594712c6ab66971ca06f9656544f2b84df031b1fb05eda61d4fab94b46e993fecd1f81cf85ff0787cda68b1488141d7aa45d76bfd2140b619b2"
+
+[update]
+[update.modrinth]
+mod-id = "Z6ykjRlM"
+version = "WYxSecea"
