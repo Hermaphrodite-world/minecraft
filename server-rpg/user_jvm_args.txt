@@ -1,0 +1,29 @@
+# Hermaphrodite RPG 서버 JVM 인자 (NeoForge 1.21.1)
+# --installServer 가 생성한 user_jvm_args.txt 를 이 내용으로 교체하면
+# run.sh / run.bat 이 자동으로 읽는다(NeoForge 표준 @argfile 방식, 한 줄 1인자, # 주석).
+
+# RAM — Xms 와 Xmx 를 같게. RPG 팩(구조물/마법 다수)은 무거우니 6G 권장,
+#   인원·콘텐츠 많으면 8G 로 두 줄 다 상향.
+-Xms6G
+-Xmx6G
+
+# Aikar's flags (G1GC) — 정식 서버 start.sh 와 동일 세트(6~8G 힙 기준).
+-XX:+UseG1GC
+-XX:+ParallelRefProcEnabled
+-XX:MaxGCPauseMillis=200
+-XX:+UnlockExperimentalVMOptions
+-XX:+DisableExplicitGC
+-XX:G1NewSizePercent=30
+-XX:G1MaxNewSizePercent=40
+-XX:G1HeapRegionSize=8M
+-XX:G1ReservePercent=20
+-XX:G1HeapWastePercent=5
+-XX:G1MixedGCCountTarget=4
+-XX:InitiatingHeapOccupancyPercent=15
+-XX:G1MixedGCLiveThresholdPercent=90
+-XX:G1RSetUpdatingPauseTimePercent=5
+-XX:SurvivorRatio=32
+-XX:+PerfDisableSharedMem
+-XX:MaxTenuringThreshold=1
+-XX:+UseStringDeduplication
+-Daikars.new.flags=true
