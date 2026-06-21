@@ -11,8 +11,8 @@ except Exception: pass
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 WORK = os.path.join(ROOT, "_work")
-TARGET = int(sys.argv[1]) if len(sys.argv) > 1 else 550
-CODEX_EVERY = int(sys.argv[2]) if len(sys.argv) > 2 else 4  # N번째 배치마다 codex
+TARGET = max(1, int(sys.argv[1])) if len(sys.argv) > 1 else 550
+CODEX_EVERY = max(1, int(sys.argv[2])) if len(sys.argv) > 2 else 4  # N번째 배치마다 codex (0/음수 → ZeroDivisionError 방지, review F-5)
 
 files = []
 for p in sorted(glob.glob(os.path.join(WORK, "*", "*.todo.json"))):

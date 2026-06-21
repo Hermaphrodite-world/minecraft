@@ -2,7 +2,7 @@ hash-format = "sha256"
 
 [[files]]
 file = "build-pack.sh"
-hash = "daefe95d1f66528c4b5de7ede6cc95369192458855a612ed7f8361d741b1276e"
+hash = "f6c6c6fe3fa9d92f33b57c1a22e5a9fd85725435b9f5c48c162158b8b1f239fa"
 
 [[files]]
 file = "fix-sides.py"
@@ -880,7 +880,7 @@ metafile = true
 
 [[files]]
 file = "resourcepacks/herma-korean.zip"
-hash = "e5e742a4310da6236e6870609a2a723e969970fa50b5f0ab432a630e9c284cd4"
+hash = "6e501bbe4d1c82baf4e85cd4d23a996b87e53a0ff677a288b9d8465bc9d96d6d"
 
 [[files]]
 file = "resourcepacks/nautilus3d.pw.toml"

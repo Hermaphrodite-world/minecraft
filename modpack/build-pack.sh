@@ -2,6 +2,7 @@
 # 전체 모드셋 packwiz 추가. 의존 라이브러리는 -y 로 자동 수락.
 PW="${PACKWIZ:-packwiz}"
 cd "$(dirname "$0")" || exit 1
+set -o pipefail   # 파이프 중간 실패(packwiz refresh 등) 마스킹 방지 (review F-1)
 
 # 핵심(모드구성.md) — fabric-api, sodium 은 이미 추가됨
 CORE="lithium ferrite-core entityculling immediatelyfast sodium-extra reeses-sodium-options iris \
@@ -68,10 +69,15 @@ echo "### CONV ###"; add "$CONV"
 # side 교정: Modrinth env 선언 기준으로 both 오감지를 server/client 로 좁힘 (fix-sides.py).
 # 멱등 + 명시 side 는 미수정. RPG/CONV 신규분만 대상(원본 큐레이션 보호).
 echo "### fix sides ###"
-python fix-sides.py $RPG $CONV 2>/dev/null || python3 fix-sides.py $RPG $CONV
+PY=$(command -v python || command -v python3) || { echo "ERROR: python 인터프리터 없음"; exit 1; }
+"$PY" fix-sides.py $RPG $CONV   # stderr 노출 (SyntaxError/ImportError 은폐 방지, review F-1)
 
 echo
 echo "===== SUMMARY: ok=$ok fail=$fail ====="
 echo "FAILED:$failed"
 echo "### refresh ###"
 "$PW" refresh 2>&1 | tail -3
+if [ "$fail" -gt 0 ]; then
+  echo "ERROR: 모드 추가 $fail 건 실패 ($failed) — 팩이 불완전합니다. 중단." >&2
+  exit 1
+fi
