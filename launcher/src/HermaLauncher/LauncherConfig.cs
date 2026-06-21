@@ -23,6 +23,30 @@ public static class LauncherConfig
     public const string BetaPackTomlUrl =
         "https://raw.githubusercontent.com/Hermaphrodite-world/minecraft/beta/modpack/pack.toml";
 
+    // RPG 채널 pack URL — 'rpg' 브랜치(raw). 정식/베타(26.1.2 Fabric)와 달리 MC 1.21.1 + NeoForge
+    //   (깊은 RPG 생태계: Ars Nouveau/Iron's Spells/Epic Fight/L_Ender's Cataclysm/Project MMO 등).
+    public const string RpgPackTomlUrl =
+        "https://raw.githubusercontent.com/Hermaphrodite-world/minecraft/rpg/modpack-rpg/pack.toml";
+    // RPG 채널 버전/로더 (정식·베타와 다름).
+    public const string RpgMinecraftVersion = "1.21.1";
+    public const string NeoForgeVersion = "21.1.234";
+
+    // 로더 종류 — 채널별로 Fabric(정식/베타) 또는 NeoForge(RPG).
+    public enum Loader { Fabric, NeoForge }
+
+    // 실행 채널 정의. 채널별로 pack URL·MC버전·로더·자동접속이 다르다.
+    public readonly record struct ChannelInfo(
+        string PackTomlUrl, string MinecraftVersion, Loader Loader, string LoaderVersion, bool AutoConnect);
+
+    // 설정 채널 문자열("prod"/"beta"/"rpg") → 채널 정보. 미상/빈값 → 정식(prod).
+    //   beta/rpg 는 서버 상태 미동기화라 자동접속 생략(싱글플레이/테스트).
+    public static ChannelInfo GetChannel(string? channel) => channel switch
+    {
+        "rpg" => new ChannelInfo(RpgPackTomlUrl, RpgMinecraftVersion, Loader.NeoForge, NeoForgeVersion, false),
+        "beta" => new ChannelInfo(BetaPackTomlUrl, MinecraftVersion, Loader.Fabric, FabricLoaderVersion, false),
+        _ => new ChannelInfo(PackTomlUrl, MinecraftVersion, Loader.Fabric, FabricLoaderVersion, true),
+    };
+
     // 서버 자동 접속 (모드구성: ServerIp 1차 경로).
     // 재빌드 없이 환경변수로 덮어쓰기 가능: HERMA_SERVER_IP (로컬 테스트=127.0.0.1).
     public static readonly string ServerIp =

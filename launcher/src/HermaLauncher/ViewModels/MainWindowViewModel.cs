@@ -143,9 +143,38 @@ public partial class MainWindowViewModel : ViewModelBase
     [ObservableProperty]
     private bool _notifyOnJoin = true;
 
-    // 베타 채널: 베타 모드팩으로 실행(멀티 자동접속 생략, 싱글플레이 테스트). 기본 꺼짐(정식 채널).
+    // 실행 채널: "prod"(정식 26.1.2 Fabric) / "beta"(베타 26.1.2 Fabric) / "rpg"(1.21.1 NeoForge).
+    //   비-정식(beta/rpg)은 멀티 자동접속 생략(싱글플레이 테스트). 기본 정식.
     [ObservableProperty]
-    private bool _betaMode;
+    private string _channel = "prod";
+
+    // 라디오 버튼 3개와 양방향 바인딩되는 파생 bool — 선택 시 Channel 문자열을 갱신한다.
+    //   (RadioButton 은 같은 그룹 안에서 상호 배타 — set(true) 만 의미를 가짐.)
+    public bool IsChannelProd
+    {
+        get => Channel == "prod";
+        set { if (value) Channel = "prod"; }
+    }
+
+    public bool IsChannelBeta
+    {
+        get => Channel == "beta";
+        set { if (value) Channel = "beta"; }
+    }
+
+    public bool IsChannelRpg
+    {
+        get => Channel == "rpg";
+        set { if (value) Channel = "rpg"; }
+    }
+
+    // Channel 이 바뀌면 파생 bool 3개도 다시 평가(라디오 UI 동기화).
+    partial void OnChannelChanged(string value)
+    {
+        OnPropertyChanged(nameof(IsChannelProd));
+        OnPropertyChanged(nameof(IsChannelBeta));
+        OnPropertyChanged(nameof(IsChannelRpg));
+    }
 
     // 트레이 아이콘이 실제로 떠 있나(App 이 조립 후 설정). false 면 '트레이로 숨기기' 버튼을 숨긴다 —
     // 트레이 없이 숨기면 복원 수단이 사라져 앱이 보이지 않게 갇힘(Codex HIGH).
@@ -191,7 +220,7 @@ public partial class MainWindowViewModel : ViewModelBase
         _maxRamMb = RamAdvisor.EffectiveMaxRamMb();
         _serverHostOverride = settings.ServerHostOverride;
         _notifyOnJoin = settings.NotifyOnJoin;
-        _betaMode = settings.BetaMode;
+        _channel = settings.EffectiveChannel; // 레거시 BetaMode→beta 마이그레이션 포함
 
         // 첫 실행이면 환영 화면으로 시작(디자이너 제외 — 디자이너는 Main 미리보기).
         if (!Avalonia.Controls.Design.IsDesignMode && !settings.HasSeenWelcome)
@@ -602,7 +631,7 @@ public partial class MainWindowViewModel : ViewModelBase
         ServerHostOverride = settings.ServerHostOverride;
         KeepLauncherOpen = settings.KeepLauncherOpen;
         NotifyOnJoin = settings.NotifyOnJoin;
-        BetaMode = settings.BetaMode;
+        Channel = settings.EffectiveChannel;
         PlaytimeSummary = PlaytimeTracker.FormatTotal(settings.TotalPlaytimeSeconds)
                           + (settings.LastPlayedUtc is { } u ? $" · 마지막 {u.ToLocalTime():M월 d일}" : "");
         View = AppView.Settings;
@@ -632,7 +661,7 @@ public partial class MainWindowViewModel : ViewModelBase
         toSave.ServerHostOverride = normalizedHost;
         toSave.KeepLauncherOpen = KeepLauncherOpen;
         toSave.NotifyOnJoin = NotifyOnJoin;
-        toSave.BetaMode = BetaMode;
+        toSave.Channel = Channel; // 신규 저장은 Channel 사용(레거시 BetaMode 는 보존만)
         if (!toSave.Save())
         {
             StatusMessage = "설정 저장에 실패했어요(파일 권한/사용 중일 수 있어요). 잠시 후 다시 시도해 주세요.";

@@ -109,9 +109,13 @@ public sealed class OfficialLauncherInstaller
             throw new LaunchStageException(LaunchStage.Fabric,
                 "Fabric 버전 파일 생성을 확인하지 못했어요. 다시 시도해 주세요.");
 
-        // 베타 채널(설정): 베타 모드팩으로 설치하고, 서버 상태 미동기화라 servers.dat 등록 생략(싱글플레이 테스트).
-        var beta = LauncherSettings.Load().BetaMode;
-        var packTomlUrl = beta ? LauncherConfig.BetaPackTomlUrl : LauncherConfig.PackTomlUrl;
+        // 채널(설정): 정식/베타=Fabric 26.1.2, RPG=NeoForge 1.21.1.
+        var channel = LauncherConfig.GetChannel(LauncherSettings.Load().EffectiveChannel);
+        // 공식 런처 설치 경로는 Fabric 채널 전용(NeoForge 프로필 설치/머지 미구현). RPG 는 '바로 플레이' 사용.
+        if (channel.Loader == LauncherConfig.Loader.NeoForge)
+            throw new LaunchStageException(LaunchStage.Packwiz,
+                "RPG 채널은 공식 런처 설치를 지원하지 않아요. 메인 화면의 '바로 플레이'로 실행해 주세요.");
+        var packTomlUrl = channel.PackTomlUrl;
 
         // (4) packwiz 모드 → 전용 게임폴더(바닐라 분리)
         var gameDir = Path.Combine(mcDir, GameDirName);
@@ -121,15 +125,15 @@ public sealed class OfficialLauncherInstaller
 
         // (4a) 자동접속 endpoint 해석 → 서버목록을 quickPlay 와 동일 주소(override=LAN IP 등)로 등록.
         //   공식 런처 경로엔 quickPlay 가 없지만, 같은 LAN 의 다른 PC 가 서버목록 항목으로 닿게 하려면 동일 해석 필요.
-        //   베타: 자동접속/등록 미사용이라 해석 생략(미사용 폴백 endpoint).
-        var endpoint = beta
+        //   비-정식(베타): 자동접속/등록 미사용이라 해석 생략(미사용 폴백 endpoint).
+        var endpoint = !channel.AutoConnect
             ? ServerEndpoint.PublicFallback
             : await ServerEndpointResolver.ResolveAsync(progress, ct).ConfigureAwait(false);
         ct.ThrowIfCancellationRequested();
 
         // (4b) 첫 설치 기본 쉐이더/리소스팩 적용 + 서버목록(endpoint 주소) 등록 → 공식 런처 첫 화면부터 적용.
-        //   베타: registerServer:false 로 servers.dat 등록만 생략(쉐이더/리소스팩은 적용).
-        ClientDefaults.ApplyAll(gameDir, endpoint, progress, registerServer: !beta);
+        //   비-정식(베타): registerServer:false 로 servers.dat 등록만 생략(쉐이더/리소스팩은 적용).
+        ClientDefaults.ApplyAll(gameDir, endpoint, progress, registerServer: channel.AutoConnect);
 
         // (5) 프로필 머지 — 스탠드얼론 + MS Store 런처 프로필 파일 모두에 반영(Codex#7 P0).
         progress.Report(StageUpdate.Of(LaunchStage.Launch, "공식 런처 프로필 등록 중…"));

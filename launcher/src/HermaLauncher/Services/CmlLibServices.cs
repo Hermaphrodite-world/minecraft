@@ -14,6 +14,7 @@ using CmlLib.Core.Auth;
 using CmlLib.Core.Auth.Microsoft;
 using CmlLib.Core.Installers;
 using CmlLib.Core.ModLoaders.FabricMC;
+using CmlLib.Core.Installer.NeoForge;
 using CmlLib.Core.ProcessBuilder;
 using Velopack;
 using Velopack.Sources;
@@ -251,12 +252,25 @@ public sealed class CmlLibMinecraftService : IMinecraftService
         PreflightChecks.EnsureDiskSpace(AppPaths.GameDir, LaunchStage.Java); // P1-5: 무거운 설치 전 빠른 실패
         try
         {
-            progress.Report(StageUpdate.Of(LaunchStage.Java, "Fabric 로더 설치 중…"));
-            var fabric = new FabricInstaller(_http);
-            // P2-2: loader 버전 핀(설정돼 있으면 3-arg, 비면 최신 자동).
-            _fabricVersionId = string.IsNullOrWhiteSpace(LauncherConfig.FabricLoaderVersion)
-                ? await fabric.Install(LauncherConfig.MinecraftVersion, _launcher.MinecraftPath).ConfigureAwait(false)
-                : await fabric.Install(LauncherConfig.MinecraftVersion, LauncherConfig.FabricLoaderVersion, _launcher.MinecraftPath).ConfigureAwait(false);
+            // 채널별 로더 설치 — 정식/베타=Fabric(26.1.2), RPG=NeoForge(1.21.1).
+            var ch = LauncherConfig.GetChannel(LauncherSettings.Load().EffectiveChannel);
+            if (ch.Loader == LauncherConfig.Loader.NeoForge)
+            {
+                progress.Report(StageUpdate.Of(LaunchStage.Java, "NeoForge 로더 설치 중…"));
+                // NeoForgeInstaller(4.0.0)는 launcher 를 받고 경로/HTTP 를 내부 재사용. 반환값=설치된 버전 id.
+                var neoforge = new NeoForgeInstaller(_launcher);
+                _fabricVersionId = await neoforge.Install(ch.MinecraftVersion, ch.LoaderVersion)
+                                                 .ConfigureAwait(false);
+            }
+            else
+            {
+                progress.Report(StageUpdate.Of(LaunchStage.Java, "Fabric 로더 설치 중…"));
+                var fabric = new FabricInstaller(_http);
+                // P2-2: loader 버전 핀(설정돼 있으면 3-arg, 비면 최신 자동).
+                _fabricVersionId = string.IsNullOrWhiteSpace(ch.LoaderVersion)
+                    ? await fabric.Install(ch.MinecraftVersion, _launcher.MinecraftPath).ConfigureAwait(false)
+                    : await fabric.Install(ch.MinecraftVersion, ch.LoaderVersion, _launcher.MinecraftPath).ConfigureAwait(false);
+            }
 
             progress.Report(StageUpdate.Of(LaunchStage.Java, "게임 파일·Java 설치 중…"));
             var fileProgress = new Progress<InstallerProgressChangedEventArgs>(e =>
