@@ -162,9 +162,17 @@ public static class ClientDefaults
             if (active.RemoveAll(IsStaleFileEntry) > 0) changed = true;
             if (incompat.RemoveAll(IsStaleFileEntry) > 0) changed = true;
 
+            // (1b-0) 번역 보충팩은 apply-once 예외 — 폴더에 존재하면 *항상* 활성 보장(없으면 추가).
+            //   이유: 인스턴스를 채널(정식/베타/RPG)이 공유한다. 다른 채널에서 herma-korean.zip 이 1회 적용 +
+            //   마커 기록된 뒤, 채널 전환으로 packwiz 가 그 파일을 잠시 제거하면 MC 가 options 의 resourcePacks
+            //   에서 빼버린다("...doesn't exist anymore"). 이후 팩이 다시 생겨도 apply-once 마커 때문에 재추가
+            //   되지 않아 영구 미로드된다(2026-06-22 RPG 채널 실측 — 번역 미적용 원인). 번역팩은 다른 팩/모드를
+            //   덮지 않는 최저우선순위 fallback 이라 always-on 이 안전 → apply-once 예외로 둔다.
+            EnsureTranslationPackActive(present, active, ref changed);
+
             // (1b) 한국어 보충팩은 항상 '선택됨' 목록 맨 아래(= options.txt 첫 file 엔트리 = lowest priority)로 고정.
             //      보충팩은 다른 팩/모드 번역을 덮지 않는 fallback 이어야 하므로 최저 우선순위가 맞다. 기존 유저의
-            //      중간 위치도 매 실행 교정 — 단 비활성(사용자가 끔)이면 active 에 없어 no-op(on/off 는 존중).
+            //      중간 위치도 매 실행 교정.
             EnsureTranslationPackAtBottom(active, ref changed);
 
             // ※ 과거 "whitelist-ensure"(active file/ 팩을 incompatibleResourcePacks 에 추가)는 폐기.
@@ -282,6 +290,22 @@ public static class ClientDefaults
 
     // 번역 보충팩을 active 의 첫 file 엔트리(="vanilla" 바로 다음)로 이동 → 게임 내 '선택됨' 맨 아래 = lowest priority.
     // idempotent: 이미 제자리거나 비활성이면 아무것도 안 한다(불필요한 쓰기/사용자 on/off 침해 방지).
+    // 번역 보충팩(TranslationPackToken)이 resourcepacks/ 에 존재하는데 active 에 없으면 추가(apply-once 예외).
+    //   present = 현재 resourcepacks/ 의 zip 파일명 목록. 채널 공유 인스턴스에서 마커가 재추가를 막는 함정을
+    //   우회한다(EnsureDefaultResourcePacks 의 1b-0 주석 참조). 폴더에 번역팩이 없으면 no-op.
+    internal static void EnsureTranslationPackActive(List<string> present, List<string> active, ref bool changed)
+    {
+        var file = present.FirstOrDefault(n =>
+            n.Contains(LauncherConfig.TranslationPackToken, StringComparison.OrdinalIgnoreCase));
+        if (file is null)
+            return; // resourcepacks/ 에 번역팩 파일 없음 → no-op
+        if (active.Any(e => e.StartsWith("\"file/", StringComparison.Ordinal) &&
+                            e.Contains(LauncherConfig.TranslationPackToken, StringComparison.OrdinalIgnoreCase)))
+            return; // 이미 활성
+        active.Add("\"file/" + file + "\""); // 위치는 EnsureTranslationPackAtBottom 가 정렬
+        changed = true;
+    }
+
     internal static void EnsureTranslationPackAtBottom(List<string> active, ref bool changed) // internal: 단위 테스트 접근
     {
         var ko = active.FirstOrDefault(e =>
