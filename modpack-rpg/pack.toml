@@ -1,0 +1,13 @@
+name = "Hermaphrodite RPG"
+author = "Hermaphrodite-world"
+version = "0.1.0"
+pack-format = "packwiz:1.1.0"
+
+[index]
+file = "index.toml"
+hash-format = "sha256"
+hash = "b8760ffa6e3bf0d7883a81deaa8fe1a0f36631e1c666bced1e16a33871e39930"
+
+[versions]
+minecraft = "1.21.1"
+neoforge = "21.1.234"
