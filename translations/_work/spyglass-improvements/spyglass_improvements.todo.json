@@ -1,0 +1,5 @@
+{
+  "options.spyglass-improvements.extraZoom": "Extra Zoom: %s",
+  "options.spyglass-improvements.forceSpyglass": "Force Spyglass: %s",
+  "options.spyglass-improvements.forceSpyglass.tooltip": "Allows to use the spyglass keybind even if no spyglass is in the inventory."
+}

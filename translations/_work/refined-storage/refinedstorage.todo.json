@@ -1,0 +1,7 @@
+{
+  "gui.refinedstorage.grid.drag_and_drop_to_pin": "Drag and drop to pin",
+  "gui.refinedstorage.grid.pin_help": "Drag and drop to pin. Drag outside the pinned area to unpin.",
+  "gui.refinedstorage.grid.resource_type.fluid": "Fluid",
+  "gui.refinedstorage.grid.resource_type.item": "Item",
+  "item.refinedstorage.regulator_upgrade.cleared_configuration": "Cleared configuration."
+}

@@ -1,0 +1,8 @@
+{
+  "commands.config.reload.success": "지정한 설정을 성공적으로 다시 불러왔습니다!",
+  "commands.config.reload_all.success": "모든 Atlas 설정을 성공적으로 다시 불러왔습니다!",
+  "options.atlas_config.button": "Atlas 설정",
+  "text.config.false": "거짓",
+  "text.config.true": "참",
+  "title.atlas_config.name": "Atlas Core"
+}

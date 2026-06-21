@@ -304,6 +304,15 @@
                         </Grid>
                         <CheckBox Content="게임 끝나도 런처 열어두기 (바로 다시 접속)" IsChecked="{Binding KeepLauncherOpen}" />
                         <CheckBox Content="친구가 접속하면 알림 받기 (트레이/최소화 중에도)" IsChecked="{Binding NotifyOnJoin}" />
+                        <TextBlock Text="실행 채널" FontWeight="SemiBold" FontSize="12.5" Margin="0,3,0,0" />
+                        <RadioButton GroupName="Channel" Content="정식 (멀티 서버 자동접속)"
+                                     IsChecked="{Binding IsChannelProd, Mode=TwoWay}" />
+                        <RadioButton GroupName="Channel" Content="베타 (테스트용 — 26.1.2 신규 모드 미리보기)"
+                                     IsChecked="{Binding IsChannelBeta, Mode=TwoWay}" />
+                        <RadioButton GroupName="Channel" Content="RPG (1.21.1 NeoForge — 던전·마법·스킬)"
+                                     IsChecked="{Binding IsChannelRpg, Mode=TwoWay}" />
+                        <TextBlock Text="베타·RPG 는 멀티 서버 자동접속 없이 게임만 실행해요. 게임이 뜨면 싱글플레이로 새 모드를 확인하세요. RPG 는 별도 마인크래프트 버전이라 '바로 플레이'로 실행하세요(공식 런처 설치 미지원)."
+                                   FontSize="11.5" Foreground="{StaticResource TextMuted}" TextWrapping="Wrap" />
                     </StackPanel>
                 </Border>
 

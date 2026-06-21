@@ -1,0 +1,15 @@
+{
+  "block.universal_graves.container_grave": "Gravestone",
+  "screen.graves.settings": "Universal Graves Settings",
+  "text.graves.about.contributors": "Contributors",
+  "text.graves.about.version": "Version: %s",
+  "text.graves.admin_graves": "All graves",
+  "text.graves.cost.creative": "Creative",
+  "text.graves.grave_unlock_payment.accepted": "You have unlocked the grave!",
+  "text.graves.grave_unlock_payment.failed": "You don't have enough currency to unlock the grave! Required: %s",
+  "text.graves.grave_unlock_payment.no_access": "You don't have access to this grave!",
+  "text.graves.gui.cost.not_enough": "Not enough resources!",
+  "text.graves.gui.teleport.cost": "Cost:",
+  "text.graves.gui.unlock_grave": "Unlock Grave",
+  "text.graves.items_xp": "Items: %s XP: %s"
+}

@@ -48,4 +48,41 @@ public class TranslationPackOrderTests
         Assert.True(changed);
         Assert.Equal(0, active.IndexOf(Ko));
     }
+
+    // ── apply-once 예외: 번역팩이 폴더에 있으면 active 에 없어도 재추가(채널 공유 인스턴스 함정 우회) ──
+
+    [Fact]
+    public void Activate_adds_korean_when_present_but_absent_from_active()
+    {
+        // 채널 전환으로 MC 가 options 에서 herma-korean 을 뺀 상태(active 에 없음)인데
+        // resourcepacks/ 엔 파일이 다시 존재 → 재추가해야 한다(영구 미로드 회귀 방지).
+        var present = new List<string> { "herma-korean.zip", "shader-x.zip" };
+        var active = new List<string> { Vanilla, "\"file/shader-x.zip\"" };
+        var changed = false;
+        ClientDefaults.EnsureTranslationPackActive(present, active, ref changed);
+        Assert.True(changed);
+        Assert.Contains(Ko, active);
+    }
+
+    [Fact]
+    public void Activate_noop_when_already_active()
+    {
+        var present = new List<string> { "herma-korean.zip" };
+        var active = new List<string> { Vanilla, Ko };
+        var changed = false;
+        ClientDefaults.EnsureTranslationPackActive(present, active, ref changed);
+        Assert.False(changed); // 이미 활성 → 중복 추가 안 함
+    }
+
+    [Fact]
+    public void Activate_noop_when_pack_file_absent_from_folder()
+    {
+        // 폴더에 번역팩 zip 자체가 없으면(미동기화 등) 추가하지 않는다.
+        var present = new List<string> { "shader-x.zip" };
+        var active = new List<string> { Vanilla };
+        var changed = false;
+        ClientDefaults.EnsureTranslationPackActive(present, active, ref changed);
+        Assert.False(changed);
+        Assert.DoesNotContain(Ko, active);
+    }
 }

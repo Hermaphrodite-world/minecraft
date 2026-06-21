@@ -1,0 +1,13 @@
+name = "Grind enchantments"
+filename = "grind-enchantments-4.1.0+26.1.2.jar"
+side = "server"
+
+[download]
+url = "https://cdn.modrinth.com/data/WC4UgDcZ/versions/mf3SB5iV/grind-enchantments-4.1.0%2B26.1.2.jar"
+hash-format = "sha512"
+hash = "db3c851c8ba7c2dfb4952f42bc733fd2a2e9b1c25f31d36b63a722f284deff438582ee839f0c9fa247cafb1c94d936be2cad9baad153831ca1f2ce399f3a676f"
+
+[update]
+[update.modrinth]
+mod-id = "WC4UgDcZ"
+version = "mf3SB5iV"

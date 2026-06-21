@@ -1,0 +1,14 @@
+{
+  "block.enchantinginfuser.enchanting_infuser.description.choose": "장비에 적용할 마법부여를 선택합니다.",
+  "block.enchantinginfuser.enchanting_infuser.description.choose_and_modify": "장비의 마법부여를 선택, 수정, 제거합니다.",
+  "block.enchantinginfuser.enchanting_infuser.description.repair": "레벨을 사용해 장비를 수리합니다.",
+  "gui.enchantinginfuser.enchantment.tooltip.current_enchanting_power": "마법부여 위력: %s / %s",
+  "gui.enchantinginfuser.enchantment.tooltip.incompatible": "이 마법부여는 다음과 호환되지 않습니다: %s",
+  "gui.enchantinginfuser.enchantment.tooltip.low_power1": "이 마법부여의 레벨을 더 올리려면 더 높은 마법부여 위력의 주입기가 필요합니다.",
+  "gui.enchantinginfuser.enchantment.tooltip.low_power2": "이 마법부여의 레벨을 수정하려면 더 높은 마법부여 위력의 주입기가 필요합니다.",
+  "gui.enchantinginfuser.enchantment.tooltip.unknown_enchantment": "이 마법부여는 마법부여 위력이 이렇게 낮은 주입기에는 너무 강력합니다.",
+  "gui.enchantinginfuser.infusing.tooltip.change": "%s -> %s",
+  "gui.enchantinginfuser.infusing.tooltip.durability": "내구도: %s",
+  "gui.enchantinginfuser.infusing.tooltip.enchanting_power_hint": "주입기 주변에 최대 두 층까지 사각형으로 책장을 더 배치하세요.",
+  "gui.enchantinginfuser.infusing.tooltip.points": "경험치 획득"
+}

@@ -35,8 +35,9 @@ public interface IMinecraftService
 
     // (5)+(6) Fabric 설치 + 게임 install(해시 검증) + endpoint 주입 실행.
     //   endpoint: quickPlay 자동접속 대상(servers.dat 등록과 동일 주소 — 오케스트레이터가 한 번 해석해 공유).
+    //   autoConnect=false(베타 모드): quickPlay 인자를 생략하고 메인 메뉴로 실행(싱글플레이 테스트).
     // 시작된 게임 프로세스를 반환한다(런처가 종료 모니터링 후 자신을 닫기 위함). 호출자가 Dispose 소유.
-    Task<Process> LaunchAsync(AuthSession session, ServerEndpoint endpoint, IProgress<StageUpdate> progress, CancellationToken ct);
+    Task<Process> LaunchAsync(AuthSession session, ServerEndpoint endpoint, IProgress<StageUpdate> progress, CancellationToken ct, bool autoConnect = true);
 }
 
 // (4) packwiz 모드팩 동기화. LaunchOrchestrator 단위 테스트를 위해 인터페이스로 분리(Codex Test-R1).

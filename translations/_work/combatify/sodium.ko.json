@@ -1,0 +1,10 @@
+{
+  "sodium.options.attack_indicator_max_value.tooltip": "화면에서 공격 표시기 표시가 끝나는 위치를 제어합니다.",
+  "sodium.options.attack_indicator_min_value.tooltip": "화면에서 공격 표시기 표시가 시작되는 위치를 제어합니다.",
+  "sodium.options.augmented_arm_height.tooltip": "공격 재사용 대기시간이 팔 높이에 주는 영향을 제어합니다.",
+  "sodium.options.dual_attack_indicator.tooltip": "화면에서 이중 공격 표시기가 표시되는 방식을 제어합니다.",
+  "sodium.options.projectile_charge_indicator.tooltip": "화면에서 투사체 충전 표시기가 표시되는 위치를 제어합니다.",
+  "sodium.options.rhythmic_attacks.tooltip": "공격 애니메이션을 제어합니다.",
+  "sodium.options.shield_indicator.tooltip": "화면에서 방패 표시기가 표시되는 위치를 제어합니다.",
+  "sodium.options.spear_charge_indicator.tooltip": "화면에서 창 충전 표시기가 표시되는 위치를 제어합니다."
+}

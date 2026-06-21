@@ -1,0 +1,13 @@
+name = "Promenade"
+filename = "promenade-5.5.0.jar"
+side = "both"
+
+[download]
+url = "https://cdn.modrinth.com/data/GuE5FpvB/versions/rNklt2vJ/promenade-5.5.0.jar"
+hash-format = "sha512"
+hash = "605d8d5c327e0019b836da305392b1ee0cef1f7273528c943e7668ed9b910f22cf70c0bc3946bd88d19a77f156f744706fc075424b19d8d3101b823755f3a83f"
+
+[update]
+[update.modrinth]
+mod-id = "GuE5FpvB"
+version = "rNklt2vJ"

@@ -26,6 +26,17 @@ public sealed class LauncherSettings
     // (JSON 에 키가 없는 구버전 설정 파일도 이 초기값 true 를 유지 — System.Text.Json 은 누락 속성을 덮지 않음.)
     public bool NotifyOnJoin { get; set; } = true;
 
+    // (레거시) 베타 토글 — Channel 도입 전 설정 파일 마이그레이션용. 신규 저장은 Channel 사용.
+    public bool BetaMode { get; set; }
+
+    // 실행 채널: "prod"(정식 26.1.2 Fabric) / "beta"(베타 26.1.2 Fabric) / "rpg"(1.21.1 NeoForge).
+    //   빈값이면 레거시 BetaMode 마이그레이션(true→beta). beta/rpg 는 멀티 자동접속/등록 생략(싱글플레이 테스트).
+    public string Channel { get; set; } = "";
+
+    // 실효 채널 — Channel 우선, 빈값이면 레거시 BetaMode 폴백.
+    [JsonIgnore]
+    public string EffectiveChannel => !string.IsNullOrEmpty(Channel) ? Channel : (BetaMode ? "beta" : "prod");
+
     // 이 서버 누적 플레이 시간(초) + 마지막 플레이(표시용). 로컬·단일 사용자 기록(서버/계정 DB 아님).
     public long TotalPlaytimeSeconds { get; set; }
     public DateTime? LastPlayedUtc { get; set; }

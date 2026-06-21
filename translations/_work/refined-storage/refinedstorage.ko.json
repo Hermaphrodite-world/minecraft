@@ -1,0 +1,7 @@
+{
+  "gui.refinedstorage.grid.drag_and_drop_to_pin": "드래그 앤 드롭하여 고정",
+  "gui.refinedstorage.grid.pin_help": "드래그 앤 드롭하여 고정합니다. 고정 영역 밖으로 드래그하면 고정 해제됩니다.",
+  "gui.refinedstorage.grid.resource_type.fluid": "유체",
+  "gui.refinedstorage.grid.resource_type.item": "아이템",
+  "item.refinedstorage.regulator_upgrade.cleared_configuration": "설정을 지웠습니다."
+}

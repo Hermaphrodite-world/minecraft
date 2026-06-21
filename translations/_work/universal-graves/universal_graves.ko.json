@@ -1,0 +1,15 @@
+{
+  "block.universal_graves.container_grave": "묘비",
+  "screen.graves.settings": "Universal Graves 설정",
+  "text.graves.about.contributors": "기여자",
+  "text.graves.about.version": "버전: %s",
+  "text.graves.admin_graves": "모든 무덤",
+  "text.graves.cost.creative": "크리에이티브",
+  "text.graves.grave_unlock_payment.accepted": "무덤을 잠금 해제했습니다!",
+  "text.graves.grave_unlock_payment.failed": "무덤을 잠금 해제할 재화가 부족합니다! 필요: %s",
+  "text.graves.grave_unlock_payment.no_access": "이 무덤에 접근할 수 없습니다!",
+  "text.graves.gui.cost.not_enough": "자원이 부족합니다!",
+  "text.graves.gui.teleport.cost": "비용:",
+  "text.graves.gui.unlock_grave": "무덤 잠금 해제",
+  "text.graves.items_xp": "아이템: %s 경험치: %s"
+}

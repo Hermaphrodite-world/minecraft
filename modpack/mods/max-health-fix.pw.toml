@@ -1,0 +1,13 @@
+name = "Max Health Fix"
+filename = "MaxHealthFix-fabric-MC26.1.2-26.1.2.3.jar"
+side = "both"
+
+[download]
+url = "https://cdn.modrinth.com/data/mH8wdmqr/versions/oaoAiYo9/MaxHealthFix-fabric-MC26.1.2-26.1.2.3.jar"
+hash-format = "sha512"
+hash = "743edb623bf3bf16143de50247675397e59159a00aaffd5a94fa51e18c42896b13f956f4db1158d2cf034793ae495dd5d4bcade4a1eaca3956510814f2cfe5dc"
+
+[update]
+[update.modrinth]
+mod-id = "mH8wdmqr"
+version = "oaoAiYo9"

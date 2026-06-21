@@ -1,0 +1,14 @@
+{
+  "advancements.respawnablepets.husbandry.make_pet_respawnable.description": "에테르 보석을 제작해 길들인 반려동물에게 사용하여 리스폰할 수 있게 하기",
+  "advancements.respawnablepets.husbandry.make_pet_respawnable.title": "영원한 최고의 친구, 영원히",
+  "item.respawnablepets.etheric_gem": "에테르 보석",
+  "respawnablepets.message.cannot_respawn": "%s은(는) 리스폰할 수 없음",
+  "respawnablepets.message.counted_entities": "엔티티 %d개",
+  "respawnablepets.message.disable_respawn": "%s은(는) 사망 시 더 이상 리스폰하지 않음",
+  "respawnablepets.message.enable_respawn": "%s은(는) 이제 사망 시 리스폰함",
+  "respawnablepets.message.not_owner": "%s은(는) 당신의 소유가 아님",
+  "respawnablepets.midnightconfig.respawnAfterSleep": "잠잔 후 리스폰",
+  "respawnablepets.midnightconfig.timeOfDayToRespawn": "리스폰 시간대",
+  "respawnablepets.midnightconfig.title": "Respawnable Pets",
+  "subtitles.respawnablepets.entity.generic.teleport": "엔티티가 순간이동함"
+}

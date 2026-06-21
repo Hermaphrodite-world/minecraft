@@ -1,0 +1,8 @@
+{
+  "block.minecraft.bed.alternate_form": "변신한 상태에서는 쉴 수 없습니다",
+  "options.strawberrylib": "StrawberryLib...",
+  "options.strawberrylib.equippable_glint_color": "장착품 반짝임 색상",
+  "options.strawberrylib.glint_color": "반짝임 색상",
+  "options.strawberrylibTitle": "StrawberryLib",
+  "tag.item.strawberrylib.untrimmable_armor": "장식할 수 없는 방어구"
+}

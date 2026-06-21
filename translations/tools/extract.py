@@ -101,8 +101,9 @@ def process(slug):
     except Exception as e:
         return (slug, 0, [], str(e)[:60])
 
+TARGETS = sys.argv[1:] or NEED   # 인자로 slug 지정 가능(신규 모드 배치). 없으면 기본 NEED.
 with cf.ThreadPoolExecutor(max_workers=10) as ex:
-    results = list(ex.map(process, NEED))
+    results = list(ex.map(process, TARGETS))
 
 results.sort(key=lambda r: -r[1])
 grand = 0
@@ -117,3 +118,9 @@ for slug, miss, nsr, err in results:
 print("-" * 60)
 print("GRAND TOTAL missing keys to translate: %d" % grand)
 print("work dir: translations/_work/ , seed pack: translations/herma-ko/")
+# review F-3/CDX-004: slug 오류(오타/폐기 slug)는 ERR 로 표기 후 exit nonzero —
+# 자동화 파이프라인이 추출 실패를 false-success(exit 0)로 통과하지 않게.
+errs = [r[0] for r in results if r[3]]
+if errs:
+    print("ERROR: %d slug 추출 실패: %s" % (len(errs), ", ".join(errs)))
+    sys.exit(1)
