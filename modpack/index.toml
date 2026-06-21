@@ -709,11 +709,6 @@ hash = "fbe51395401ce68d9933a65fbcb4ed8cda82ac88d4afd79a5740116114d15949"
 metafile = true
 
 [[files]]
-file = "mods/sparsestructures.pw.toml"
-hash = "9e2b1d39430e0de7614f28bcc6a1e3331bf492f61f8892e669745191be7db8b6"
-metafile = true
-
-[[files]]
 file = "mods/spyglass-improvements.pw.toml"
 hash = "ab457ca2f0d845c2c9e582ac60320524aa490ef5bf002ab43cc5292ea395c1f4"
 metafile = true

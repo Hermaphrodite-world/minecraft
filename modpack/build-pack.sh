@@ -37,7 +37,7 @@ CONV="farmers-delight-refabricated more-delight cooking-for-blockheads ecologics
 universal-bone-meal trample-no-more stellarity \
 veinminer veinminer-client easy-anvils enchanting-infuser grind-enchantments advanced-netherite tool-stats \
 held-item-info building-wands armor-statues spyglass-improvements max-health-fix first-person-model boat-item-view \
-netherportalfix hardcore-revival double-doors sparsestructures kleeslabs bl4cks-sit client-tweaks chatpatches \
+netherportalfix hardcore-revival double-doors kleeslabs bl4cks-sit client-tweaks chatpatches \
 emotecraft villager-names-serilum overflowing-bars invmove \
 shulkerboxtooltip easy-shulker-boxes universal-graves stack-to-nearby-chests xp-tome inventoryhudplus simple-copper-pipes \
 promenade mes-moogs-end-structures respawnable-pets shoulder-surfing-reloaded no-chat-reports moreculling \
