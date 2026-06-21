@@ -165,7 +165,7 @@ metafile = true
 
 [[files]]
 file = "mods/defaulted.pw.toml"
-hash = "46ed698dca47f786958433ffa37843f20c9f137454a38e684acb56fe4635fc34"
+hash = "dc3c068bd757fd2ec908c730f7b498766ff751c2c8f7fceaa824d98624aa2646"
 metafile = true
 
 [[files]]
@@ -800,7 +800,7 @@ metafile = true
 
 [[files]]
 file = "mods/veinminer.pw.toml"
-hash = "698bf8313037cea28a25149b6284d2fdc511e30e5ecb00b77a0eb75024a382bf"
+hash = "d746947799093e8035c1c712c78c3db720fb824334f8fad91e1598c1ead401ef"
 metafile = true
 
 [[files]]

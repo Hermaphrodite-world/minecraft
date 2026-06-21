@@ -1,6 +1,6 @@
 name = "Defaulted"
 filename = "defaulted-fabric-26.1.2-1.2.3.jar"
-side = "server"
+side = "both"
 
 [download]
 url = "https://cdn.modrinth.com/data/LxgPJAAy/versions/XsEoI7UE/defaulted-fabric-26.1.2-1.2.3.jar"
