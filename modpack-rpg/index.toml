@@ -2,7 +2,7 @@ hash-format = "sha256"
 
 [[files]]
 file = "fix-sides.py"
-hash = "53d998420f10cf8568d98318bc390c5e9a01505102c21668c03e15e3686eadbb"
+hash = "39b5e6a4be3e345eb3019dd504c068cdd4ecf3558dff19f25fd2c8db5bd94b9c"
 
 [[files]]
 file = "mods/appleskin.pw.toml"
@@ -56,7 +56,7 @@ metafile = true
 
 [[files]]
 file = "mods/cristel-lib.pw.toml"
-hash = "257903c450bc291cf787542079eb0be5179087b041490e0d9d183967df79b2b4"
+hash = "ce022dca0479fccb6402ea41edc1d202ae3d415458f4485358a71dd009f57e6b"
 metafile = true
 
 [[files]]
@@ -66,7 +66,7 @@ metafile = true
 
 [[files]]
 file = "mods/dungeons-and-taverns.pw.toml"
-hash = "4bd59a35e9f6fe52bce5d9039e1e26b8c8e24d0e0a6fd3d6abbf6b1bdd3fb204"
+hash = "6af9dbb90cf40809619202cbbd5e4d10ba57db4984ac45129f3f48254fe163e2"
 metafile = true
 
 [[files]]
@@ -111,7 +111,7 @@ metafile = true
 
 [[files]]
 file = "mods/incendium.pw.toml"
-hash = "66238b398ea98d21776da2545f38014cbbda3f3a8ef7eaa347b1c9978f699a86"
+hash = "89ea2d0411426f6ae2e70b18b6421096fae6c3ab4b6e68387f5316d4f3e9b1ca"
 metafile = true
 
 [[files]]
@@ -156,7 +156,7 @@ metafile = true
 
 [[files]]
 file = "mods/lithostitched.pw.toml"
-hash = "f4ec9f142fbd572f9da8253241b6c532bc9234e2defbe0e67e7ea7ea164d019c"
+hash = "0b2e5afd8e76ff119e6212a077a07a3b786776811f968287f0a219f106c8e175"
 metafile = true
 
 [[files]]
@@ -166,12 +166,12 @@ metafile = true
 
 [[files]]
 file = "mods/moogs-structure-lib.pw.toml"
-hash = "5084978e1741e49386abdb94349600da22b463997507d9cc8d1ae125d1f9a2a4"
+hash = "65c29f33b71b18965c3c98afb566254004542cef0a885ed278deb40a4e74f3d1"
 metafile = true
 
 [[files]]
 file = "mods/moogs-voyager-structures.pw.toml"
-hash = "dfc7697d70c9adf6006d06a3aeb681825dd1cd44250e34c7508193e86e4b9b2b"
+hash = "edd4f14e0c6af065bb3bb51e1b24833ec8a722cf4a79724567ff997bd7e1e42b"
 metafile = true
 
 [[files]]
@@ -226,7 +226,7 @@ metafile = true
 
 [[files]]
 file = "mods/smartbrainlib.pw.toml"
-hash = "27c6365bdc19eff05f3231bff86a4f09b2d584fed40de92d67c00b4cbd52862a"
+hash = "6e7ce9c2aee5bb72d2698eb89035c9b2458d20daa0782e1a03cfba7a6647621e"
 metafile = true
 
 [[files]]
@@ -256,27 +256,27 @@ metafile = true
 
 [[files]]
 file = "mods/structory-towers.pw.toml"
-hash = "9674637df6df75bca987a63968ceec17bbcee9a38e44e438f44762b489772f4a"
+hash = "d695c29a4aae8bf7d968388e164bfb2b0aa0903aa649d1ad8a42f621cf9811a6"
 metafile = true
 
 [[files]]
 file = "mods/structory.pw.toml"
-hash = "efce0ba2d1a17ba3aa20001201cbffbf444012899dff47eb434968e4bbdfcf6a"
+hash = "3481509baa07bf9ea1e9a72a10d4aaa38bdc044696d311f65650fba950ae0c07"
 metafile = true
 
 [[files]]
 file = "mods/tectonic.pw.toml"
-hash = "17972d6b6185196ad2fe023b313ef88a891eb5eaf113745c1b4e6cc88af9d6a3"
+hash = "fbf9ab3737984fbceaef5cc504dd497ba293118dd07c069caeed17065af21676"
 metafile = true
 
 [[files]]
 file = "mods/terralith.pw.toml"
-hash = "a58deaea68d4ed6c8e551273571cf7f9305c0a9747f82b0ef4b778c4bb54e235"
+hash = "d14d2e8497d8ea4604222438da28ad3e802b271b6bc2ab293f65da05cc4a9eec"
 metafile = true
 
 [[files]]
 file = "mods/towns-and-towers.pw.toml"
-hash = "792a20509e5e9bc63279ca360db8c070803d1c7505fdf27d4e5cdbb3c08d7eb0"
+hash = "a85c76d60249f590c33328edf165c055b7e338d1868cf5d6021af3ad966b8096"
 metafile = true
 
 [[files]]
@@ -291,7 +291,7 @@ metafile = true
 
 [[files]]
 file = "mods/when-dungeons-arise.pw.toml"
-hash = "7e6948368276f2c49d5bccf52cbf80930d0daca75b4dfbc5530479f1d3f95cf8"
+hash = "485906ff55a5d6ad06070abb80663d6adadc3e4b32f8b52240d8596e7aaef9fa"
 metafile = true
 
 [[files]]
@@ -301,5 +301,5 @@ metafile = true
 
 [[files]]
 file = "mods/yungs-better-dungeons.pw.toml"
-hash = "4c2830674a08ec9f10af13e4d259aa60158bd306a3996d935e678281ec0cb5fd"
+hash = "1496ffa30020676979e65921b91e583a2fdc77e50001e2ed55f99edf1a0ae880"
 metafile = true

@@ -1,6 +1,6 @@
 name = "Tectonic"
 filename = "tectonic-3.0.22-neoforge-21.1.jar"
-side = "server"
+side = "both"
 
 [download]
 url = "https://cdn.modrinth.com/data/lWDHr9jE/versions/iCGkqnnx/tectonic-3.0.22-neoforge-21.1.jar"
