@@ -1,0 +1,16 @@
+{
+  "name": "Arcanethyst",
+  "icon": "simplyswords:arcanethyst",
+  "category": "simplyswords:category_unique_weapons",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "simplyswords:arcanethyst",
+      "text": "Arcanethyst는 비전 마법의 힘을 끌어내어 마치 염동력처럼 적을 조종하는 강력한 미늘창입니다. 이 미늘창은 마법 에너지를 전달하는 능력으로 알려진 희귀하고 값진 보석, 마법이 깃든 자수정으로 제작되었습니다."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "비전 에너지의 파동으로 적을 땅에서 들어 올리는 이 미늘창의 고유 능력은 적을 후속 공격에 취약한 상태로 만듭니다. 이 미늘창은 강력한 파괴의 도구로 여겨지지만, 최대의 잠재력에 도달하려면 적의 살점에서 힘을 흡수해야 합니다."
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "name": "Star's Edge",
+  "icon": "simplyswords:stars_edge",
+  "category": "simplyswords:category_unique_weapons",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "simplyswords:stars_edge",
+      "text": "장엄한 양손 쌍날검 Star's Edge는 별의 우주적 정수와 공명한다. 빛나는 햇살의 품 안에서 Star's Edge는 에너지로 솟구쳐, 추가 피해를 입힐 수 있게 된다."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "밤이 내려앉으면 Star's Edge는 다시 한번 변모한다. 달과 별의 은은한 빛에 잠긴 이 쌍날검은 평온한 기운을 내뿜는다. 이제 달의 영향이 깃든 그 일격은 적의 생명력을 빨아들인다."
+    }
+  ]
+}

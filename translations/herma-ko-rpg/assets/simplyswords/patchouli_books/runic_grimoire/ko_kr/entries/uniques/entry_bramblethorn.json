@@ -1,0 +1,16 @@
+{
+  "name": "Bramblethorn",
+  "icon": "simplyswords:bramblethorn",
+  "category": "simplyswords:category_unique_weapons",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "simplyswords:bramblethorn",
+      "text": "Bramblethorn은 단순한 나뭇가지에 지나지 않아 보이지만 그 안에 강력한 비밀을 품은 독특하고 치명적인 레이피어입니다. 가볍고도 견고한 희귀한 마법 목재로 제작된 Bramblethorn은 신속하고 치명적인 공격을 가할 수 있습니다."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "손목을 한 번 튕기는 것만으로 유독한 포자 구름을 내뿜는 이 레이피어의 능력은 그 사정거리 안에 발을 들이는 어떤 적이든 중독시키고 무력화시킬 수 있습니다. 포자는 소지자 외에는 구분을 두지 않으니, 소중히 여기는 이들 곁에서 휘두를 때는 조심하십시오."
+    }
+  ]
+}

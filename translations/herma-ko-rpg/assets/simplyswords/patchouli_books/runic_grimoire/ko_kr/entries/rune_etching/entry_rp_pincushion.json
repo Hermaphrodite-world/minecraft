@@ -1,0 +1,17 @@
+{
+  "name": "바늘방석",
+  "icon": "simplyswords:runic_tablet",
+  "category": "simplyswords:category_rune_etching",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "simplyswords:runic_tablet",
+      "title": "바늘방석",
+      "text": "바늘방석은 사용자의 무기에 $(#d1422c)$(l)보복의 정수$()를 깃들게 하는 룬 힘입니다. $(br2)사용자의 몸에 박힌 화살의 수에 따라 적에게 추가 피해를 입히는 능력을 무기에 부여합니다."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "바늘방석으로 인해 사용자는 적에게 치명적인 바늘방석이 되어, 원거리 공격자가 화살을 쏘기 전에 다시 한번 생각하게 만듭니다. 사용자에게 적중하는 화살이 많을수록 그 일격이 강력해져, 전투에서 더욱 큰 위협이 됩니다. "
+    }
+  ]
+}

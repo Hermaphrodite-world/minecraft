@@ -1,0 +1,26 @@
+{
+  "name": "롱소드",
+  "icon": "simplyswords:iron_longsword",
+  "category": "simplyswords:category_weapon_variants",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "simplyswords:iron_longsword",
+      "text": "롱소드는 베기, 찌르기, 가르기에 두루 쓸 수 있는 다재다능한 무기다. 중세 시대에 기사를 비롯한 병사들이 널리 사용했다. 롱소드는 기사의 전형적인 무기로 여겨지며, 정밀함과 절삭력, 그리고 다재다능함으로 유명하다."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "simplyswords:iron_longsword",
+      "recipe2": "simplyswords:gold_longsword"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "simplyswords:diamond_longsword"
+    },
+    {
+      "type": "patchouli:smithing",
+      "recipe": "simplyswords:netherite_longsword",
+      "recipe2": "simplyswords:runic_longsword"
+    }
+  ]
+}

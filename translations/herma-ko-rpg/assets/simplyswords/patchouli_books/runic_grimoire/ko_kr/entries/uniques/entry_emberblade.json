@@ -1,0 +1,16 @@
+{
+  "name": "Emberblade",
+  "icon": "simplyswords:emberblade",
+  "category": "simplyswords:category_unique_weapons",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "simplyswords:emberblade",
+      "text": "Emberblade는 불의 힘이 깃든 강력한 장검입니다. 칼날은 자신을 둘러싼 화염의 강렬한 열기를 견뎌낼 수 있는 희귀한 금속으로 단조되었습니다. 소지자를 화염에 휩싸이게 하는 것으로 알려진 Emberblade는 증가한 힘과 속도를 부여할 수 있습니다."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "이 검은 스스로 소지자를 선택하며, 오직 그에 합당한 자만이 휘두를 수 있다고 전해집니다. 그러나 검의 능력을 너무 오래 사용하면 소지자가 통제력을 잃고 화염에 압도되어, 더없이 끔찍한 죽음을 맞이하게 된다고도 합니다."
+    }
+  ]
+}

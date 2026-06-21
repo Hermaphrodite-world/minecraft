@@ -1,0 +1,16 @@
+{
+  "name": "Soulkeeper",
+  "icon": "simplyswords:soulkeeper",
+  "category": "simplyswords:category_unique_weapons",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "simplyswords:soulkeeper",
+      "text": "Soulkeeper는 쓰러진 자들의 영혼을 흡수할 수 있는 신비로운 재료로 제작되어, 사용자와 영혼 사이에 유대를 형성한다고 전해진다. 망치에 흡수된 영혼들은 보호막 역할을 하여 사용자에게 가해지는 피해의 일부를 흡수한다."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "이 망치는 또한 이 영혼들을 내보내 주변의 적을 약화시키고 둔화시키는 능력을 지니고 있다. 망치 자체는 거대하고 위압적이며, 영혼의 우물을 들여다보는 창이 달려 있다. 망치를 감싸는 으스스한 기운이 감돌며, 영혼의 힘을 다스려 전투에서 자신의 이점으로 삼고자 하는 자들이 즐겨 찾는 무기라고 전해진다."
+    }
+  ]
+}

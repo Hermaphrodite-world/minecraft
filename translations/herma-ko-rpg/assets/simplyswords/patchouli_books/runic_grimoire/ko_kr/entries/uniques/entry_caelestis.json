@@ -1,0 +1,12 @@
+{
+  "name": "Caelestis",
+  "icon": "simplyswords:caelestis",
+  "category": "simplyswords:category_unique_weapons",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "simplyswords:caelestis",
+      "text": "성단계(星團界)를 드러내는 칼날을 지닌 기묘한 무기. 소지자에게 성계로 위상 이동하여 잠시 동안 닿을 수 없게 되는 능력을 부여합니다."
+    }
+  ]
+}

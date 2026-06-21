@@ -1,0 +1,16 @@
+{
+  "name": "Twisted Blade",
+  "icon": "simplyswords:twisted_blade",
+  "category": "simplyswords:category_unique_weapons",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "simplyswords:twisted_blade",
+      "text": "Twisted Blade는 독특하고 치명적인 디자인으로 유명한 가공할 대검이다. 검의 칼날은 일격을 가할 때마다 비틀리고 뒤틀리는 능력으로 알려진 특수한 강철로 만들어졌다."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "이 비틀리는 움직임은 검에 전례 없는 수준의 속도와 위력을 부여하여, 전장에서 가장 치명적인 무기 중 하나로 만든다. 일격을 가할 때마다 속도가 빨라지는 이 검의 능력은 상대의 방어를 순식간에 무너뜨리고 치명적인 일격을 가할 수 있어 믿기 힘들 만큼 치명적이다. 게다가 이 검의 독특한 디자인은 막거나 받아넘기기도 극도로 어렵게 만든다."
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "name": "카타나",
+  "icon": "simplyswords:iron_katana",
+  "category": "simplyswords:category_weapon_variants",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "simplyswords:iron_katana",
+      "text": "카타나는 예리함과 강도, 그리고 빠른 속도와 정밀함으로 다룰 수 있는 능력으로 유명하다. 봉건 시대 일본의 사무라이 계급이 전통적으로 사용했으며, 사무라이의 가장 중요한 무기 중 하나로 여겨졌다."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "simplyswords:iron_katana",
+      "recipe2": "simplyswords:gold_katana"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "simplyswords:diamond_katana"
+    },
+    {
+      "type": "patchouli:smithing",
+      "recipe": "simplyswords:netherite_katana",
+      "recipe2": "simplyswords:runic_katana"
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "name": "Soulrender",
+  "icon": "simplyswords:soulrender",
+  "category": "simplyswords:category_unique_weapons",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "simplyswords:soulrender",
+      "text": "Soulrender의 칼날은 사악한 에너지로 빛나는 신비로운 검은 금속으로 제작되었다고 전해지며, 살과 뼈뿐만 아니라 존재의 본질 그 자체마저 베어낼 수 있다고 한다."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "영혼이 갈가리 찢기고 나면, 희생자는 육체적으로도 영적으로도 약해진 채 남는다. 이 낫은 강력한 네크로맨서들이 휘두른다고 전해지며, 그들은 이것으로 적의 영혼을 거두어 자신의 목적에 이용한다. 막대한 힘을 지닌 무기이지만, 영혼을 뽑아내는 그 능력이 사용자 자신의 영혼에도 해로운 영향을 끼칠 수 있으므로 신중하게 사용해야 한다."
+    }
+  ]
+}

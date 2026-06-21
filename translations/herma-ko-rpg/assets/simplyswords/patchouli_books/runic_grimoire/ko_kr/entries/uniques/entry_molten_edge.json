@@ -1,0 +1,16 @@
+{
+  "name": "Molten Edge",
+  "icon": "simplyswords:molten_edge",
+  "category": "simplyswords:category_unique_weapons",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "simplyswords:molten_edge",
+      "text": "Molten Edge는 사용자가 부상을 입을수록 힘과 신속함을 부여하는 흉포한 도끼다. 사용자가 피해를 입을수록 도끼는 더욱 강력해지며, 전투에서 더 세고 빠르게 내리칠 수 있게 된다."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "또한 이 도끼는 사용 시 강력한 전투의 함성을 내질러 사용자의 움직임을 크게 가속시키고, 적에게 순식간에 접근할 수 있게 한다. 이 도끼는 녹아내린 용암으로 벼려졌다고 전해지며, 불타는 듯한 기운을 내뿜는다. 이 무기는 전투에서 치열하게 싸우며 어떤 역경도 극복하고자 하는 전사에게 완벽하다."
+    }
+  ]
+}

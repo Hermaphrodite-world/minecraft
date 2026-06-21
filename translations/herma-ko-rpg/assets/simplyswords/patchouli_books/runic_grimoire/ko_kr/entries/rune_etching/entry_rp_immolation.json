@@ -1,0 +1,17 @@
+{
+  "name": "분신(焚身)",
+  "icon": "simplyswords:runic_tablet",
+  "category": "simplyswords:category_rune_etching",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "simplyswords:runic_tablet",
+      "title": "분신(焚身)",
+      "text": "분신은 강력한 성화의 오라를 부여합니다. 활성화되어 있는 동안 이 오라는 주기적으로 근처의 적에게 피해를 입혀, 정의로운 화염으로 그들을 불태웁니다. 이 피해는 사용자의 현재 체력에 따라 비례하여 증가합니다."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "그러나 이 강력한 능력에는 대가가 따릅니다. 사용자 역시 성화로부터 더 적은 피해를 입게 됩니다."
+    }
+  ]
+}

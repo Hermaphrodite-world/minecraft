@@ -1,0 +1,16 @@
+{
+  "name": "Stormbringer",
+  "icon": "simplyswords:stormbringer",
+  "category": "simplyswords:category_unique_weapons",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "simplyswords:stormbringer",
+      "text": "이 검의 갈라진 칼날에는 강력한 전기 에너지가 깃들어, 일격을 가할 때마다 탁탁 튀며 호를 그린다. 이 검은 폭풍이 몰아치는 전투에서 사용할 때 특히 효과적이라고 전해지며, 그때 사용자는 번개의 힘을 온전히 다스릴 수 있다."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "이 검은 극도로 강력하지만 또한 예측할 수 없다고 전해진다. 그 전하가 사용자를 향해 호를 그리며 튀어, 종종 치명적인 결과를 불러오는 것으로 알려져 있기 때문이다."
+    }
+  ]
+}

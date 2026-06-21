@@ -1,0 +1,16 @@
+{
+  "name": "Livyatan",
+  "icon": "simplyswords:livyatan",
+  "category": "simplyswords:category_unique_weapons",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "simplyswords:livyatan",
+      "text": "Livyatan은 적을 얼린 뒤 산산조각 내어 엄청난 피해를 입힐 수 있는 무시무시한 도끼입니다. 일격을 가할 때마다 도끼는 얼어붙는 에너지의 파동을 내보내 근처의 표적을 휘감아 완전히 움직이지 못하게 만들 수 있습니다."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "소지자가 원하면, 도끼는 그들을 산산조각 내어 파멸적인 피해를 입힙니다. 이 도끼는 전설적인 생물의 심장으로 단조되었다고 전해지며 차가운 푸른빛으로 빛납니다. 이 무기는 적을 얼리고 산산조각 내어 막대한 피해를 입히고 전장을 지배하고자 하는 전사에게 완벽합니다."
+    }
+  ]
+}

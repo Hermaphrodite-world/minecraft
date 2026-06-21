@@ -1,0 +1,16 @@
+{
+  "name": "Hiveheart",
+  "icon": "simplyswords:hiveheart",
+  "category": "simplyswords:category_unique_weapons",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "simplyswords:hiveheart",
+      "text": "수수께끼의 양손 망치 Hiveheart는 마치 야생 벌집이 손잡이에 들러붙은 듯한 모습입니다. 알 수 없는 이유로, 벌집의 주민들은 소지자에게 예속되어 적을 발견하는 즉시 공격하는 듯합니다."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "벌떼의 충성은 단순한 공격력에 그치지 않습니다. 소지자의 명에 따라 벌들은 재생의 꿀, 즉 가장 심각한 상처조차 치유할 수 있는 기적의 감로를 만들어냅니다."
+    }
+  ]
+}

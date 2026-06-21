@@ -1,0 +1,17 @@
+{
+  "name": "능동 방어",
+  "icon": "simplyswords:runic_tablet",
+  "category": "simplyswords:category_rune_etching",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "simplyswords:runic_tablet",
+      "title": "능동 방어",
+      "text": "능동 방어는 사용자의 무기에 $(#389fff)$(l)보호의 정수$()를 깃들게 하는 룬 힘입니다. $(br2)사용자가 인벤토리에 화살을 가지고 있는 한, 주기적으로 근처의 적에게 화살을 발사할 기회를 부여합니다."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "이 힘은 사용자가 인벤토리에 화살을 가지고 있어야 함을 명심하세요. 화살이 떨어지면 힘이 비활성화되며, 다시 사용하려면 화살을 보충해야 합니다. $(br2)화살이 적을 멀리 견제하는 동안 사용자가 위치를 다시 잡을 수 있으므로, 카이팅과 군중 제어에 의존하는 캐릭터에게 이상적입니다."
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "name": "레이피어",
+  "icon": "simplyswords:iron_rapier",
+  "category": "simplyswords:category_weapon_variants",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "simplyswords:iron_rapier",
+      "text": "레이피어는 16세기와 17세기에 상류층 사이에서 인기를 끌었으며, 결투와 민간 호신용으로 사용되었다. 레이피어는 전투에서의 속도, 정밀함, 그리고 우아함으로 유명하다. 가늘고 긴 칼날 때문에 효과적으로 다루려면 높은 수준의 기술과 섬세함이 필요하다."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "simplyswords:iron_rapier",
+      "recipe2": "simplyswords:gold_rapier"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "simplyswords:diamond_rapier"
+    },
+    {
+      "type": "patchouli:smithing",
+      "recipe": "simplyswords:netherite_rapier",
+      "recipe2": "simplyswords:runic_rapier"
+    }
+  ]
+}

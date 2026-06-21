@@ -1,0 +1,17 @@
+{
+  "name": "수호막",
+  "icon": "simplyswords:runic_tablet",
+  "category": "simplyswords:category_rune_etching",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "simplyswords:runic_tablet",
+      "title": "수호막",
+      "text": "수호막은 강력하지만 위험한 능력으로, 들어오는 공격을 막아주는 일시적인 보호막을 소지자에게 제공합니다. 발동 시 소지자는 현재 체력의 절반을 희생하여 자신의 주위에 들어오는 피해를 흡수하는 맥동하는 에너지 장벽을 만듭니다."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "보호막은 6초간 지속되며 주기적으로 맥동하여 매 맥동마다 새로운 흡수 층을 제공합니다. 보호막의 강도는 남은 체력의 양에 비례하여 강해지므로, 위험을 감수할 의향이 있는 자에게 강력한 방어 수단이 됩니다."
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "name": "Soulstealer",
+  "icon": "simplyswords:soulstealer",
+  "category": "simplyswords:category_unique_weapons",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "simplyswords:soulstealer",
+      "text": "Soulstealer는 희생자의 영혼을 훔치고 그들의 인식을 조종하는 능력을 지녔다고 전해지는 강력하고 신비로운 무기다. 대상의 정신을 흐리게 하여 사용자의 존재를 알아채지 못하게 만드는, 강력한 조종과 이동의 도구로 여겨진다."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Soulstealer의 정확한 본질과 능력은 거의 알려져 있지 않다. 가장 강력하고 사악한 자들만이 휘두른다고 전해지는, 모두가 탐내지만 좀처럼 손에 넣기 힘든 무기이기 때문이다."
+    }
+  ]
+}

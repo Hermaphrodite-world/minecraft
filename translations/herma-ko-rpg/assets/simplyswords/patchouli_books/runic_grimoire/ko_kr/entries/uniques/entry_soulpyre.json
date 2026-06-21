@@ -1,0 +1,17 @@
+{
+  "name": "Soul Pyre",
+  "icon": "simplyswords:soulpyre",
+  "category": "simplyswords:category_unique_weapons",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "simplyswords:soulpyre",
+      "text": "Soul Pyre는 영혼과 위치 전환, 그리고 불의 힘을 담고 있다고 전해지는 강력하고 오래된 도끼다. 이 도끼는 수많은 영혼의 에너지가 주입된 희귀하고 신비로운 금속으로 벼려졌다고 한다."
+
+    },
+    {
+      "type": "patchouli:text",
+      "text": "이 도끼는 희생자의 영혼을 전위시키는 능력을 지녀, 사용자가 적과 자신의 위치를 맞바꿀 수 있게 한다. 또한 그 안에 갇힌 영혼들을 해방시켜, 전장 전체를 불태워 버릴 수 있는 파괴적인 화염 에너지의 물결을 내뿜는 힘도 지니고 있다."
+    }
+  ]
+}

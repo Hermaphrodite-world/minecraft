@@ -1,0 +1,26 @@
+{
+  "name": "커틀러스",
+  "icon": "simplyswords:iron_cutlass",
+  "category": "simplyswords:category_weapon_variants",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "simplyswords:iron_cutlass",
+      "text": "커틀러스는 베기와 찌르기 공격 모두에 적합하게 설계되었으며, 배 위의 근접전에서 널리 사용되어 해전에 가공할 무기였다. 휘어진 형태 덕분에 강력한 베기 공격이 가능하여, 살과 밧줄 모두에 효과적이다."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "simplyswords:iron_cutlass",
+      "recipe2": "simplyswords:gold_cutlass"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "simplyswords:diamond_cutlass"
+    },
+    {
+      "type": "patchouli:smithing",
+      "recipe": "simplyswords:netherite_cutlass",
+      "recipe2": "simplyswords:runic_cutlass"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "name": "부유",
+  "icon": "simplyswords:runic_tablet",
+  "category": "simplyswords:category_rune_etching",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "simplyswords:runic_tablet",
+      "title": "부유",
+      "text": "부유는 공중부양의 힘을 다루어, 사용자가 중력을 조작하고 대상에게 미치는 중력 효과를 뒤집을 수 있게 하는 룬 힘입니다. $(br2)적을 땅에서 띄워 올려 일시적으로 움직이거나 행동하지 못하게 만들 기회를 부여합니다."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "부유는 전투의 흐름을 흐트러뜨리고 사용자에게 전략적 우위를 주는 강력한 룬 힘입니다. $(br2)힘으로 적을 무력화하여 아군에게 공격 기회를 열어줄 수 있는, 마법사·흑마법사·소환사처럼 군중 제어와 지원에 집중하는 캐릭터에게 이상적입니다."
+    }
+  ]
+}

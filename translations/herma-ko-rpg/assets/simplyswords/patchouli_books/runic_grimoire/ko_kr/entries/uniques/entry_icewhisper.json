@@ -1,0 +1,16 @@
+{
+  "name": "Icewhisper",
+  "icon": "simplyswords:icewhisper",
+  "category": "simplyswords:category_unique_weapons",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "simplyswords:icewhisper",
+      "text": "Icewhisper는 소지자 주위로 약화시키는 서리 아우라를 내뿜는 치명적인 미늘창입니다. 이 아우라는 적의 움직임을 둔화시켜 더 쉽게 공격할 수 있게 하고, 적을 후속 공격에 취약한 상태로 만듭니다."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "오싹한 존재감에 더해, 이 미늘창은 눈보라를 소환하여 전장을 얼음과 눈의 폭풍으로 뒤덮는 능력도 지녔습니다. 이 눈보라는 적에게 피해를 입힐 뿐만 아니라 시야와 이동을 더 어렵게 만들어 소지자에게 전술적 우위를 제공합니다. 이 미늘창은 가장 순수한 얼음으로 단조되었다고 전해지며 차가운 푸른빛으로 반짝입니다."
+    }
+  ]
+}

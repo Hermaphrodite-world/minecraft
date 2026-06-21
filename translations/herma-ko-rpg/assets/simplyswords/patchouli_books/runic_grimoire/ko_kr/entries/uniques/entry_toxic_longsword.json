@@ -1,0 +1,16 @@
+{
+  "name": "Longsword of the Plague",
+  "icon": "simplyswords:toxic_longsword",
+  "category": "simplyswords:category_unique_weapons",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "simplyswords:toxic_longsword",
+      "text": "Longsword of the Plague는 적에게 걸린 재생이나 저항 같은 이로운 효과를 쇠약하게 만드는 효과로 변질시킬 수 있는 저주받은 무기다. 이로써 적을 약화시키고 무방비 상태로 만들어, 사용자에게 전투의 우위를 가져다준다."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "이 검은 거대한 역병의 희생자들의 유해로 벼려져 어둠의 마법이 깃들었다고 전해진다. 부패의 불길한 기운을 내뿜는 이 무기는 적을 교란하고 전세를 뒤집고자 하는 전사에게 완벽하다."
+    }
+  ]
+}

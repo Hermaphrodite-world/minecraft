@@ -1,0 +1,54 @@
+{
+  "name": "기본 주문책",
+  "icon": "irons_spellbooks:iron_spell_book",
+  "category": "irons_spellbooks:root",
+  "sortnum": 1,
+  "read_by_default": true,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "title": "제작 가능한 주문책",
+      "text": "많은 주문책은 바닐라 재료와 비전 재료를 조합하여 제작할 수 있습니다. 등급이 올라갈 때마다 주문책의 슬롯 수가 늘어나며, 종종 추가 보너스가 따라와 담을 수 있는 주문의 위력과 수량이 증가합니다."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "irons_spellbooks:copper_spell_book",
+      "recipe2": "irons_spellbooks:iron_spell_book"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "irons_spellbooks:gold_spell_book",
+      "recipe2": "irons_spellbooks:diamond_spell_book"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "irons_spellbooks:netherite_spell_book",
+      "recipe2": "irons_spellbooks:dragonskin_spell_book"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "이름 있는 주문책",
+      "text": "이름 있는 주문책은 세계의 여러 구석에 자리 잡고 있으며, 알맞은 곳을 살펴보는 운 좋은 모험가에게 종종 보너스를 제공합니다."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "irons_spellbooks:rotten_spell_book",
+      "text": "한때는 더 강력한 책이었을 것이 이제는 썩어 문드러져 세 쪽만 남았습니다. 그래도 여전히 대부분의 오버월드 주문책보다 강력합니다. 오버월드 곳곳의 똑같이 썩은 장소에서 약탈할 수 있습니다."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "irons_spellbooks:villager_spell_book",
+      "text": "작은 축복이 깃든 평범한 책은 신성 마법의 알맞은 통로가 됩니다. 주민들과 평판을 쌓다 보면, 특히 대주술사로부터 포로를 구해 주면, 결국 하나가 당신 손에 들어오게 될 것입니다."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "irons_spellbooks:blaze_spell_book",
+      "text": "모든 블레이즈는 자신도 모르게 이것을 하나씩 품고 있습니다. 관건은 그들을 처치하면서 재로 변하지 않기를 바라는 것입니다."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "irons_spellbooks:druidic_spell_book",
+      "text": "썩은 주문책 안에는 여전히 강력한 마법 에너지가 남아 있습니다. 알맞은 처방을 가하면 이 책을 새로이 축복할 수 있습니다."
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "name": "초반",
+  "icon": "irons_spellbooks:inscription_table",
+  "category": "irons_spellbooks:root",
+  "sortnum": -3,
+  "read_by_default": false,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "title": "개요",
+      "text": "초반 진행은 탐험과 약탈이 중심입니다. 세계는 마법 전리품으로 가득 차 있으며, 특히 대지 곳곳에 흩어진 새로운 마법 구조물에서 많이 발견됩니다. 하지만 조심하세요! 각 마법 구조물에는 강력한 마법사가 살고 있으며, 그들은 당신을 곱게 보지 않을 것입니다."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "irons_spellbooks:scroll",
+      "title": "주문서",
+      "text": "주문서는 당신이 처음으로 맛보게 될 마법입니다. 담겨 있는 주문을 시전하기 위해 소비할 수도 있지만, 각인 작업대를 통해 주문책에 각인하여 반복적으로 사용할 수 있을 때까지 아껴 두는 것이 좋습니다 >>>"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "각인 작업대",
+      "text": "주문책을 제대로 사용하려면 주문서를 이용해 각인 작업대에서 주문을 각인해야 합니다. 주문서는 주문책에 넣은 뒤에도 다시 회수할 수 있지만, 그러면 해당 주문의 각인이 풀립니다. 초보용 주문책은 기본 재료로 제작할 수 있습니다."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "irons_spellbooks:inscription_table",
+      "recipe2": "irons_spellbooks:copper_spell_book"
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "irons_spellbooks:arcane_essence",
+      "title": "기본 재료",
+      "text": "일부 기본 재료는 바닐라 구조물에서도 드물게 발견할 수 있습니다.$(br2)비전 정수를 가죽 갑옷과 결합하면 방랑 마법사 갑옷을 제작할 수 있으며, 이는 초반에 최대 마나를 추가로 얻을 수 있는 수단입니다."
+    },
+    {
+      "type": "patchouli:entity",
+      "name": "방랑 마법사 갑옷",
+      "entity": "minecraft:armor_stand{ArmorItems:[{id:'irons_spellbooks:wandering_magician_boots',Count:1b},{id:'irons_spellbooks:wandering_magician_leggings',Count:1b},{id:'irons_spellbooks:wandering_magician_chestplate',Count:1b},{id:'irons_spellbooks:wandering_magician_helmet',Count:1b}],NoBasePlate:1b}"
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "name": "할버드",
+  "icon": "simplyswords:iron_halberd",
+  "category": "simplyswords:category_weapon_variants",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "simplyswords:iron_halberd",
+      "text": "할버드는 긴 자루의 한쪽 끝에 날카로운 갈고리 칼날이, 반대쪽 끝에 도끼날이 달린 장병기의 일종이다. 다재다능함과 사거리 덕분에, 할버드는 노련한 전사의 손에서 가공할 무기가 된다."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "simplyswords:iron_halberd",
+      "recipe2": "simplyswords:gold_halberd"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "simplyswords:diamond_halberd"
+    },
+    {
+      "type": "patchouli:smithing",
+      "recipe": "simplyswords:netherite_halberd",
+      "recipe2": "simplyswords:runic_halberd"
+    }
+  ]
+}

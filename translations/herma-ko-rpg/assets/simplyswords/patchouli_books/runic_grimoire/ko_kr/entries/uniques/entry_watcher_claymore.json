@@ -1,0 +1,16 @@
+{
+  "name": "감시자",
+  "icon": "simplyswords:watcher_claymore",
+  "category": "simplyswords:category_unique_weapons",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "simplyswords:watcher_claymore",
+      "text": "감시자는 손잡이에 섬뜩하게 깜빡이는 눈이 박힌 대검으로, 그 눈이 힘의 근원이라 전해진다. 칼날은 주변의 빛을 빨아들이는 듯한, 거의 검은빛에 가까운 어두운 금속으로 만들어졌다."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "감시자는 어떤 적이든 단 일격에 즉시 쓰러뜨릴 수 있다고 알려져 있으나, 이는 오직 사용자가 완벽한 집중 상태에 있고 적이 위태로운 상태에 처했을 때에만 일어난다고 한다. 강인한 의지와 힘에 대한 갈망을 지닌 진정한 전사만이 감시자를 다루며 그 잠재력을 온전히 끌어낼 수 있다고 전해진다."
+    }
+  ]
+}

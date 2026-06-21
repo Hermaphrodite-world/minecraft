@@ -1,0 +1,26 @@
+{
+  "name": "쌍날검",
+  "icon": "simplyswords:iron_twinblade",
+  "category": "simplyswords:category_weapon_variants",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "simplyswords:iron_twinblade",
+      "text": "쌍날검은 효과적으로 다루려면 높은 수준의 기술과 민첩함이 필요한 무기다. 양쪽에 칼날이 달린 구조 덕분에 전투에서의 속도와 정밀함으로 유명하여, 제대로 다루는 자의 손에서 가공할 무기가 된다."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "simplyswords:iron_twinblade",
+      "recipe2": "simplyswords:gold_twinblade"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "simplyswords:diamond_twinblade"
+    },
+    {
+      "type": "patchouli:smithing",
+      "recipe": "simplyswords:netherite_twinblade",
+      "recipe2": "simplyswords:runic_twinblade"
+    }
+  ]
+}

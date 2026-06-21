@@ -1,0 +1,38 @@
+{
+  "name": "잉크",
+  "icon": "irons_spellbooks:epic_ink",
+  "category": "irons_spellbooks:root",
+  "sortnum": 4,
+  "read_by_default": true,
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "irons_spellbooks:common_ink",
+      "text": "가장 흔한 잉크(그래서 이름도 그렇습니다)로, 가장 낮은 등급의 주문을 제작할 수 있습니다. 주문의 최저 레벨이 일반보다 높으면 일반 잉크로는 제작할 수 없습니다. 다른 모든 잉크도 마찬가지입니다."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "irons_spellbooks:uncommon_ink",
+      "text": "일반보다 덜 흔하며, 조금 더 강력한 주문을 제작할 수 있습니다."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "irons_spellbooks:rare_ink",
+      "text": "희귀 잉크는 마법 보물 상자나 주문을 시전하는 몹을 처치하여 꾸준히 얻을 수 있습니다."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "irons_spellbooks:epic_ink",
+      "text": "영웅 잉크를 비롯한 모든 고희귀도 잉크를 얻기 가장 좋은 곳은 마법 보물이나 주문을 시전하는 몹을 처치하는 것입니다."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "irons_spellbooks:legendary_ink",
+      "text": "가장 희귀한 잉크로, 가장 강력한 주문을 제작합니다. 일부 주문에는 여러 전설 레벨이 있어, 이를 얻으려면 비전 모루를 사용해야 한다는 점을 유념하세요."
+    },
+    {
+      "type": "patchouli:empty",
+      "draw_filler": false
+    }
+  ]
+}

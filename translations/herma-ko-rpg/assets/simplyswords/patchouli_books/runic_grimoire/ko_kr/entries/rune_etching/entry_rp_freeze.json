@@ -1,0 +1,17 @@
+{
+  "name": "동결",
+  "icon": "simplyswords:runic_tablet",
+  "category": "simplyswords:category_rune_etching",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "simplyswords:runic_tablet",
+      "title": "동결",
+      "text": "동결은 사용자의 무기에 $(#38caff)$(l)냉기와 얼음의 정수$()를 깃들게 하는 룬 힘입니다. $(br2)명중에 성공할 때마다 대상을 한기에 떨게 하거나 얼릴 기회를 부여합니다."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "동결은 전투의 흐름을 크게 흐트러뜨리고 사용자에게 전략적 우위를 주는 강력한 룬 힘입니다. $(br2)힘으로 적을 무력화하여 아군에게 공격 기회를 열어줄 수 있는, 마법사·흑마법사·소환사처럼 군중 제어와 지원에 집중하는 캐릭터에게 이상적입니다."
+    }
+  ]
+}

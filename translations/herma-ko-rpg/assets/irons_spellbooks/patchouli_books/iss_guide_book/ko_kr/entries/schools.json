@@ -1,0 +1,74 @@
+{
+  "name": "마법 학파",
+  "icon": "irons_spellbooks:lightning_bottle",
+  "category": "irons_spellbooks:root",
+  "sortnum": 20,
+  "read_by_default": true,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "title": "개요",
+      "text": "모든 마법 주문은 하나의 마법 학파에 속합니다. 각 학파는 시각적으로도 기능적으로도 고유한 테마를 담고 있으며, 저마다 초점을 가집니다: 제작 재료로 쓰이는 대표 아이템입니다. 더 나아가, 각 학파는 특정 학파 관련 장비로 강화할 수 있어, 한 학파의 강력한 대가가 되거나 여러 학파를 섞어 만능형으로 성장할 수 있습니다."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "minecraft:blaze_rod",
+      "title": "화염",
+      "text": "초점이 블레이즈 막대인 화염 학파는 피해와 지속 피해에 중점을 둡니다."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "irons_spellbooks:frozen_bone",
+      "title": "얼음",
+      "text": "초점이 얼어붙은 뼈인 얼음 학파는 피해와 군중 제어에 중점을 둡니다."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "irons_spellbooks:lightning_bottle",
+      "title": "번개",
+      "text": "초점이 번개 병인 번개 학파는 집중된 피해에 중점을 둡니다."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "irons_spellbooks:divine_pearl",
+      "title": "신성",
+      "text": "초점이 신성한 진주인 신성 학파는 지원, 치유, 그리고 아군 강화에 중점을 둡니다."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "minecraft:ender_pearl",
+      "title": "엔더",
+      "text": "초점이 엔더 진주인 엔더 학파는 비전적이고 신비로운 모든 것을 테마로 하며, 피해부터 유틸리티, 이동기까지 아우르는 주문을 갖추고 있습니다."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "irons_spellbooks:blood_vial",
+      "title": "피",
+      "text": "초점이 피의 약병인 피 학파는 악을 테마로 합니다. 이곳에서는 강령술, 위더, 그리고 피의 마법 요소를 찾을 수 있으며, 시전자를 강화하면서 피해를 주는 주문에 중점을 둡니다."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "minecraft:emerald",
+      "title": "환술",
+      "text": "초점이 에메랄드인 환술 학파는 마법적 속임수와 소환을 테마로 하며, 공격, 방어, 유틸리티 주문을 가장 폭넓게 아우릅니다."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "minecraft:poisonous_potato",
+      "title": "자연",
+      "text": "초점이 독 감자인 자연 학파는 적에게 약화 효과를 거는 데 중점을 두며, 마무리를 위한 피해 요소도 갖추고 있습니다."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "irons_spellbooks:eldritch_manuscript",
+      "title": "고대신",
+      "text": "고대신 학파는 다른 학파들과 다릅니다. 이는 고대의 강력한 마법 방식으로, 거의 잊혀진 것입니다. 당신은 처음에는 고대신 주문을 제작하거나 시전할 수 없습니다. 그러나 고대 고대신 필사본의 조각들은 여전히 세계 곳곳에 흩어져 있으며, 메아리 조각의 도움으로 다시 짜맞출 수도 있습니다."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "minecraft:echo_shard",
+      "title": "고대신, 계속",
+      "text": "필사본이 복원되면, 이를 소비하여 고대신 주문 하나를 익혀 그 주문의 제작과 시전을 가능하게 할 수 있습니다. 익히고 나면 메아리 조각이 초점으로 사용됩니다."
+    }
+  ]
+}

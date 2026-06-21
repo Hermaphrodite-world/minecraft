@@ -1,0 +1,16 @@
+{
+  "name": "감시하는 워글레이브",
+  "icon": "simplyswords:watching_warglaive",
+  "category": "simplyswords:category_unique_weapons",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "simplyswords:watching_warglaive",
+      "text": "감시하는 워글레이브는 노련하고 사나운 전사들이 다루도록 만들어진 강력하고 치명적인 무기다. 중앙에 깜빡이는 두 개의 눈이 박혀 있으며, 칼날은 주변의 빛을 빨아들이는 듯한, 거의 검은빛에 가까운 어두운 금속으로 만들어졌다"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "감시하는 워글레이브는 주변 적들의 생명력을 빨아들여 사용자에게 전달함으로써 더 오래 전투를 이어가게 하는 힘을 지녔다. 또한 워글레이브는 적을 즉시 처형하여, 전투를 단숨에 끝낼 수 있는 강력한 치명타를 입힐 확률을 지니고 있다."
+    }
+  ]
+}

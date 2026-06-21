@@ -1,0 +1,16 @@
+{
+  "name": "Sword on a Stick",
+  "icon": "simplyswords:sword_on_a_stick",
+  "category": "simplyswords:category_unique_weapons",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "simplyswords:sword_on_a_stick",
+      "text": "Sword on a Stick은 위대한 전사 가문에서 대대로 전해 내려왔다고 전해지는 전설의 무기다. 그 무용담은 온 땅에 널리 퍼졌으며, 귀 기울이는 모든 이는 그 위력에 경외감을 느끼지 않을 수 없다."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "하지만 다시 생각해 보면, 이건 그냥 막대기 끝에 검을 묶어 놓은 것일지도 모른다."
+    }
+  ]
+}

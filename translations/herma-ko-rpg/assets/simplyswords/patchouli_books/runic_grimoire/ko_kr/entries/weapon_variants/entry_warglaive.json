@@ -1,0 +1,26 @@
+{
+  "name": "워글레이브",
+  "icon": "simplyswords:iron_warglaive",
+  "category": "simplyswords:category_weapon_variants",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "simplyswords:iron_warglaive",
+      "text": "워글레이브는 속도와 민첩함으로 유명하며, 면도날처럼 날카로운 날 덕분에 빠르고 치명적인 일격을 가할 수 있다. 효과적으로 다루려면 높은 수준의 민첩함과 기술이 필요하지만, 제대로 사용하면 전투에서 매우 효과적이다."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "simplyswords:iron_warglaive",
+      "recipe2": "simplyswords:gold_warglaive"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "simplyswords:diamond_warglaive"
+    },
+    {
+      "type": "patchouli:smithing",
+      "recipe": "simplyswords:netherite_warglaive",
+      "recipe2": "simplyswords:runic_warglaive"
+    }
+  ]
+}

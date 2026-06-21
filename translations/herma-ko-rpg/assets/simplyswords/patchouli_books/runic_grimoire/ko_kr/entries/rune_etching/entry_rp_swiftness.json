@@ -1,0 +1,17 @@
+{
+  "name": "신속",
+  "icon": "simplyswords:runic_tablet",
+  "category": "simplyswords:category_rune_etching",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "simplyswords:runic_tablet",
+      "title": "신속",
+      "text": "신속은 사용자의 무기에 $(#389fff)$(l)속도와 민첩의 정수$()를 깃들게 하는 룬 힘입니다. $(br2)명중에 성공할 때마다 이동 속도를 높일 기회를 부여합니다."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "신속은 전투에서 사용자에게 상당한 우위를 안겨줄 수 있는 강력한 룬 힘입니다. $(br2)힘을 이용해 적을 따돌리고 재빠르게 공격할 수 있는, 도적·레인저·수도사처럼 기동성과 속도에 의존하는 캐릭터에게 이상적입니다."
+    }
+  ]
+}

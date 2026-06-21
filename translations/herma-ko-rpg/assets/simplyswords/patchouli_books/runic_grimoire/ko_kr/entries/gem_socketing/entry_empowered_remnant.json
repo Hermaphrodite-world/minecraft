@@ -1,0 +1,20 @@
+{
+  "name": "강화된 잔재",
+  "icon": "simplyswords:empowered_remnant",
+  "category": "simplyswords:category_gem_socketing",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "simplyswords:empowered_remnant",
+      "text": "강화된 잔재는 화로에서 고유 무기를 녹여서 얻을 수 있습니다. 무기는 파괴되고 그 힘의 작은 일부가 강화된 잔재의 형태로 남게 됩니다."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "이 아이템을 대장장이 작업대에서 룬 석판이나 네더라이트 주괴 같은 촉매와 결합하면 보석을 만들 수 있습니다. 이렇게 만든 보석은 고유 무기의 알맞은 소켓에 장착하여 다양한 방식으로 무기를 강화할 수 있습니다."
+    },
+    {
+      "type": "patchouli:smelting",
+      "recipe": "simplyswords:unique_melting"
+    }
+  ]
+}

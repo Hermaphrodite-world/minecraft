@@ -1,0 +1,17 @@
+{
+  "name": "추진력",
+  "icon": "simplyswords:runic_tablet",
+  "category": "simplyswords:category_rune_etching",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "simplyswords:runic_tablet",
+      "title": "추진력",
+      "text": "추진력은 사용자의 무기에 $(#389fff)$(l)질량과 속도의 정수$()를 깃들게 하는 룬 힘입니다. $(br2)전진하는 추진력을 만들어 내어 사용자를 앞으로 빠르게 밀어냅니다."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "추진력이 만들어 내는 에너지의 분출은 전투에서 큰 효과를 발휘하여, 사용자가 빠르게 거리를 좁히고 적을 처치하기 위해 파고들 수 있게 합니다."
+    }
+  ]
+}

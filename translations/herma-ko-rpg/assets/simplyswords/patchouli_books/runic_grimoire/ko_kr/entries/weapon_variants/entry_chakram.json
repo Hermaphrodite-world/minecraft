@@ -1,0 +1,26 @@
+{
+  "name": "차크람",
+  "icon": "simplyswords:iron_chakram",
+  "category": "simplyswords:category_weapon_variants",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "simplyswords:iron_chakram",
+      "text": "차크람은 보통 금속으로 만들어지며 바깥 가장자리가 날카로운 원형 투척 무기다. 쌍수로 들면 차크람은 범위 공격을 펼칠 수 있어, 사용자 주변의 여러 적을 한 번에 타격할 수 있다."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "simplyswords:iron_chakram",
+      "recipe2": "simplyswords:gold_chakram"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "simplyswords:diamond_chakram"
+    },
+    {
+      "type": "patchouli:smithing",
+      "recipe": "simplyswords:netherite_chakram",
+      "recipe2": "simplyswords:runic_chakram"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "name": "들불",
+  "icon": "simplyswords:runic_tablet",
+  "category": "simplyswords:category_rune_etching",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "simplyswords:runic_tablet",
+      "title": "들불",
+      "text": "들불은 소지자의 무기에 $(#d1422c)$(l)불과 연소의 정수$()를 깃들게 하는 룬 권능입니다. $(br2)공격을 성공시킬 때마다 근처에 있는 같은 종류의 모든 적을 화염에 휩싸이게 할 확률을 소지자에게 줍니다."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "들불은 전투의 흐름을 교란하고 소지자에게 전략적 우위를 줄 수 있는 강력한 룬 권능입니다. $(br2)화염술사, 흑마법사, 소환사처럼 시간에 걸쳐 막대한 피해를 입히는 데 집중하는 캐릭터에게 이상적입니다."
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "name": "서리 결계",
+  "icon": "simplyswords:runic_tablet",
+  "category": "simplyswords:category_rune_etching",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "simplyswords:runic_tablet",
+      "title": "서리 결계",
+      "text": "서리 결계는 사용자의 무기에 $(#38caff)$(l)냉기와 서리의 정수$()를 깃들게 하는 룬 힘입니다. $(br2)근처의 적에게 주기적으로 이동을 방해하는 눈덩이를 발사하는 결계를 만들어 냅니다."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "서리 결계는 전장을 손쉽게 통제할 수 있게 해주므로, 보다 방어적인 플레이 스타일을 선호하는 이들에게 이상적인 선택입니다."
+    }
+  ]
+}

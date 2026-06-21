@@ -1,0 +1,17 @@
+{
+  "name": "제피르",
+  "icon": "simplyswords:runic_tablet",
+  "category": "simplyswords:category_rune_etching",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "simplyswords:runic_tablet",
+      "title": "제피르",
+      "text": "제피르는 소지자의 무기에 $(#85a0ab)$(l)바람 원소의 정수$()를 깃들게 하는 룬 권능입니다. $(br2)공격을 성공시킬 때마다 공격 속도와 이동 속도가 증가할 확률을 소지자에게 줍니다."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "증가한 공격 속도와 이동 속도를 활용해 빠르게 공격하고 적의 공격을 회피할 수 있는, 전사·바바리안·도적처럼 높은 피해를 입히는 데 집중하는 캐릭터에게 이상적입니다."
+    }
+  ]
+}

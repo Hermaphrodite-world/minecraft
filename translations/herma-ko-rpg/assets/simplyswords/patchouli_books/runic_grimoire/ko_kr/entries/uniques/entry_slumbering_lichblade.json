@@ -1,0 +1,21 @@
+{
+  "name": "Slumbering Lichblade",
+  "icon": "simplyswords:slumbering_lichblade",
+  "category": "simplyswords:category_unique_weapons",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "simplyswords:slumbering_lichblade",
+      "text": "Slumbering Lichblade는 고통받는 영혼들의 기운을 내뿜어 너무 가까이 다가오는 적에게 피해를 입히는 대검이다. 이 검은 강력한 리치의 유해로 제작되었으며, 그것이 집어삼킨 영혼들의 힘이 깃들어 있다고 전해진다. 때때로 칼날에서 사악한 속삭임이 새어 나오는 것을 들을 수 있다."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "그러나 이 검은 현재 휴면 상태에 있으며 진정한 힘은 봉인되어 있다. 특별한 의식이나 제작 과정을 통해 사용자는 검을 깨우고 그 위대한 능력을 해방시킬 수 있다. 일단 깨어나면, 검의 기운을 명령해 적을 공격하고 생명력을 빨아들여 사용자에게 부여할 수 있다. 막대한 힘을 지닌 무기이므로 신중하게 사용해야 한다."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "simplyswords:waking_lichblade",
+      "recipe2": "simplyswords:awakened_lichblade"
+    }
+  ]
+}

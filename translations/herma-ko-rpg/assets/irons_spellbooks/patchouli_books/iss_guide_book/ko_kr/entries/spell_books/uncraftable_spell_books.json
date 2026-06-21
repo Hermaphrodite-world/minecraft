@@ -1,0 +1,30 @@
+{
+  "name": "고유 주문책",
+  "icon": "irons_spellbooks:evoker_spell_book",
+  "category": "irons_spellbooks:root",
+  "sortnum": 2,
+  "read_by_default": true,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "title": "고유 주문책",
+      "text": "고유 주문책은 특정 몹에게서 드물게 떨어지며, 제거하거나 편집할 수 없는 주문이 각인된 채로 나옵니다. 모든 주문책을 만들어 낼 수 있는 것은 아닙니다 -- 어쨌든 이것은 비전의 기예니까요."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "title": "고유 강화",
+      "item": "irons_spellbooks:arcane_anvil",
+      "text": "고유 주문책의 주문은 잠겨 있지만, 강화할 수는 있습니다. 비전 모루에서 고유 주문책을 그 주문책에 담긴 것과 같은 주문의 더 높은 레벨 주문서와 결합하면, 잠긴 주문의 레벨을 올릴 수 있습니다."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "irons_spellbooks:evoker_spell_book",
+      "text": "기초 일리저 마법으로 가득한 책인 환술 마도서는 주술사나 그들의 더 강력한 시전 친척인 대주술사가 떨어뜨릴 수 있습니다."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "irons_spellbooks:necronomicon_spell_book",
+      "text": "수많은 어둠의 주문을 담은 고대의 책으로, 그 언데드 주인에게서 빼앗아야만 얻을 수 있습니다."
+    }
+  ]
+}

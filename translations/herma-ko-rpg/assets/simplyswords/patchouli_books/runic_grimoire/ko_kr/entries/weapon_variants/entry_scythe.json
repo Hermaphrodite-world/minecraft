@@ -1,0 +1,26 @@
+{
+  "name": "사이드",
+  "icon": "simplyswords:iron_scythe",
+  "category": "simplyswords:category_weapon_variants",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "simplyswords:iron_scythe",
+      "text": "사이드는 그 무게와 날카로운 칼날 덕분에 일격마다 파멸적인 피해를 입히는 능력으로 유명하다. 사이드는 유난히 크고 휘어진 칼날과 긴 자루 덕분에 넓은 범위에 걸쳐 베기와 가르기 공격을 펼칠 수 있다."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "simplyswords:iron_scythe",
+      "recipe2": "simplyswords:gold_scythe"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "simplyswords:diamond_scythe"
+    },
+    {
+      "type": "patchouli:smithing",
+      "recipe": "simplyswords:netherite_scythe",
+      "recipe2": "simplyswords:runic_scythe"
+    }
+  ]
+}

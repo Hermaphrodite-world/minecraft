@@ -1,0 +1,12 @@
+{
+  "name": "Ribboncleaver",
+  "icon": "simplyswords:ribboncleaver",
+  "category": "simplyswords:category_unique_weapons",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "simplyswords:ribboncleaver",
+      "text": "아직 구현되지 않음"
+    }
+  ]
+}

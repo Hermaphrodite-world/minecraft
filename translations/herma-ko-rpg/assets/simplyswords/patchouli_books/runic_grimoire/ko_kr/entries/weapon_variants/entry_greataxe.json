@@ -1,0 +1,26 @@
+{
+  "name": "대도끼",
+  "icon": "simplyswords:iron_greataxe",
+  "category": "simplyswords:category_weapon_variants",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "simplyswords:iron_greataxe",
+      "text": "대도끼를 효과적으로 다루려면 높은 수준의 힘과 기술이 필요하다. 양손 무기라서 사용자는 양손으로 무기를 잡고 휘두른다. 또한 찍기, 베기, 짓이기기 공격에 두루 쓸 수 있어 다재다능함으로도 유명하다."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "simplyswords:iron_greataxe",
+      "recipe2": "simplyswords:gold_greataxe"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "simplyswords:diamond_greataxe"
+    },
+    {
+      "type": "patchouli:smithing",
+      "recipe": "simplyswords:netherite_greataxe",
+      "recipe2": "simplyswords:runic_greataxe"
+    }
+  ]
+}

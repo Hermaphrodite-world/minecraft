@@ -1,0 +1,16 @@
+{
+  "name": "Hearthflame",
+  "icon": "simplyswords:hearthflame",
+  "category": "simplyswords:category_unique_weapons",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "simplyswords:hearthflame",
+      "text": "Hearthflame은 파멸적인 진동을 일으키는 능력이 깃든 강력한 대형 망치입니다. 휘두르면 힘의 파문을 내보내 적을 자신 쪽으로 끌어당긴 뒤 불타는 폭발로 점화시킵니다."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "그 결과 일어나는 폭발은 막대한 피해를 입힐 뿐만 아니라 적을 소지자에게서 멀리 날려 보내어, 위치를 재조정하거나 다른 표적을 추격할 기회를 제공합니다. 이 망치는 대지의 가장 뜨거운 화염으로 단조되었다고 전해지며 열기의 아우라를 내뿜습니다. 이 무기는 막대한 피해를 입히고 전장을 지배하고자 하는 전사에게 완벽합니다."
+    }
+  ]
+}

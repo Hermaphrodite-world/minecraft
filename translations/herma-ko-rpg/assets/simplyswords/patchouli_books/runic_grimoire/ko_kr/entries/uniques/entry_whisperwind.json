@@ -1,0 +1,12 @@
+{
+  "name": "Whisperwind",
+  "icon": "simplyswords:whisperwind",
+  "category": "simplyswords:category_unique_weapons",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "simplyswords:whisperwind",
+      "text": "바람과 함께 춤추는 영묘한 칼날 Whisperwind는 사용자에게 견줄 데 없는 민첩함과 불가사의한 힘을 부여한다. 카타나가 허공을 가를 때면, 마치 부드러운 산들바람에 실린 듯 희미한 선율이 울려 퍼진다. 날쌘 돌진을 거듭할 때마다 적의 감각이 교란되어, 그들은 방향을 잃고 무방비 상태에 빠진다."
+    }
+  ]
+}

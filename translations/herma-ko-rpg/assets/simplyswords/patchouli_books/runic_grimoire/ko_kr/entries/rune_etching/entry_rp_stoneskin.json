@@ -1,0 +1,17 @@
+{
+  "name": "돌피부",
+  "icon": "simplyswords:runic_tablet",
+  "category": "simplyswords:category_rune_etching",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "simplyswords:runic_tablet",
+      "title": "돌피부",
+      "text": "돌피부는 사용자의 무기에 $(#916f49)$(l)대지와 돌의 정수$()를 깃들게 하는 룬 힘입니다. $(br2)명중에 성공할 때마다 속도를 대가로 피해 저항을 높일 기회를 부여합니다."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "돌피부는 내구성을 높여 전투에서 우위를 안겨줄 수 있는 강력한 룬 힘입니다. $(br2)감소한 속도는 속도와 기동성에 의존하는 캐릭터에게는 단점일 수 있지만, 높아진 저항이 특정 상황에서는 이를 보완해 줄 수 있습니다."
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "name": "Storm's Edge",
+  "icon": "simplyswords:storms_edge",
+  "category": "simplyswords:category_unique_weapons",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "simplyswords:storms_edge",
+      "text": "Storm's Edge는 전기의 힘을 끌어모아 다룰 수 있는 희귀한 금속으로 벼려졌다고 전해진다. 손잡이는 어두운 나무로 만들어졌으며 보호용 가죽으로 감겨 있다."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "이 쌍날검은 전기를 저장하는 능력을 지녀, 명령어나 의지력으로 사용자가 이를 방출하면 앞으로 추진해 적과의 거리를 순식간에 좁히고 일시적으로 모든 공격에 무적이 된다."
+    }
+  ]
+}

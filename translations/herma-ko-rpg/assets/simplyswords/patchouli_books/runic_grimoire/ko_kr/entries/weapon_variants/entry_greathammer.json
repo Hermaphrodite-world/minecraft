@@ -1,0 +1,26 @@
+{
+  "name": "대망치",
+  "icon": "simplyswords:iron_greathammer",
+  "category": "simplyswords:category_weapon_variants",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "simplyswords:iron_greathammer",
+      "text": "대망치는 그 무게와 크기 덕분에 일격마다 파멸적인 피해를 입히는 능력으로 유명하다. 중세 전쟁에서 보병과 중기병이 전통적으로 사용했으며, 대장장이와 석공을 비롯한 여러 노동자들도 강도 높은 타격 작업에 사용했다."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "simplyswords:iron_greathammer",
+      "recipe2": "simplyswords:gold_greathammer"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "simplyswords:diamond_greathammer"
+    },
+    {
+      "type": "patchouli:smithing",
+      "recipe": "simplyswords:netherite_greathammer",
+      "recipe2": "simplyswords:runic_greathammer"
+    }
+  ]
+}

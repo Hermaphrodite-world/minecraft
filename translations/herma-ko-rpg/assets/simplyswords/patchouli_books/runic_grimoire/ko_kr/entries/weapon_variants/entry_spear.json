@@ -1,0 +1,26 @@
+{
+  "name": "창",
+  "icon": "simplyswords:iron_spear",
+  "category": "simplyswords:category_weapon_variants",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "simplyswords:iron_spear",
+      "text": "창은 역사 전반에 걸쳐 사냥과 전쟁의 무기로 사용되어 왔다. 다재다능함과 사거리로 유명하며, 주로 찌르기에 사용된다. 또한 만들고 관리하기가 비교적 간단하여 고대와 원시 문화권에서 널리 쓰인 무기였다."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "simplyswords:iron_spear",
+      "recipe2": "simplyswords:gold_spear"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "simplyswords:diamond_spear"
+    },
+    {
+      "type": "patchouli:smithing",
+      "recipe": "simplyswords:netherite_spear",
+      "recipe2": "simplyswords:runic_spear"
+    }
+  ]
+}

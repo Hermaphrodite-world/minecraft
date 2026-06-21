@@ -1,0 +1,12 @@
+{
+  "name": "Enigma",
+  "icon": "simplyswords:enigma",
+  "category": "simplyswords:category_unique_weapons",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "simplyswords:enigma",
+      "text": "기원이 불분명한 고대의 기술. 손잡이의 기이한 빛은 바람의 변화에 반응하여 깜빡이는 듯합니다."
+    }
+  ]
+}

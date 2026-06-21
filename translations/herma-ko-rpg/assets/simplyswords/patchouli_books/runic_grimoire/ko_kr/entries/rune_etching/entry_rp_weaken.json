@@ -1,0 +1,17 @@
+{
+  "name": "약화",
+  "icon": "simplyswords:runic_tablet",
+  "category": "simplyswords:category_rune_etching",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "simplyswords:runic_tablet",
+      "title": "약화",
+      "text": "약화는 소지자의 무기에 $(#87185d)$(l)부패의 정수$()를 깃들게 하는 룬 권능입니다. $(br2)공격을 성공시킬 때마다 대상을 둔화시키고 약화시킬 확률을 소지자에게 줍니다."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "약화는 대상을 둔화시키고 약화시켜 소지자에게 전투의 우위를 줄 수 있는 강력한 룬 권능입니다. $(br2)더 많은 공격을 적중시키고 대상의 공격을 약화시킬 수 있게 해주므로, 근접 전투에 집중하는 캐릭터에게 이상적입니다."
+    }
+  ]
+}

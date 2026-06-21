@@ -1,0 +1,16 @@
+{
+  "name": "Mjolnir",
+  "icon": "simplyswords:mjolnir",
+  "category": "simplyswords:category_unique_weapons",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "simplyswords:mjolnir",
+      "text": "드워프 브로크와 에이트리가 벼려내어 천둥의 신 토르에게 바친 무기다. Mjolnir는 자격을 갖춘 자가 휘두르면 단 한 번의 일격으로 산맥 전체를 무너뜨릴 수 있는, 믿기 힘든 위력을 지닌 무기다."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "자격이 부족한 자의 손에서도, 비가 내릴 때 번개를 소환하고 던진 뒤 휘두른 자에게 되돌아오는 능력은 여전히 발휘된다. 다만 사거리와 속도는 현저히 줄어든다. 차라리 진정한 주인에게 돌려주는 편이 낫지 않겠는가?"
+    }
+  ]
+}

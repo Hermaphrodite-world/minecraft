@@ -1,0 +1,17 @@
+{
+  "name": "보호막",
+  "icon": "simplyswords:runic_tablet",
+  "category": "simplyswords:category_rune_etching",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "simplyswords:runic_tablet",
+      "title": "보호막",
+      "text": "보호막은 사용자의 무기에 $(#389fff)$(l)보호의 정수$()를 깃들게 하는 룬 힘입니다. $(br2)명중에 성공할 때마다 흡수 효과를 부여할 기회를 사용자에게 줍니다."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "보호막은 사용자를 위해로부터 지켜 전투에서 우위를 안겨줄 수 있는 강력한 룬 힘입니다. 전사와 팔라딘처럼 탱킹과 피해 흡수에 집중하는 캐릭터에게 이상적입니다. $(br2)또한 흡수 효과 덕분에 전투를 더 오래 버틸 수 있으므로, 강한 일격에 의존하는 캐릭터에게도 유용할 수 있습니다."
+    }
+  ]
+}

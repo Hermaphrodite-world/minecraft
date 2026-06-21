@@ -1,0 +1,12 @@
+{
+  "name": "Waxweaver",
+  "icon": "simplyswords:waxweaver",
+  "category": "simplyswords:category_unique_weapons",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "simplyswords:waxweaver",
+      "text": "Waxweaver는 화려한 촛대를 연상시키는, 우아함과 치명성을 매끄럽게 결합한 정교한 클레이모어다. Waxweaver가 불붙은 적을 가격하면 촛불들이 강화되어 그 힘이 사용자에게 전해진다."
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "name": "중반",
+  "icon": "irons_spellbooks:scroll_forge",
+  "category": "irons_spellbooks:root",
+  "sortnum": -2,
+  "read_by_default": true,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "title": "주문서 제련소",
+      "text": "네더 등급의 자원에 도달하면, 힘을 얻는 완전히 새로운 방식이 열립니다: 바로 주문서 제련소입니다$(br2)주문서 제련소는 잉크, 종이, 그리고 초점을 사용하여 주문서를 제작하는 데 쓰입니다. 잉크는 희귀도(따라서 레벨)를 결정하고, 초점은 주문의 학파를 결정합니다."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "irons_spellbooks:scroll_forge"
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "새로운 주문책",
+      "text": "더 나아가, 중급 주문책은 네더 자원을 사용해 제작할 수 있습니다",
+      "recipe": "irons_spellbooks:gold_spell_book"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "irons_spellbooks:diamond_spell_book",
+      "text": "호글린가죽은 호글린이 떨어뜨립니다"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "irons_spellbooks:magic_cloth",
+      "title": "새로운 재료",
+      "text": "또한 비전 천을 사용해 더 강력한 갑옷을 제작하기 시작해야 합니다. 비전 정수를 많이 얻으려면 마법 구조물 약탈에 집중해야 합니다."
+    },
+    {
+      "type": "patchouli:entity",
+      "name": "허수아비 갑옷",
+      "entity": "minecraft:armor_stand{ArmorItems:[{id:'irons_spellbooks:pumpkin_boots',Count:1b},{id:'irons_spellbooks:pumpkin_leggings',Count:1b},{id:'irons_spellbooks:pumpkin_chestplate',Count:1b},{id:'irons_spellbooks:pumpkin_helmet',Count:1b}],NoBasePlate:1b}"
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "irons_spellbooks:blank_rune",
+      "title": "희귀 재료",
+      "text": "계속 진행하려면 마법 구조물에서 룬석을 주의 깊게 찾아보세요. 룬석은 한층 더 강력한 갑옷을 제작하는 데 사용됩니다. 학파 마법사들은 항상 자신의 학파 룬을 떨어뜨립니다."
+    },
+    {
+      "type": "patchouli:empty",
+      "draw_filler": false
+    }
+  ]
+}

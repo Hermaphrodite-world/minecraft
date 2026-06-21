@@ -1,0 +1,26 @@
+{
+  "name": "사이",
+  "icon": "simplyswords:iron_sai",
+  "category": "simplyswords:category_weapon_variants",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "simplyswords:iron_sai",
+      "text": "사이는 효과적으로 다루려면 높은 수준의 기술과 훈련이 필요한 다재다능한 무기다. 상대의 무기를 받아넘기고 붙잡는 능력으로 유명하여, 사용자가 전투에서 우위를 점할 수 있게 한다. 작은 크기와 다루기 쉬운 점 덕분에 비좁은 공간과 근접전에서 사용할 수 있다."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "simplyswords:iron_sai",
+      "recipe2": "simplyswords:gold_sai"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "simplyswords:diamond_sai"
+    },
+    {
+      "type": "patchouli:smithing",
+      "recipe": "simplyswords:netherite_sai",
+      "recipe2": "simplyswords:runic_sai"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "name": "불안정",
+  "icon": "simplyswords:runic_tablet",
+  "category": "simplyswords:category_rune_etching",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "simplyswords:runic_tablet",
+      "title": "불안정",
+      "text": "불안정은 소지자의 무기에 $(#9243a3)$(l)혼돈의 정수$()를 깃들게 하는 룬 권능입니다. $(br2)주기적으로 자신에게 무작위 효과를 부여할 확률을 소지자에게 줍니다."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "이 권능은 부정적인 효과를 일으킬 수도 있어 매우 예측 불가능하다는 점을 명심하십시오. $(br2)위험을 감수하고 결과에 놀라기를 즐기는 플레이어에게 이상적이지만, 전투에서 일관성을 선호하는 플레이어에게는 권장하지 않습니다."
+    }
+  ]
+}

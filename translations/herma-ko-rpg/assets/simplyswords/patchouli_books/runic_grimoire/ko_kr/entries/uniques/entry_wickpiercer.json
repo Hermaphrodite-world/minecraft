@@ -1,0 +1,12 @@
+{
+  "name": "Wickpiercer",
+  "icon": "simplyswords:wickpiercer",
+  "category": "simplyswords:category_unique_weapons",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "simplyswords:wickpiercer",
+      "text": "Wickpiercer는 화려한 촛대를 연상시키는, 우아함과 치명성을 매끄럽게 결합한 정교한 창이다. Wickpiercer는 사용자의 정신과 육체에 영향을 미쳐 분노에 휩싸이게 하고 민첩함을 끌어올리는 능력을 지녔다."
+    }
+  ]
+}

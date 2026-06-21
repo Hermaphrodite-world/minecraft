@@ -1,0 +1,26 @@
+{
+  "name": "클레이모어",
+  "icon": "simplyswords:iron_claymore",
+  "category": "simplyswords:category_weapon_variants",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "simplyswords:iron_claymore",
+      "text": "클레이모어는 베기와 찌르기 공격 모두에 적합하게 설계되었으며, 스코틀랜드 전사들이 전투에서 사용했다. 그 크기와 무게 덕분에 적에게 파멸적인 일격을 가할 수 있는 강력한 무기다."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "simplyswords:iron_claymore",
+      "recipe2": "simplyswords:gold_claymore"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "simplyswords:diamond_claymore"
+    },
+    {
+      "type": "patchouli:smithing",
+      "recipe": "simplyswords:netherite_claymore",
+      "recipe2": "simplyswords:runic_claymore"
+    }
+  ]
+}

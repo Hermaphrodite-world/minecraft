@@ -1,0 +1,78 @@
+{
+  "name": "후반",
+  "icon": "irons_spellbooks:arcane_anvil",
+  "category": "irons_spellbooks:root",
+  "sortnum": -1,
+  "read_by_default": true,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "title": "비전 모루",
+      "text": "후반은 네더라이트와 막대한 양의 기본 자원을 확보함으로써 도달하며, 비전 모루를 동력으로 삼습니다.$(br2)비전 모루는 가장 강력한 제작 장치로, 주문서의 레벨을 올리고, 갑옷과 주문책을 업그레이드하며, 무기에 주문을 부여하는 데 사용됩니다."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "irons_spellbooks:arcane_anvil"
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "추가 주문책",
+      "text": "제작 가능한 최고급 주문책들이 여기 나와 있습니다. 폐허가 된 책은 고대 도시에서 발견됩니다",
+      "recipe": "irons_spellbooks:netherite_spell_book"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "irons_spellbooks:dragonskin_spell_book",
+      "text": "드래곤가죽은 엔더 드래곤이 떨어뜨립니다"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "irons_spellbooks:cryomancer_helmet",
+      "recipe2": "irons_spellbooks:pyromancer_helmet",
+      "title": "학파 갑옷"
+    },
+    {
+      "type": "patchouli:entity",
+      "name": "예: 빙결술사 갑옷",
+      "entity": "minecraft:armor_stand{ArmorItems:[{id:'irons_spellbooks:cryomancer_boots',Count:1b},{id:'irons_spellbooks:cryomancer_leggings',Count:1b},{id:'irons_spellbooks:cryomancer_chestplate',Count:1b},{id:'irons_spellbooks:cryomancer_helmet',Count:1b}],NoBasePlate:1b}",
+      "text": "학파 갑옷은 비전 천과 특정 학파 룬으로 만들며, 이 양식을 따릅니다"
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "irons_spellbooks:upgrade_orb",
+      "title": "업그레이드",
+      "text": "업그레이드는 진행의 최종 형태입니다. 기본적으로 모든 갑옷과 주문책을 업그레이드할 수 있습니다.$(br2)특정 속성의 업그레이드 보주는 기본 업그레이드 보주 하나와 원하는 속성의 룬 8개로 만듭니다."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "irons_spellbooks:upgrade_orb",
+      "recipe2": "irons_spellbooks:fire_upgrade_orb"
+    },
+    {
+      "type": "patchouli:multiblock",
+      "name": "업그레이드 제작 재료",
+      "enable_visualize": false,
+      "multiblock": {
+        "pattern": [
+          [
+            " D S ",
+            "DA0PF"
+          ]
+        ],
+        "mapping": {
+          "D": "minecraft:deepslate",
+          "A": "irons_spellbooks:deepslate_mithril_ore",
+          "P": "irons_spellbooks:armor_pile",
+          "S": "minecraft:soul_sand",
+          "F": "minecraft:soul_fire"
+        }
+      },
+      "text": "미스릴은 희귀한 오버월드 광석으로, y = -38 아래에서 공기에 노출되지 않은 채 발견됩니다. 채굴하려면 네더라이트 곡괭이가 필요합니다."
+    },
+    {
+      "type": "patchouli:entity",
+      "entity": "irons_spellbooks:citadel_keeper",
+      "text": "잉걸 정수는 고대 기사가 떨어뜨리며, 고대 기사는 네더에서 갑옷 더미를 부숴 깨울 수 있습니다."
+    }
+  ]
+}

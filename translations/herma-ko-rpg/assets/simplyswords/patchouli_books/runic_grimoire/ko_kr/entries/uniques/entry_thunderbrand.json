@@ -1,0 +1,16 @@
+{
+  "name": "Thunderbrand",
+  "icon": "simplyswords:thunderbrand",
+  "category": "simplyswords:category_unique_weapons",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "simplyswords:thunderbrand",
+      "text": "Thunderbrand는 천둥의 힘을 다루는 전설의 미늘창이다. 이 미늘창은 전기를 손쉽게 전도하는 희귀한 금속으로 제작되었으며, 자루는 사용자가 미늘창을 안전하게 쥘 수 있도록 특수한 절연 재료로 감겨 있다."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "믿기 힘든 속도로 앞으로 돌진하는 이 미늘창의 능력은 사용자가 거리를 좁혀 치명적인 정확도로 일격을 가할 수 있게 한다. Thunderbrand는 또한 여러 적을 한 번에 강타할 수 있는 강력한 전기 충격파를 방출할 수 있어, 전장에서 가공할 무기가 된다."
+    }
+  ]
+}

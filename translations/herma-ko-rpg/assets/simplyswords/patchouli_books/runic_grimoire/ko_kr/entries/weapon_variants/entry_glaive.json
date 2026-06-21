@@ -1,0 +1,26 @@
+{
+  "name": "글레이브",
+  "icon": "simplyswords:iron_glaive",
+  "category": "simplyswords:category_weapon_variants",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "simplyswords:iron_glaive",
+      "text": "글레이브는 긴 장대나 자루 끝에 외날 칼날을 장착한 장병기의 일종으로, 베거나 자르기에 이상적이다. 글레이브의 구조는 전투에서 긴 사거리를 제공하여 공격과 방어 모두에 유용하다."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "simplyswords:iron_glaive",
+      "recipe2": "simplyswords:gold_glaive"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "simplyswords:diamond_glaive"
+    },
+    {
+      "type": "patchouli:smithing",
+      "recipe": "simplyswords:netherite_glaive",
+      "recipe2": "simplyswords:runic_glaive"
+    }
+  ]
+}

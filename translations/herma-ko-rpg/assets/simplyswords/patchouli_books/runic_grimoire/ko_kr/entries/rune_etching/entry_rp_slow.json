@@ -1,0 +1,17 @@
+{
+  "name": "둔화",
+  "icon": "simplyswords:runic_tablet",
+  "category": "simplyswords:category_rune_etching",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "simplyswords:runic_tablet",
+      "title": "둔화",
+      "text": "둔화는 사용자의 무기에 $(#87185d)$(l)나태와 무기력의 정수$()를 깃들게 하는 룬 힘입니다. $(br2)명중에 성공할 때마다 대상의 이동 속도를 늦출 기회를 부여합니다."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "둔화는 전투의 흐름을 흐트러뜨리고 사용자에게 전략적 우위를 주는 강력한 룬 힘입니다. $(br2)추격을 늦추고 재빨리 빠져나갈 수 있게 해주므로, 치고 빠지는 전술에 의존하는 캐릭터에게 이상적입니다."
+    }
+  ]
+}

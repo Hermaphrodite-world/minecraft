@@ -1,0 +1,12 @@
+{
+  "name": "Emberlash",
+  "icon": "simplyswords:emberlash",
+  "category": "simplyswords:category_unique_weapons",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "simplyswords:emberlash",
+      "text": "Emberlash는 순수하고 통제된 화염으로 이루어진 칼날을 자랑하며 통념적인 무기의 틀을 깨는 비범한 단검입니다. Emberlash는 단순한 볼거리에 그치지 않습니다. 이 작열하는 칼날은 상처를 지져 지혈하는 고유한 능력을 지녔으며, 같은 무게 등급의 대부분의 칼날보다 긴 사정거리를 자랑합니다."
+    }
+  ]
+}

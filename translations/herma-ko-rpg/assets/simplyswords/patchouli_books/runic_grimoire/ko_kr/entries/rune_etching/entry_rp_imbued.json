@@ -1,0 +1,17 @@
+{
+  "name": "마력 부여",
+  "icon": "simplyswords:runic_tablet",
+  "category": "simplyswords:category_rune_etching",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "simplyswords:runic_tablet",
+      "title": "마력 부여",
+      "text": "마력 부여는 사용자의 무기에 $(#389fff)$(l)마법의 정수$()를 깃들게 하는 룬 힘입니다. $(br2)적을 명중시킬 때 강력한 마법 에너지를 분출하는 능력을 무기에 부여합니다."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "마력 부여로 가하는 마법 피해는 종종 예측하기 어렵고, 무기의 내구도가 닳을수록 약해지는 경향이 있습니다. 마력 부여 무기를 잘 수리해 두는 것이 현명할 것입니다."
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "name": "Magiscythe",
+  "icon": "simplyswords:magiscythe",
+  "category": "simplyswords:category_unique_weapons",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "simplyswords:magiscythe",
+      "text": "이 기묘한 기술에 대해 알려진 바는 아무것도 없다."
+    }
+  ]
+}

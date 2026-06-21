@@ -1,0 +1,16 @@
+{
+  "name": "Shadowsting",
+  "icon": "simplyswords:shadowsting",
+  "category": "simplyswords:category_unique_weapons",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "simplyswords:shadowsting",
+      "text": "Shadowsting은 그림자의 힘이 깃든 가느다란 레이피어다. 이 레이피어의 고유 능력은 일정 확률로 방어구에 비례하는 마법 피해를 적에게 입혀, 가장 단단한 방어구마저 꿰뚫을 수 있게 한다."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "이 레이피어는 또한 적의 시야를 가리는 그림자 안개를 만들어내는 능력을 지니고 있는데, 이 능력은 Shadowmist라 불린다. 사용자는 이 안개를 이용해 적들 사이에 혼란과 방향 감각 상실을 일으켜, 전투에서 전략적 우위를 점할 수 있다."
+    }
+  ]
+}
