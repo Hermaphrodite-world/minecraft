@@ -65,11 +65,6 @@ hash = "36debf7653e95a855b4fedacc19027cf2e01960fc0b6d55ef2ffbffbcb455690"
 metafile = true
 
 [[files]]
-file = "mods/daily-quests.pw.toml"
-hash = "80e15edbbc6d672496cf010a905960dee3b467b5710e103125182bad251bb10e"
-metafile = true
-
-[[files]]
 file = "mods/dungeons-and-taverns.pw.toml"
 hash = "4bd59a35e9f6fe52bce5d9039e1e26b8c8e24d0e0a6fd3d6abbf6b1bdd3fb204"
 metafile = true
