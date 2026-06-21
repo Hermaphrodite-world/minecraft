@@ -5,6 +5,102 @@ file = "fix-sides.py"
 hash = "39b5e6a4be3e345eb3019dd504c068cdd4ecf3558dff19f25fd2c8db5bd94b9c"
 
 [[files]]
+file = "globalpacks/datapacks/herma-rpg-tweaks/data/irons_spellbooks/pmmo/items/blaze_spell_book.json"
+hash = "3d7a10b337b0b80171839c589906134aae3e28b4dc2ea9a14a40133e25dc2750"
+
+[[files]]
+file = "globalpacks/datapacks/herma-rpg-tweaks/data/irons_spellbooks/pmmo/items/blood_staff.json"
+hash = "1a1017c307f9064250d8921fbaa6470d5e908fa5794a0181b33aa12aa70fce26"
+
+[[files]]
+file = "globalpacks/datapacks/herma-rpg-tweaks/data/irons_spellbooks/pmmo/items/copper_spell_book.json"
+hash = "63a1c518e32631e5eec8a4ad79def5d9d7305a3bbbc2dd798ba772452e73b418"
+
+[[files]]
+file = "globalpacks/datapacks/herma-rpg-tweaks/data/irons_spellbooks/pmmo/items/diamond_spell_book.json"
+hash = "3d7a10b337b0b80171839c589906134aae3e28b4dc2ea9a14a40133e25dc2750"
+
+[[files]]
+file = "globalpacks/datapacks/herma-rpg-tweaks/data/irons_spellbooks/pmmo/items/dragonskin_spell_book.json"
+hash = "1a1017c307f9064250d8921fbaa6470d5e908fa5794a0181b33aa12aa70fce26"
+
+[[files]]
+file = "globalpacks/datapacks/herma-rpg-tweaks/data/irons_spellbooks/pmmo/items/druidic_spell_book.json"
+hash = "3d7a10b337b0b80171839c589906134aae3e28b4dc2ea9a14a40133e25dc2750"
+
+[[files]]
+file = "globalpacks/datapacks/herma-rpg-tweaks/data/irons_spellbooks/pmmo/items/evoker_spell_book.json"
+hash = "3d7a10b337b0b80171839c589906134aae3e28b4dc2ea9a14a40133e25dc2750"
+
+[[files]]
+file = "globalpacks/datapacks/herma-rpg-tweaks/data/irons_spellbooks/pmmo/items/gold_spell_book.json"
+hash = "3d7a10b337b0b80171839c589906134aae3e28b4dc2ea9a14a40133e25dc2750"
+
+[[files]]
+file = "globalpacks/datapacks/herma-rpg-tweaks/data/irons_spellbooks/pmmo/items/graybeard_staff.json"
+hash = "3d7a10b337b0b80171839c589906134aae3e28b4dc2ea9a14a40133e25dc2750"
+
+[[files]]
+file = "globalpacks/datapacks/herma-rpg-tweaks/data/irons_spellbooks/pmmo/items/ice_spell_book.json"
+hash = "3d7a10b337b0b80171839c589906134aae3e28b4dc2ea9a14a40133e25dc2750"
+
+[[files]]
+file = "globalpacks/datapacks/herma-rpg-tweaks/data/irons_spellbooks/pmmo/items/ice_staff.json"
+hash = "3d7a10b337b0b80171839c589906134aae3e28b4dc2ea9a14a40133e25dc2750"
+
+[[files]]
+file = "globalpacks/datapacks/herma-rpg-tweaks/data/irons_spellbooks/pmmo/items/illusioner_spell_book.json"
+hash = "3d7a10b337b0b80171839c589906134aae3e28b4dc2ea9a14a40133e25dc2750"
+
+[[files]]
+file = "globalpacks/datapacks/herma-rpg-tweaks/data/irons_spellbooks/pmmo/items/improved_blood_staff.json"
+hash = "1a1017c307f9064250d8921fbaa6470d5e908fa5794a0181b33aa12aa70fce26"
+
+[[files]]
+file = "globalpacks/datapacks/herma-rpg-tweaks/data/irons_spellbooks/pmmo/items/iron_spell_book.json"
+hash = "63a1c518e32631e5eec8a4ad79def5d9d7305a3bbbc2dd798ba772452e73b418"
+
+[[files]]
+file = "globalpacks/datapacks/herma-rpg-tweaks/data/irons_spellbooks/pmmo/items/necronomicon_spell_book.json"
+hash = "c7a8a05b4c30fde90f0024fd94073873363d7ab37f3bd8d0b55f4351114f38ac"
+
+[[files]]
+file = "globalpacks/datapacks/herma-rpg-tweaks/data/irons_spellbooks/pmmo/items/netherite_spell_book.json"
+hash = "1a1017c307f9064250d8921fbaa6470d5e908fa5794a0181b33aa12aa70fce26"
+
+[[files]]
+file = "globalpacks/datapacks/herma-rpg-tweaks/data/irons_spellbooks/pmmo/items/pyrium_staff.json"
+hash = "1a1017c307f9064250d8921fbaa6470d5e908fa5794a0181b33aa12aa70fce26"
+
+[[files]]
+file = "globalpacks/datapacks/herma-rpg-tweaks/data/irons_spellbooks/pmmo/items/rotten_spell_book.json"
+hash = "1a1017c307f9064250d8921fbaa6470d5e908fa5794a0181b33aa12aa70fce26"
+
+[[files]]
+file = "globalpacks/datapacks/herma-rpg-tweaks/data/irons_spellbooks/pmmo/items/spell_book.json"
+hash = "63a1c518e32631e5eec8a4ad79def5d9d7305a3bbbc2dd798ba772452e73b418"
+
+[[files]]
+file = "globalpacks/datapacks/herma-rpg-tweaks/data/irons_spellbooks/pmmo/items/staff_of_the_nines.json"
+hash = "c7a8a05b4c30fde90f0024fd94073873363d7ab37f3bd8d0b55f4351114f38ac"
+
+[[files]]
+file = "globalpacks/datapacks/herma-rpg-tweaks/data/irons_spellbooks/pmmo/items/villager_spell_book.json"
+hash = "63a1c518e32631e5eec8a4ad79def5d9d7305a3bbbc2dd798ba772452e73b418"
+
+[[files]]
+file = "globalpacks/datapacks/herma-rpg-tweaks/data/irons_spellbooks/pmmo/items/wimpy_spell_book.json"
+hash = "63a1c518e32631e5eec8a4ad79def5d9d7305a3bbbc2dd798ba772452e73b418"
+
+[[files]]
+file = "globalpacks/datapacks/herma-rpg-tweaks/data/pmmo/config/server.json"
+hash = "d0453d2af09bd0409d8be095b0e0bc1f23acde4dd7a5585e46e4ca4e92e546e9"
+
+[[files]]
+file = "globalpacks/datapacks/herma-rpg-tweaks/pack.mcmeta"
+hash = "a82d2d8ef49cfa3f60a8911391f69e5149ddce9d3ea2c25f87dd5973d80deaaf"
+
+[[files]]
 file = "mods/apotheosis.pw.toml"
 hash = "fee5ee9d360181e358b02459530b30e8148d7193a6064ec31dbcfcc447ca59ce"
 metafile = true
@@ -172,6 +268,16 @@ metafile = true
 [[files]]
 file = "mods/geckolib.pw.toml"
 hash = "0521ed2becdf2b460511c92e80e2702a4b6e540c85c99fb571844e1c7c505724"
+metafile = true
+
+[[files]]
+file = "mods/globalpacks.pw.toml"
+hash = "a7f2ae8ea415e95ce1a3518b66edcaf124d8903ff9101d07331f7fec92b3400f"
+metafile = true
+
+[[files]]
+file = "mods/hardcore-revival.pw.toml"
+hash = "27b62f12a031555f1f81f97dc7950f6c2ccc0b615c9c3867172a5cccacaa7209"
 metafile = true
 
 [[files]]

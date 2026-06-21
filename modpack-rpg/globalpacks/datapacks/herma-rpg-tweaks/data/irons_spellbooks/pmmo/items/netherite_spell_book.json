@@ -1,0 +1,11 @@
+{
+  "requirements": {
+    "USE": {
+      "magic": 45
+    },
+    "WEAPON": {
+      "magic": 45
+    }
+  },
+  "override": false
+}

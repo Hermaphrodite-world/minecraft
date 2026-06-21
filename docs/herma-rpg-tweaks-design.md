@@ -122,6 +122,24 @@ PMMO `items`/`req` config 로 "사용/착용/들기" 요구 레벨 지정:
 - **하드코어 강도**: 친구 서버라 과한 게이팅은 역효과 → 전투/마법만 강게이트, 채집/이동 느슨(§2.3).
 - **오픈 결정**: (a) Eidolon/Forbidden 유지 vs 컷 (b) Hardcore Revival 추가 여부 (c) 성장 속도(느림/보통).
 
-## 10. 현재 상태 (2026-06-22)
-- 토대 모드 추가 완료(0e78a7f + ARPG): Apotheosis/Apothic Attributes/AttributeFix/Gateways/Lootr + 보강팩(JEI/JER/미니맵/최적화/리소스/쉐이더). 88모드. dep 폐쇄 OK.
-- **다음**: Phase 1(KubeJS 추가 + PMMO 스킬 축).
+## 10. 진행 상태 (2026-06-22)
+
+### 토대 (완료)
+- ARPG/보강 모드 추가(0e78a7f, e3915eb): Apotheosis 생태계+Gateways+Lootr / JEI·JER·Xaero's·최적화·Fresh Animations·쉐이더 / KubeJS+Rhino / Hardcore Revival / GlobalPacks. dep 폐쇄 OK, fix-sides 0-server.
+
+### Phase 1 — 스킬 축 (config 작성 완료, 런타임 검증 대기)
+- **검증된 메커니즘**(PMMO/Iron's jar 실측): (a) **Magic XP = `#pmmo:magic` DEAL_DAMAGE → magic 100** → Iron's 공격 주문이 Magic 경험치 자동 부여(KubeJS 훅 불필요). (b) **게이팅 = `requirement_enabled` 마스터 스위치** — easy 프리셋 전부 OFF → 하드코어로 WEAR/WEAPON/USE ON(명시 req 있는 아이템만 게이트 = surgical). (c) PMMO에 **Iron's 방어구 46종 WEAR req 내장**.
+- **작성물**(`globalpacks/datapacks/herma-rpg-tweaks/`, GlobalPacks가 전 월드 글로벌 로드):
+  - `data/pmmo/config/server.json` — 하드코어 게이팅 ON + Magic XP(마법데미지) + 파티보너스 1.5 + 성장 normal(per_level 1.0) + 사망손실 0(친구서버). 채집/이동(BREAK/PLACE/TOOL/KILL)은 OFF=느슨(결정3).
+  - `data/irons_spellbooks/pmmo/items/*.json`(22) — 주문책/지팡이 **Magic 티어 게이트**(T1 wimpy/iron=5, T2 gold/diamond/ice=25, T3 netherite/blood=45, T4 necronomicon/staff_of_the_nines=60). USE+WEAPON req.
+- **정적 검증 통과**: PMMO 포맷(jar) + Iron's 아이템 ID(jar) + JSON 유효 + packwiz 인덱싱(24파일).
+- **⚠️ 런타임 검증 대기(BLOCKING "동작" 단정 전)**:
+  1. GlobalPacks가 datapack을 실제 로드 + PMMO가 server.json/item config 적용하나(데이터팩 reload 로그)
+  2. 게이팅 인게임 강제(레벨 부족 시 주문책 사용 차단)
+  3. 공격 주문 시전 → Magic XP 누적 확인
+  4. 밸런스(티어 레벨이 보스 진행과 맞나)
+  → 서버 부팅(Java 21) + 클라 실행으로 확인 필요.
+
+### 다음 (Phase 1 마무리 + Phase 2)
+- Simply Swords 고유무기 Combat 게이트(아이템 ID 추출 후) / Occultism 느슨 게이트 / 비-데미지 유틸 주문 XP(옵션 KubeJS)
+- Phase 2: Apotheosis 등급률 + 던전/보스 loot 주입(GlobalPacks datapack)
