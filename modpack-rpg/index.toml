@@ -5,6 +5,14 @@ file = "fix-sides.py"
 hash = "39b5e6a4be3e345eb3019dd504c068cdd4ecf3558dff19f25fd2c8db5bd94b9c"
 
 [[files]]
+file = "globalpacks/datapacks/herma-rpg-tweaks/data/herma_rpg/loot_modifiers/chest_loot/modded_generic_scrolls.json"
+hash = "b75bf4f17f5bd04f096ee2f049483bb662de79cc9efe008f58585c373576b84a"
+
+[[files]]
+file = "globalpacks/datapacks/herma-rpg-tweaks/data/herma_rpg/loot_modifiers/chest_loot/modded_treasure_scrolls.json"
+hash = "66fbff4e5d3180a3d59f5c30fbb88f6df8a9826eadc2c643a78d290d47874e6f"
+
+[[files]]
 file = "globalpacks/datapacks/herma-rpg-tweaks/data/irons_spellbooks/pmmo/items/blaze_spell_book.json"
 hash = "3d7a10b337b0b80171839c589906134aae3e28b4dc2ea9a14a40133e25dc2750"
 
@@ -91,6 +99,10 @@ hash = "63a1c518e32631e5eec8a4ad79def5d9d7305a3bbbc2dd798ba772452e73b418"
 [[files]]
 file = "globalpacks/datapacks/herma-rpg-tweaks/data/irons_spellbooks/pmmo/items/wimpy_spell_book.json"
 hash = "63a1c518e32631e5eec8a4ad79def5d9d7305a3bbbc2dd798ba772452e73b418"
+
+[[files]]
+file = "globalpacks/datapacks/herma-rpg-tweaks/data/neoforge/loot_modifiers/global_loot_modifiers.json"
+hash = "f52d9a5708b8b64561b02a4833205f8c37b94a66c1b600494d3d6dba967b5740"
 
 [[files]]
 file = "globalpacks/datapacks/herma-rpg-tweaks/data/pmmo/config/server.json"

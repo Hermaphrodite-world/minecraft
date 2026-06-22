@@ -140,6 +140,18 @@ PMMO `items`/`req` config 로 "사용/착용/들기" 요구 레벨 지정:
   4. 밸런스(티어 레벨이 보스 진행과 맞나)
   → 서버 부팅(Java 21) + 클라 실행으로 확인 필요.
 
-### 다음 (Phase 1 마무리 + Phase 2)
-- Simply Swords 고유무기 Combat 게이트(아이템 ID 추출 후) / Occultism 느슨 게이트 / 비-데미지 유틸 주문 XP(옵션 KubeJS)
-- Phase 2: Apotheosis 등급률 + 던전/보스 loot 주입(GlobalPacks datapack)
+### Phase 2 — 루트(던전→주문서) (config 작성 완료, 런타임 검증 대기)
+- **검증된 메커니즘**(Iron's jar 실측): Iron's GLM 타입 `irons_spellbooks:append_loot` + `RandomizeSpellFunction`으로 구조물 chest에 랜덤 주문서 주입. Iron's는 이미 **바닐라 + YUNG's(betterdungeons) + Structory + trial chambers** 커버. **modded 미커버 = When Dungeons Arise / Dungeons&Taverns / Cataclysm**.
+- **작성물**(herma-rpg-tweaks datapack):
+  - `data/herma_rpg/loot_modifiers/chest_loot/modded_treasure_scrolls.json` — WDA/Cataclysm **treasure 40종** → Iron's `additional_treasure_loot`(상위 주문서)
+  - `.../modded_generic_scrolls.json` — WDA/D&T **일반/도서관/대장간 48종** → `additional_generic_loot`(일반 주문서)
+  - `data/neoforge/loot_modifiers/global_loot_modifiers.json` — 등록(Iron's 것과 머지, replace:false)
+  - Iron's GLM 타입·주문서 loot table **재사용**(새 주문서 테이블 저작 불필요) → "던전/보스 treasure = 랜덤 주문서" 루프
+- **정적 검증**: GLM 포맷(Iron's 실측) + loot table ID(modded jar 실측) + JSON 유효.
+- **⚠️ 런타임 대기**: GLM 적용(던전 상자에 주문서 뜨나) + 밸런스(드랍률).
+- **🟡 Apotheosis affix 커버리지**: 기본값이 chest loot 광범위 처리 — modded 던전 affix 장비 드랍 + 등급률은 **런타임 확인 후 튜닝**(별도). Lootr는 자동(상자 인스턴스화).
+
+### 다음 (Phase 1·2 마무리 + Phase 3)
+- Phase 1: Simply Swords 고유무기 Combat 게이트 / Occultism 느슨 게이트
+- Phase 2: Apotheosis 등급률 튜닝(런타임 후) / Cataclysm 보스 entity_drops에 주문서·재료
+- Phase 3: 보스 트레드밀 게이트(KubeJS 레시피 — 보스 A 재료로 B 소환) + Gateways 연결

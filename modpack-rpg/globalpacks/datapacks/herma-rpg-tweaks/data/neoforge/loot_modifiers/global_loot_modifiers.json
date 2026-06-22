@@ -1,0 +1,7 @@
+{
+  "replace": false,
+  "entries": [
+    "herma_rpg:chest_loot/modded_treasure_scrolls",
+    "herma_rpg:chest_loot/modded_generic_scrolls"
+  ]
+}
