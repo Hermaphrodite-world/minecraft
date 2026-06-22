@@ -58,3 +58,20 @@ Thumbs.db
 *.log
 /tmp/
 launcher/tools/_*.png
+
+# ── server-rpg 부팅/동기화 런타임 산출물(스캐폴드만 커밋) ──
+server-rpg/config/
+server-rpg/defaultconfigs/
+server-rpg/globalpacks/
+server-rpg/kubejs/
+server-rpg/local/
+server-rpg/resourcepacks/
+server-rpg/packwiz.json
+server-rpg/fix-sides.py
+server-rpg/audit-rpg.py
+server-rpg/usercache.json
+server-rpg/banned-*.json
+server-rpg/ops.json
+server-rpg/whitelist.json
+server-rpg/boot.log
+server-rpg/.bootstrap.properties

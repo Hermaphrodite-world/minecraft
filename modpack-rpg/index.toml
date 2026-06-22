@@ -1,10 +1,6 @@
 hash-format = "sha256"
 
 [[files]]
-file = "fix-sides.py"
-hash = "39b5e6a4be3e345eb3019dd504c068cdd4ecf3558dff19f25fd2c8db5bd94b9c"
-
-[[files]]
 file = "globalpacks/datapacks/herma-rpg-tweaks/data/herma_rpg/gateways/gateways/raid.json"
 hash = "cc5f71538818e9725f596f584d42782cc597d1db109e174c69f2e73c655c3936"
 
