@@ -1,0 +1,95 @@
+{
+  "size": "medium",
+  "color": "#1E5AA8",
+  "waves": [
+    {
+      "entities": [
+        {
+          "entity": "minecraft:zombie",
+          "count": 6
+        },
+        {
+          "entity": "mutantmonsters:mutant_zombie",
+          "count": 2
+        }
+      ],
+      "modifiers": [
+        {
+          "attribute": "generic.max_health",
+          "operation": "add_multiplied_total",
+          "value": 0.3
+        }
+      ],
+      "rewards": [
+        {
+          "type": "gateways:stack",
+          "stack": {
+            "id": "minecraft:diamond",
+            "count": 3
+          }
+        }
+      ],
+      "max_wave_time": 2400,
+      "setup_time": 200
+    },
+    {
+      "entities": [
+        {
+          "entity": "mowziesmobs:ferrous_wroughtnaut",
+          "count": 1
+        },
+        {
+          "entity": "minecraft:skeleton",
+          "count": 4
+        }
+      ],
+      "modifiers": [
+        {
+          "attribute": "generic.max_health",
+          "operation": "add_multiplied_total",
+          "value": 0.35
+        }
+      ],
+      "rewards": [
+        {
+          "type": "gateways:entity_loot"
+        }
+      ],
+      "max_wave_time": 2400,
+      "setup_time": 200
+    },
+    {
+      "entities": [
+        {
+          "entity": "mutantmonsters:mutant_enderman",
+          "count": 1
+        },
+        {
+          "entity": "cataclysm:aptrgangr",
+          "count": 2
+        }
+      ],
+      "modifiers": [
+        {
+          "attribute": "generic.max_health",
+          "operation": "add_multiplied_total",
+          "value": 0.4
+        }
+      ],
+      "rewards": [
+        {
+          "type": "gateways:entity_loot"
+        },
+        {
+          "type": "gateways:stack",
+          "stack": {
+            "id": "minecraft:netherite_scrap",
+            "count": 2
+          }
+        }
+      ],
+      "max_wave_time": 2400,
+      "setup_time": 200
+    }
+  ]
+}

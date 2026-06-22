@@ -151,7 +151,22 @@ PMMO `items`/`req` config 로 "사용/착용/들기" 요구 레벨 지정:
 - **⚠️ 런타임 대기**: GLM 적용(던전 상자에 주문서 뜨나) + 밸런스(드랍률).
 - **🟡 Apotheosis affix 커버리지**: 기본값이 chest loot 광범위 처리 — modded 던전 affix 장비 드랍 + 등급률은 **런타임 확인 후 튜닝**(별도). Lootr는 자동(상자 인스턴스화).
 
-### 다음 (Phase 1·2 마무리 + Phase 3)
-- Phase 1: Simply Swords 고유무기 Combat 게이트 / Occultism 느슨 게이트
-- Phase 2: Apotheosis 등급률 튜닝(런타임 후) / Cataclysm 보스 entity_drops에 주문서·재료
-- Phase 3: 보스 트레드밀 게이트(KubeJS 레시피 — 보스 A 재료로 B 소환) + Gateways 연결
+### Phase 3 — 보스 트레드밀 (config 작성 완료, 런타임 검증 대기)
+- **검증된 계약**(Gateways jar 실측): gateway 정의 `{size,color,waves[entities,modifiers,rewards,max_wave_time,setup_time]}` + `gateways:gate_recipe`(shaped → gate_pearl, `gateway` 필드 바인딩) + reward 타입 `gateways:stack`/`gateways:entity_loot`. 모드 보스 엔티티 ID 확정(Mowzies ferrous_wroughtnaut/frostmaw, Mutant Monsters, Cataclysm aptrgangr).
+- **작성물**(herma-rpg-tweaks datapack):
+  - `data/herma_rpg/gateways/gateways/{trial_1,trial_2,raid}.json` — 3티어 소환 레이드:
+    - trial_1(small): 좀비/스켈+mutant_skeleton, 보상 다이아/에메랄드+entity_loot
+    - trial_2(medium): **ferrous_wroughtnaut(보스)**+mutant_zombie/enderman+aptrgangr, 보상 netherite_scrap+entity_loot
+    - raid(large): **frostmaw(보스)**+mutant_creeper/enderman+cataclysm, 보상 netherite_ingot+entity_loot
+    - 웨이브 modifier로 체력 스케일(파티 난이도). 보상 entity_loot = Apotheosis affix 장비 드랍
+  - `data/herma_rpg/recipe/gate_{trial_1,trial_2,raid}.json` — gate_pearl 제작, **티어 비용 게이트**: trial_1(diamond/gold) → trial_2(netherite_scrap+nether_star) → raid(nether_star+netherite). 자원 에스컬레이션 = "다같이 준비→소환→처치→다음 티어".
+- **정적 검증**: Gateways 스키마+엔티티 ID(jar 실측) + JSON 유효.
+- **⚠️ 런타임 대기**: gateway 소환/웨이브/보상 동작 + 난이도 밸런스 + 1.21.1 attribute 명("generic.max_health" — jar 예시 따름).
+
+### ⚠️ 누적 미검증 (4 Phase) — 런타임 검증 강력 권장
+Phase 1~3 + 보강이 모두 **herma-rpg-tweaks datapack + GlobalPacks 딜리버리 공유** → 딜리버리 1회 검증으로 전부 살거나 죽음. **클라/서버 1회 실행 후 로그+인게임 확인이 다음 우선순위**(설계 §8 검증계획).
+
+### 다음 (마무리)
+- Simply Swords 고유무기 Combat 게이트 / Occultism 느슨 게이트 / Apotheosis 등급률 튜닝(런타임 후)
+- (옵션) KubeJS 커스텀 티어 토큰으로 하드 게이트(보스 드랍 → 다음 pearl) 정교화
+- **Phase 4(밸런스/하드코어) + Phase 5(폴리시) 는 런타임 검증 통과 후**

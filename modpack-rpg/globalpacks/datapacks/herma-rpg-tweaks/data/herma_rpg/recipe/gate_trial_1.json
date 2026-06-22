@@ -1,0 +1,24 @@
+{
+  "type": "gateways:gate_recipe",
+  "group": "herma_rpg",
+  "pattern": [
+    "DGD",
+    "GED",
+    "DGD"
+  ],
+  "key": {
+    "D": {
+      "item": "minecraft:diamond"
+    },
+    "G": {
+      "item": "minecraft:gold_ingot"
+    },
+    "E": {
+      "item": "minecraft:ender_eye"
+    }
+  },
+  "result": {
+    "id": "gateways:gate_pearl"
+  },
+  "gateway": "herma_rpg:trial_1"
+}

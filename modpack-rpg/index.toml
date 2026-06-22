@@ -5,12 +5,36 @@ file = "fix-sides.py"
 hash = "39b5e6a4be3e345eb3019dd504c068cdd4ecf3558dff19f25fd2c8db5bd94b9c"
 
 [[files]]
+file = "globalpacks/datapacks/herma-rpg-tweaks/data/herma_rpg/gateways/gateways/raid.json"
+hash = "cc5f71538818e9725f596f584d42782cc597d1db109e174c69f2e73c655c3936"
+
+[[files]]
+file = "globalpacks/datapacks/herma-rpg-tweaks/data/herma_rpg/gateways/gateways/trial_1.json"
+hash = "b5d9514fe8235afe1678efc149cee26f731f63598c7c942248b683aa01ca7b99"
+
+[[files]]
+file = "globalpacks/datapacks/herma-rpg-tweaks/data/herma_rpg/gateways/gateways/trial_2.json"
+hash = "225a4910ad6c30d7ecaa554069d5239a5a989f26f0ee0d7877a18dddff01caf6"
+
+[[files]]
 file = "globalpacks/datapacks/herma-rpg-tweaks/data/herma_rpg/loot_modifiers/chest_loot/modded_generic_scrolls.json"
 hash = "b75bf4f17f5bd04f096ee2f049483bb662de79cc9efe008f58585c373576b84a"
 
 [[files]]
 file = "globalpacks/datapacks/herma-rpg-tweaks/data/herma_rpg/loot_modifiers/chest_loot/modded_treasure_scrolls.json"
 hash = "66fbff4e5d3180a3d59f5c30fbb88f6df8a9826eadc2c643a78d290d47874e6f"
+
+[[files]]
+file = "globalpacks/datapacks/herma-rpg-tweaks/data/herma_rpg/recipe/gate_raid.json"
+hash = "e9e926801f5d650da0f88770c31babcbacea383f9133e22f4a2ee1bb0f4efa70"
+
+[[files]]
+file = "globalpacks/datapacks/herma-rpg-tweaks/data/herma_rpg/recipe/gate_trial_1.json"
+hash = "a1698d09a2eab5ae2031f2cd52b8f53324f1851b7706dee937791d1565242fd5"
+
+[[files]]
+file = "globalpacks/datapacks/herma-rpg-tweaks/data/herma_rpg/recipe/gate_trial_2.json"
+hash = "df863dbf981f511a5ddaeb932531a740103672cfd50602a4a00ec7abc6676642"
 
 [[files]]
 file = "globalpacks/datapacks/herma-rpg-tweaks/data/irons_spellbooks/pmmo/items/blaze_spell_book.json"

@@ -1,0 +1,27 @@
+{
+  "type": "gateways:gate_recipe",
+  "group": "herma_rpg",
+  "pattern": [
+    "NGN",
+    "GED",
+    "NGN"
+  ],
+  "key": {
+    "N": {
+      "item": "minecraft:netherite_scrap"
+    },
+    "G": {
+      "item": "minecraft:diamond_block"
+    },
+    "E": {
+      "item": "minecraft:ender_eye"
+    },
+    "D": {
+      "item": "minecraft:nether_star"
+    }
+  },
+  "result": {
+    "id": "gateways:gate_pearl"
+  },
+  "gateway": "herma_rpg:trial_2"
+}
