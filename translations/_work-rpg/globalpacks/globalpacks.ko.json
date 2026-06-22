@@ -1,0 +1,4 @@
+{
+  "globalpacks.source.global": "[전역] %s",
+  "globalpacks.source.global_opt": "[전역 (선택)] %s"
+}

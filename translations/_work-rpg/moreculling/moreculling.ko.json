@@ -1,0 +1,8 @@
+{
+  "moreculling.config.category.item_frame": "아이템 액자 컬링",
+  "moreculling.config.category.leaves": "나뭇잎 컬링",
+  "moreculling.config.option.dontCull": "컬링 제외",
+  "moreculling.config.option.dontCull.tooltip": "여기에 블록 ID를 추가하면 해당 블록을 컬링에서 제외합니다. 예: minecraft:bamboo",
+  "moreculling.config.option.paintingCulling": "그림 컬링",
+  "moreculling.config.option.paintingCulling.tooltip": "그림의 뒷면과 안쪽 면을 컬링합니다"
+}

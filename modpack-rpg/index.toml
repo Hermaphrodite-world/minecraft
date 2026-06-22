@@ -1,6 +1,10 @@
 hash-format = "sha256"
 
 [[files]]
+file = "config/iris.properties"
+hash = "e0792eb35d91ef01ceac866401c9c565b206f80a481aff60369aae866ca26cd3"
+
+[[files]]
 file = "globalpacks/datapacks/herma-rpg-tweaks/data/herma_rpg/gateways/gateways/raid.json"
 hash = "cc5f71538818e9725f596f584d42782cc597d1db109e174c69f2e73c655c3936"
 
@@ -599,7 +603,7 @@ metafile = true
 
 [[files]]
 file = "resourcepacks/herma-korean.zip"
-hash = "5004f2ede94d7b48a8e2d5e6d3e22bfca294f1dc3cc78f4b5f99cf3374637120"
+hash = "4b8960a56e2230132ad2f7bb09280bc51072274b594cb519e0b3a97a10c9043c"
 
 [[files]]
 file = "shaderpacks/complementary-reimagined.pw.toml"

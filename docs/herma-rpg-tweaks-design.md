@@ -166,7 +166,15 @@ PMMO `items`/`req` config 로 "사용/착용/들기" 요구 레벨 지정:
 ### ⚠️ 누적 미검증 (4 Phase) — 런타임 검증 강력 권장
 Phase 1~3 + 보강이 모두 **herma-rpg-tweaks datapack + GlobalPacks 딜리버리 공유** → 딜리버리 1회 검증으로 전부 살거나 죽음. **클라/서버 1회 실행 후 로그+인게임 확인이 다음 우선순위**(설계 §8 검증계획).
 
-### 다음 (마무리)
-- Simply Swords 고유무기 Combat 게이트 / Occultism 느슨 게이트 / Apotheosis 등급률 튜닝(런타임 후)
-- (옵션) KubeJS 커스텀 티어 토큰으로 하드 게이트(보스 드랍 → 다음 pearl) 정교화
-- **Phase 4(밸런스/하드코어) + Phase 5(폴리시) 는 런타임 검증 통과 후**
+### Phase 4 — 밸런스/하드코어 (적용분 완료, 깊은 밸런스는 배치 검증 후)
+- **Hardcore Revival 추가**(결정2) — 다운된 친구 부활(영구사망 대신). config는 런타임 생성 TOML(기본값 합리적, bleed-out 시간 등은 배치 테스트 후 튜닝).
+- **PMMO 성장 normal**(결정3) — per_level 1.0, 전투/마법만 강게이트, 채집/이동 느슨(Phase 1 server.json).
+- **깊은 밸런스는 본질적으로 플레이 데이터 필요**(정직) → Apotheosis 등급률/affix 강도, 몹 난이도, 마나 비용, gateway 난이도는 **배치 런타임 검증 후 튜닝**. 블라인드 작성 안 함.
+
+### Phase 5 — 폴리시 (완료)
+- **신규 모드 한국어 번역**: 보강팩+ARPG 신규 모드 1,949키 번역(6배치). 커버리지 **22,025키 100%**(전 68 네임스페이스). EMF/ETF·Xaero's·Apotheosis속성·JEI·ModernFix·Gateways 등. herma-korean.zip(162파일) 재빌드.
+- **쉐이더 기본 OFF**(저사양 보호): `config/iris.properties`(enableShaders=false + ComplementaryReimagined_r5.8.1.zip) — 설치는 되되 기본 꺼짐, 인게임에서 켜기.
+- (옵션 잔여) 퀘스트 입문(Easy NPC/Pumpkillager's) 커스텀 — 인게임 설정 영역, 모드 기본으로 동작.
+
+### ✅ 전체 상태: Phase 1~5 작성 완료
+모든 Phase config 작성 + 정적 검증 통과 + **서버 부팅 딜리버리 검증 완료**(GlobalPacks→datapack→PMMO/Gateways/GLM 로드 확인). **남은 것 = 사용자 배치 런타임 검증**(인게임 행동: 게이팅 차단/Magic XP/주문서 드랍/gateway 소환/밸런스) → 그 결과로 Phase 4 깊은 밸런스 튜닝.

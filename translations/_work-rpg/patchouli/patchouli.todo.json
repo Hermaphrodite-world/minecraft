@@ -1,0 +1,7 @@
+{
+  "item.patchouli:pamphlet.landing": "A test pamphlet, which is a book with only one category.",
+  "item.patchouli:pamphlet.name": "Test Pamphlet",
+  "patchouli.gui.lexicon.button.toggle_mock_header": "Toggle Mock Header",
+  "patchouli.networking.open_book.failed": "Failed to open book %s",
+  "patchouli.networking.reload_contents.failed": "Failed to reload contents %S"
+}

@@ -1,0 +1,15 @@
+{
+  "hardcorerevival.configuration.allowAcceptingFate": "운명 받아들이기 허용",
+  "hardcorerevival.configuration.allowAcceptingFate.tooltip": "false로 설정하면 운명 받아들이기 버튼이 제거되어 플레이어가 타이머가 끝날 때까지 기다리도록 강제합니다.",
+  "hardcorerevival.configuration.disableInLonelyMultiplayer": "혼자 멀티플레이 시 비활성화",
+  "hardcorerevival.configuration.disableInLonelyMultiplayer.tooltip": "true이면 멀티플레이에서 혼자 플레이할 때 Hardcore Revival이 활성화되지 않습니다.",
+  "hardcorerevival.configuration.disableInSingleplayer": "싱글플레이 시 비활성화",
+  "hardcorerevival.configuration.disableInSingleplayer.tooltip": "true이면 싱글플레이에서 Hardcore Revival이 활성화되지 않습니다.",
+  "hardcorerevival.configuration.instantDeathEntityTypes": "즉사 엔티티 유형",
+  "hardcorerevival.configuration.instantDeathEntityTypes.tooltip": "K.O. 기간 없이 플레이어를 즉사시키는 근원 엔티티 유형입니다.",
+  "hardcorerevival.configuration.instantDeathSources": "즉사 피해원",
+  "hardcorerevival.configuration.instantDeathSources.tooltip": "K.O. 기간 없이 플레이어를 즉사시키는 피해원입니다.",
+  "hardcorerevival.configuration.title": "Hardcore Revival",
+  "stat.hardcorerevival.players_revived": "되살린 플레이어",
+  "stat.hardcorerevival.times_rescued": "구조된 횟수"
+}

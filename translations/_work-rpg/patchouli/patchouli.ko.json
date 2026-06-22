@@ -1,0 +1,7 @@
+{
+  "item.patchouli:pamphlet.landing": "카테고리가 하나뿐인 책, 테스트용 팸플릿입니다.",
+  "item.patchouli:pamphlet.name": "테스트 팸플릿",
+  "patchouli.gui.lexicon.button.toggle_mock_header": "모의 헤더 전환",
+  "patchouli.networking.open_book.failed": "책 %s 열기 실패",
+  "patchouli.networking.reload_contents.failed": "콘텐츠 %S 새로고침 실패"
+}
