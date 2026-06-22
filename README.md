@@ -2,7 +2,8 @@
 
 비개발자 친구도 **클릭 한 번**으로 접속하는 모드 적용 마인크래프트 서버 + 커스텀 런처.
 
-- **로더 / 버전:** Fabric / **Minecraft 26.1.2** (현재 최신, Java 25)
+- **로더 / 버전:** Fabric / **Minecraft 26.1.2** (현재 최신, Java 25) — 정식 월드
+- **RPG 트랙 (개발 중):** 별도 **1.21.1 NeoForge** 하드코어 ARPG 팩(`modpack-rpg/`) — 마법·던전·레이드 보스 트레드밀. [↓ RPG 월드](#rpg-월드-1211-neoforge)
 - **단일 진실 공급원:** packwiz 모드팩 — 서버와 런처가 같은 팩을 바라봐 버전 불일치 구조적 방지
 - **무재배포 확장:** 모드 추가 = 팩 push, 런처/서버 바이너리 무수정
 
@@ -12,7 +13,9 @@
 |------|------|
 | [`launcher/`](launcher/) | Avalonia(.NET 10) 크로스플랫폼 런처 — Windows/macOS(arm64). 실행: 자체 업데이트 → MS 로그인 → Java → packwiz 동기화 → Fabric → ServerIp 자동 접속 |
 | [`modpack/`](modpack/) | packwiz 팩 (`pack.toml` + `mods/` + `resourcepacks/` + `shaderpacks/`). 77 모드 + 4 쉐이더팩 + 6 리소스팩 + 한국어 번역 리소스팩(미번역 모드 100% 커버), side(client/server/both) 분류 완료 |
+| [`modpack-rpg/`](modpack-rpg/) | **RPG 트랙** packwiz 팩 (1.21.1 NeoForge, 92 모드) — Iron's Spells 주축 마법 + Apotheosis/Gateways/Lootr ARPG 레이어. 통합은 자작 `globalpacks/datapacks/herma-rpg-tweaks/`(PMMO config + 데이터팩). 한국어 번역팩 포함. 설계 SoT [docs/herma-rpg-tweaks-design.md](docs/herma-rpg-tweaks-design.md) |
 | [`server/`](server/) | Fabric 서버 구성 — 기동 스크립트(Aikar flags), `server.properties`(화이트리스트/online-mode), 모드 동기화, 셋업 가이드 |
+| [`server-rpg/`](server-rpg/) | **RPG 트랙** NeoForge(1.21.1) 서버 스캐폴드 — 셋업·모드 동기화. 야생→RPG 월드 이전 가이드 [docs/rpg-world-migration.md](docs/rpg-world-migration.md) |
 | [`docs/`](docs/) | 기획서 · 구현계획 · 모드구성 · 서버스택 · 런처 통합 노트 · [모드 가이드](docs/mods-guide.md)(친구용) |
 
 ## 빠른 시작
@@ -68,6 +71,31 @@ bash build-mac-app.sh publish/osx-arm64 publish/mac   # → HermaLauncher-macos-
 | macOS Apple 공증 | ✅ Developer ID 인증서 + notarytool 공증 — v1.0.x `osx-Setup.pkg` 공증·staple 출시(CI `launcher-build.yml` macos job, signcheck 게이트 통과) |
 
 > 미검증(런타임 게이트): v1.0.x 신규 UI **레이아웃**은 CI 테스트빌드로 육안 스모크됨. **런타임**(실 로그인→설치→접속 e2e, 같은 LAN '서버 주소 직접 입력' 실접속, 서버 pill 실 ping, 실 크래시 분류 정확도)은 실 환경 확인 권장 — 이상 시 roll-forward. 상세 [feature-plan](docs/launcher-v1.0-feature-plan.md).
+
+## RPG 월드 (1.21.1 NeoForge)
+
+정식 26.1.2 Fabric 월드와 **별개 트랙**으로 개발 중인 하드코어 ARPG 팩. 26.1.2 Fabric 에선 핵심 RPG/마법 모드(Iron's Spells·PMMO·Apotheosis·Cataclysm 등)가 로더 미지원이라 **1.21.1 NeoForge** 로 구성한다.
+
+- **버전/로더:** Minecraft 1.21.1 / NeoForge 21.1.234 (Java 21), `modpack-rpg/` (92 모드, packwiz)
+- **게임 루프:** 파티 플레이 → 파밍 → 던전 → **레이드 보스 트레드밀**(다같이 준비 → 처치 → 루트로 스펙업 → 더 강한 보스)
+- **주축 마법:** Iron's Spells (전투 주문·루트/장비 스케일), 보조 Occultism(소환/유틸), 사이드 Ars Nouveau / Eidolon / Forbidden Arcanus
+- **ARPG 레이어:** Apotheosis(어픽스/희귀도/젬) + Gateways to Eternity(웨이브 레이드) + Lootr(플레이어별 인스턴스 루트) + Apothic Attributes. 통합은 자작 **`herma-rpg-tweaks`**(PMMO config + 데이터팩: 마법 스킬 게이팅·주문서 루트 주입·티어별 게이트 펄 레시피)로 구현 — Java 포팅 아님(원본 모드 미수정, 라이선스 무관).
+- **저사양 배려:** 쉐이더 기본 OFF(`config/iris.properties`), 최적화 모드, Xaero 미니맵, Fresh Animations.
+- **설계 SoT:** [docs/herma-rpg-tweaks-design.md](docs/herma-rpg-tweaks-design.md) (루프·큐레이션·스킬축·보스 티어·밸런스·검증 계획).
+
+> **상태:** 팩 구성·의존성 폐쇄·헤드리스 서버 부팅(데이터팩/Gateways/PMMO 로드)·번역 100% 는 **정적 검증 완료**. **인게임 런타임 검증**(게이팅 차단·XP 적립·스크롤 드롭·게이트 소환·밸런스)은 실기기 플레이 영역 — 미검증.
+
+### 런처 채널 (3-way) — `feat/rpg-dungeon-pack` 브랜치
+
+채널-인지 런처는 `feat/rpg-dungeon-pack` 에 있고, 한 런처에서 3개 트랙을 전환한다 (`LauncherConfig.GetChannel()` SoT):
+
+| 채널 | 버전/로더 | 자동 접속 | 용도 |
+|------|-----------|-----------|------|
+| `prod` | 26.1.2 Fabric | O | 정식 멀티 월드 |
+| `beta` | 26.1.2 Fabric | X | 신규 모드 미리보기(싱글 테스트) |
+| `rpg` | 1.21.1 NeoForge | X | RPG 신규 월드(싱글 테스트) |
+
+> **브랜치 레이아웃 주의:** RPG 팩/서버(`modpack-rpg/`·`server-rpg/`)는 **`rpg`** 브랜치, 채널-인지 런처는 **`feat/rpg-dungeon-pack`** 브랜치에 분리돼 있다. 코히런트 릴리스를 위해 두 브랜치 병합/조율 필요(메인테이너 결정). 런처 NeoForge 설치 런타임은 **빌드 검증**(테스트 통과)까지 — 실설치/실행은 실기기 검증 영역.
 
 ## 라이선스
 [MIT](LICENSE) (런처 소스·스크립트·문서). 서드파티 모드는 각자 라이선스를 따르며 바이너리는 미포함(packwiz 메타데이터만).
