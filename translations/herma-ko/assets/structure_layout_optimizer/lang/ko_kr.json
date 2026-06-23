@@ -1,0 +1,8 @@
+{
+  "config.structure_layout_optimizer.title": "Structure Layout Optimizer",
+  "config.structure_layout_optimizer.desc": "직소 구조물 생성 최적화를 시도합니다",
+  "config.structure_layout_optimizer.link.bug_report": "버그 신고",
+  "config.structure_layout_optimizer.link.license": "라이선스",
+  "config.structure_layout_optimizer.deduplicate_shuffled_template_pool_element_list": "셔플된 템플릿 풀 요소 목록 중복 제거",
+  "config.structure_layout_optimizer.deduplicate_shuffled_template_pool_element_list.desc": "구조물이 템플릿 풀 가중치에 적용하는 기본 최적화보다 구조물 배치 생성을 더 빠르게 만드는 대체 전략을 사용할지 여부입니다. 이 전략은 구조물이 템플릿 풀에서 수집하는 조각 목록에서 중복 항목을 제거하는 방식으로 작동합니다.\n구조물 생성이 깨지지는 않지만, 이 옵션을 끈 경우와 구조물 배치가 달라집니다(바닐라 씨앗 동등성이 깨짐). 템플릿 풀에서 매우 높은 가중치를 사용하는 구조물 모드가 많은 대형 모드팩에서는 속도 향상이 충분히 가치 있을 수 있습니다.\n\n장점: 높은 가중치의 템플릿 풀 구조물에서 성능이 향상됩니다.\n단점: 구조물 배치에서 바닐라 씨앗과의 동등성을 잃습니다. (구조물 배치가 깨지는 것이 아니라 달라지는 것입니다)"
+}

@@ -1,0 +1,13 @@
+{
+  "smoothswapping.config.menu": "Smooth Swapping 설정 메뉴",
+  "smoothswapping.config.toggle": "모드 토글",
+  "smoothswapping.config.toggle.on": "켜짐",
+  "smoothswapping.config.toggle.off": "꺼짐",
+  "smoothswapping.config.testinventory": "인벤토리 테스트",
+  "smoothswapping.config.option.animationspeed.tooltip": "-빈 공간을 우클릭하여 새 곡선 점 추가\n-점을 좌클릭한 채 드래그하여 이동\n-우클릭하여 점 삭제",
+  "smoothswapping.config.option.animationspeed": "애니메이션 속도",
+  "smoothswapping.config.option.animationspeed.speed": "속도",
+  "smoothswapping.config.option.animationspeed.reset": "초기화",
+  "smoothswapping.config.save": "저장 후 나가기",
+  "smoothswapping.config.exit": "나가기"
+}

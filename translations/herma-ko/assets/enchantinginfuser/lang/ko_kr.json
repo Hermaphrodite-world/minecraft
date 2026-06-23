@@ -1,0 +1,16 @@
+{
+  "block.enchantinginfuser.advanced_enchanting_infuser": "고급 마법부여 주입기",
+  "block.enchantinginfuser.enchanting_infuser": "마법부여 주입기",
+  "block.enchantinginfuser.enchanting_infuser.description.choose": "장비에 마법부여를 선택하세요.",
+  "block.enchantinginfuser.enchanting_infuser.description.choose_and_modify": "장비에 마법부여를 선택·변경·제거하세요.",
+  "block.enchantinginfuser.enchanting_infuser.description.repair": "레벨을 소모해 장비를 수리하세요.",
+  "gui.enchantinginfuser.enchantment.tooltip.current_enchanting_power": "마법부여 동력: %s / %s",
+  "gui.enchantinginfuser.enchantment.tooltip.incompatible": "이 마법부여는 다음과 호환되지 않습니다: %s",
+  "gui.enchantinginfuser.enchantment.tooltip.low_power1": "이 마법부여의 레벨을 더 올리려면 마법부여 동력이 더 높은 주입기가 필요합니다.",
+  "gui.enchantinginfuser.enchantment.tooltip.low_power2": "이 마법부여의 레벨을 변경하려면 마법부여 동력이 더 높은 주입기가 필요합니다.",
+  "gui.enchantinginfuser.enchantment.tooltip.unknown_enchantment": "이 마법부여는 현재 주입기의 마법부여 동력으로는 너무 강력합니다.",
+  "gui.enchantinginfuser.infusing.tooltip.change": "%s -> %s",
+  "gui.enchantinginfuser.infusing.tooltip.durability": "내구도: %s",
+  "gui.enchantinginfuser.infusing.tooltip.enchanting_power_hint": "주입기 주변 최대 두 층 높이의 정사각형 범위에 책장을 더 배치하세요.",
+  "gui.enchantinginfuser.infusing.tooltip.points": "경험치 획득"
+}

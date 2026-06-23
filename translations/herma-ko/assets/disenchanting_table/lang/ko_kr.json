@@ -1,0 +1,10 @@
+{
+  "itemGroup.disenchantingTable": "마법해제 테이블",
+  "block.disenchanting_table.disenchanting_table": "마법해제 테이블",
+  "item.disenchanting_table.disenchanting_table": "마법해제 테이블",
+  "container.disenchanting_table": "마법해제 테이블",
+  "gui.disenchanting_table.mode.manual": "모드: 수동",
+  "gui.disenchanting_table.mode.auto": "모드: 자동",
+  "container.disenchanting_table.cost_points": "마법해제 비용: %s 포인트",
+  "container.disenchanting_table.cost_levels": "마법해제 비용: %s 레벨"
+}

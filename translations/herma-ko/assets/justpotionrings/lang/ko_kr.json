@@ -1,0 +1,17 @@
+{
+  "itemGroup.justpotionrings.potion_rings": "포션 반지",
+  "item.justpotionrings.ring": "%s의 반지",
+  "item.justpotionrings.potion_ring": "포션 반지",
+  "advancements.justpotionrings.potion_ring.title": "예에에!!!",
+  "advancements.justpotionrings.potion_ring.description": "첫 번째 반지를 얻으세요",
+  "advancements.justpotionrings.craft_ring.title": "내 소중한 것...",
+  "advancements.justpotionrings.craft_ring.description": "반지를 강화하세요",
+  "advancements.justpotionrings.hero_ring.title": "모두를 지배하는 하나의 반지",
+  "advancements.justpotionrings.hero_ring.description": "떠돌이 상인과 거래해 마을의 영웅 반지를 획득하세요",
+  "advancements.justpotionrings.night_ring.title": "그것들을 찾아내는 하나의 반지",
+  "advancements.justpotionrings.night_ring.description": "사막 피라미드에서 야간 투시 반지를 얻으세요",
+  "advancements.justpotionrings.luck_ring.title": "모두를 이끄는 하나의 반지",
+  "advancements.justpotionrings.luck_ring.description": "삼림 대저택에서 행운 반지를 얻으세요",
+  "advancements.justpotionrings.health_ring.title": "그리고 어둠 속에서 묶어라",
+  "advancements.justpotionrings.health_ring.description": "엔드 도시에서 체력 강화 반지를 얻으세요"
+}
