@@ -1,0 +1,10 @@
+{
+  "item.xpbook.xp_book": "구버전 — 마우스 우클릭으로 변환",
+  "item.xpbook.xp_tome": "경험치 책",
+  "xpbook.tooltip.store.max": "웅크리기 + 우클릭으로 경험치를 최대한 저장",
+  "xpbook.tooltip.store.previous": "웅크리기 + 우클릭으로 경험치를 최대 1레벨 저장",
+  "xpbook.tooltip.retrieve.max": "우클릭으로 경험치를 모두 회수",
+  "xpbook.tooltip.retrieve.next": "우클릭으로 경험치를 최대 1레벨 회수",
+  "xpbook.tooltip.retrieve.orb": "경험치 구슬 생성",
+  "xpbook.tooltip.stored_xp": "%1$s/%2$s 경험치 저장됨"
+}

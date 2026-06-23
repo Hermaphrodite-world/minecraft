@@ -1,0 +1,13 @@
+name = "Dis-Enchanting Table"
+filename = "disenchanting_table-fabric-26.1.2-6.0.1.jar"
+side = "both"
+
+[download]
+url = "https://cdn.modrinth.com/data/9BgYgXE4/versions/WSRE79x0/disenchanting_table-fabric-26.1.2-6.0.1.jar"
+hash-format = "sha512"
+hash = "58c233e1d3d633a85d459ef6701e072ae9d7a879f7cf6bbf7c16101efada460ff39cd52bbf5225431a6cad76e0c8e49e3a870f7f68f981a030460cf80ab0e1cd"
+
+[update]
+[update.modrinth]
+mod-id = "9BgYgXE4"
+version = "WSRE79x0"

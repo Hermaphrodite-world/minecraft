@@ -1,0 +1,13 @@
+name = "Item Tooltips"
+filename = "item-tooltips-26.1-r2.3-fabric.jar"
+side = "both"
+
+[download]
+url = "https://cdn.modrinth.com/data/JAn3TQr0/versions/hplm5cM4/item-tooltips-26.1-r2.3-fabric.jar"
+hash-format = "sha512"
+hash = "dd8de411209fb14e706ba460fe17d727055ca41c1118ab03aae77068b24b6b5b4eb9daa7a16803ae2d89326f699293f1f9171ecca82a91060e7b31e842903c62"
+
+[update]
+[update.modrinth]
+mod-id = "JAn3TQr0"
+version = "hplm5cM4"

@@ -1,0 +1,16 @@
+{
+  "tooltrims.title": "Tool Trims",
+  "advancements.adventure.shiny_tools.title": "빛나는 도구",
+  "advancements.adventure.shiny_tools.description": "대장장이 작업대에서 장식된 도구를 제작하세요",
+  "advancements.adventure.tools_of_all_styles.title": "모든 스타일의 도구",
+  "advancements.adventure.tools_of_all_styles.description": "모든 도구 장식 대장장이 틀을 최소 한 번씩 적용하세요",
+  "template.tooltrims.applies_to": "무기 및 도구",
+  "trim_pattern.tooltrims.linear": "선형 도구 장식",
+  "trim_pattern.tooltrims.tracks": "트랙 도구 장식",
+  "trim_pattern.tooltrims.charge": "차지 도구 장식",
+  "trim_pattern.tooltrims.frost": "서리 도구 장식",
+  "tooltip.linear_template": "선형 도구 장식 대장장이 틀퀀",
+  "tooltip.tracks_template": "트랙 도구 장식 대장장이 틀퀁",
+  "tooltip.charge_template": "차지 도구 장식 대장장이 틀퀂",
+  "tooltip.frost_template": "서리 도구 장식 대장장이 틀퀃"
+}

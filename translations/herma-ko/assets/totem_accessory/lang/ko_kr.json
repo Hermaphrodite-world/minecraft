@@ -1,0 +1,7 @@
+{
+  "accessory_type.totem_accessory.totem": "토템",
+  "dataPack.totem_accessory.description": "Totem Accessory 모드 리소스",
+  "dataPack.totem_type.description": "언데잉의 토템을 전용 장신구 유형으로 사용하도록 변경합니다",
+  "dataPack.totem_type.name": "토템 장신구 유형",
+  "tag.item.totem_accessory.totem": "토템"
+}

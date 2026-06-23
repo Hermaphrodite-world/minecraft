@@ -1,0 +1,7 @@
+{
+  "tooltip.toolstats.harvestlevel": " 채굴 레벨 %d",
+  "tooltip.toolstats.efficiency": " 채굴 속도 %s",
+  "tooltip.toolstats.enchantability": " 마법부여 능력치 %d",
+  "tooltip.toolstats.repaircost": " 수리 비용: %d",
+  "tooltip.toolstats.when_on.horse": "말 탑승 중:"
+}

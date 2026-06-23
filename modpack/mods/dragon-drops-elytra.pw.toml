@@ -1,0 +1,13 @@
+name = "Dragon Drops Elytra"
+filename = "dragondropselytra-26.1.2-3.6.jar"
+side = "server"
+
+[download]
+url = "https://cdn.modrinth.com/data/DPkbo3dg/versions/QbLd0tvF/dragondropselytra-26.1.2-3.6.jar"
+hash-format = "sha512"
+hash = "03912efcb1894318893ed928b49f5f275fa9b917f912642414128205d141714e3c57ca83b90b27371cd23ab22ab94a6a0223abba742a09568b9a61402df474e9"
+
+[update]
+[update.modrinth]
+mod-id = "DPkbo3dg"
+version = "QbLd0tvF"

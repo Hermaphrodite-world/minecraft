@@ -1,0 +1,13 @@
+name = "Elytra Accessory"
+filename = "elytra_accessory-1.3.4-fabric+26.1.2.jar"
+side = "both"
+
+[download]
+url = "https://cdn.modrinth.com/data/pLVRp7qd/versions/pkTF4tXD/elytra_accessory-1.3.4-fabric%2B26.1.2.jar"
+hash-format = "sha512"
+hash = "c1693cae4a5f0be4a734298902716c4617016d9babc24ef1b187c7bbbb810bba56009b4766cfdcd9849c4ef8ff1fb02f786fff64ab537a93a70ffa2d576ea88e"
+
+[update]
+[update.modrinth]
+mod-id = "pLVRp7qd"
+version = "pkTF4tXD"

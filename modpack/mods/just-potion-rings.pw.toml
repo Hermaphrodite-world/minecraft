@@ -1,0 +1,13 @@
+name = "Just Potion Rings"
+filename = "JustPotionRings-FABRIC-26.1.2-v2.0.jar"
+side = "both"
+
+[download]
+url = "https://cdn.modrinth.com/data/6C3LNL9Q/versions/avUnjpBv/JustPotionRings-FABRIC-26.1.2-v2.0.jar"
+hash-format = "sha512"
+hash = "ef36f7277be016676d2b3006330c4149ee42800e4cb96e075a31c1dba5b00f40471065390386c341fddfef7924a7073fb03c55a44af637298911feaa8fd7ac27"
+
+[update]
+[update.modrinth]
+mod-id = "6C3LNL9Q"
+version = "avUnjpBv"

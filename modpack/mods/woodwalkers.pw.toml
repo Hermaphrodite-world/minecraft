@@ -1,0 +1,13 @@
+name = "woodwalkers"
+filename = "walkers-fabric-8.2.jar"
+side = "both"
+
+[download]
+url = "https://cdn.modrinth.com/data/Sr1HeD8z/versions/32DtlEjn/walkers-fabric-8.2.jar"
+hash-format = "sha512"
+hash = "1adebf55418acf87729527d7092f60042008490d8a429ad7efd9e51392760f432db554d0a26864adda6fbf99af0afc6b7621c25b5d7131ca3dfcaebf37cfa3e8"
+
+[update]
+[update.modrinth]
+mod-id = "Sr1HeD8z"
+version = "32DtlEjn"

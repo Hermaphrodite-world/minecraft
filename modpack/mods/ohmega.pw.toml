@@ -1,0 +1,13 @@
+name = "Ohmega"
+filename = "ohmega-1.6.0-beta.16-fabric-mc26.1.2.jar"
+side = "both"
+
+[download]
+url = "https://cdn.modrinth.com/data/scvT0o5w/versions/SEhZH4uv/ohmega-1.6.0-beta.16-fabric-mc26.1.2.jar"
+hash-format = "sha512"
+hash = "dbe6c8bbad8ae0e18bc4f9552412eac533181b910b171dc59d00236eccfb3708fddae3a76c52b9ef4c88a5ed20ea5087c8ef68d0dfe96849cf1b4efc3ecb8cac"
+
+[update]
+[update.modrinth]
+mod-id = "scvT0o5w"
+version = "SEhZH4uv"

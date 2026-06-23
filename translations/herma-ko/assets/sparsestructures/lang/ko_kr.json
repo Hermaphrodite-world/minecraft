@@ -1,0 +1,6 @@
+{
+  "command.sparsestructures.dump.dumping": "구조물 세트 덤프 중...",
+  "command.sparsestructures.dump.success": "구조물 세트가 `%s`에 덤프되었습니다",
+  "command.sparsestructures.dump.failure": "구조물 세트 덤프에 실패했습니다. 로그에서 오류를 확인하세요",
+  "command.sparsestructures.dump.server": "(결과는 서버 파일에서 확인할 수 있습니다)"
+}

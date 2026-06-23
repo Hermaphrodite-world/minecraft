@@ -1,0 +1,13 @@
+name = "Coins JE"
+filename = "Coins-fabric-MC26.1.2-26.1.2.4.jar"
+side = "both"
+
+[download]
+url = "https://cdn.modrinth.com/data/b8aQgkOD/versions/2H8opaYj/Coins-fabric-MC26.1.2-26.1.2.4.jar"
+hash-format = "sha512"
+hash = "4c1e0ddae8bcf5e855a766f7bb98ffbcb9000334863445ad74787382e3c368748a595cdc617b5649ab8c5cf7561e83a4e2f0bb539c055bede16b0a9c42ac9a60"
+
+[update]
+[update.modrinth]
+mod-id = "b8aQgkOD"
+version = "2H8opaYj"

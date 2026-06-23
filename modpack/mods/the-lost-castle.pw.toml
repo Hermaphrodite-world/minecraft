@@ -1,0 +1,13 @@
+name = "The Lost Castle"
+filename = "tlc-fabric-26.1-2.1.1.jar"
+side = "server"
+
+[download]
+url = "https://cdn.modrinth.com/data/FGlHZl7X/versions/ii7tzK3s/tlc-fabric-26.1-2.1.1.jar"
+hash-format = "sha512"
+hash = "718a734bcd9fdca056880aa4544862560457974355eed7a00e0dc06c16e96598ca2001d3231c15794d1ff6db0c336af51b2d592d594ef5f7ecaf2e633e82fea2"
+
+[update]
+[update.modrinth]
+mod-id = "FGlHZl7X"
+version = "ii7tzK3s"

@@ -1,0 +1,13 @@
+name = "Ecologics"
+filename = "Ecologics-NeoFab-26.1.2-2.5.1.jar"
+side = "both"
+
+[download]
+url = "https://cdn.modrinth.com/data/NCKpPR0Z/versions/GzscKxxa/Ecologics-NeoFab-26.1.2-2.5.1.jar"
+hash-format = "sha512"
+hash = "faf5fbacd0526dd64201ebdd7fe49810e2f18a9359a7945fc3e886da4c557e8d6bd8f74ef7c2fe5feda1ec055deaf0a6f36b592fbb00ef159b03160abdc3c5dc"
+
+[update]
+[update.modrinth]
+mod-id = "NCKpPR0Z"
+version = "GzscKxxa"

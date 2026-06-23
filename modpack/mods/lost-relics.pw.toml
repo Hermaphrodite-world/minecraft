@@ -1,0 +1,13 @@
+name = "Lost Relics"
+filename = "lost-relics-26.1-r6.jar"
+side = "both"
+
+[download]
+url = "https://cdn.modrinth.com/data/xF60FXqO/versions/AoLp3c4i/lost-relics-26.1-r6.jar"
+hash-format = "sha512"
+hash = "e6bc726797c1a2e8ffd43925b6707a5d1548803878194773331a162816826efbe18a24ac54891c8865e9b10255d8776a831f2fd800cd4d26b92a70860d7a96ed"
+
+[update]
+[update.modrinth]
+mod-id = "xF60FXqO"
+version = "AoLp3c4i"

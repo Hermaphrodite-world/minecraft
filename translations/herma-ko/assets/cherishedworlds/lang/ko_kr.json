@@ -1,0 +1,7 @@
+{
+  "selectWorld.cherishedworlds.favorite": "즐겨찾기에 추가",
+  "selectWorld.cherishedworlds.unfavorite": "즐겨찾기에서 제거",
+  "gui.cherishedworlds.config.backupWorldType": "더 높은 버전의 마인크래프트로 세계를 불러올 때 백업을 묻는 세계 유형을 설정합니다.",
+  "gui.narrate.cherishedworlds.favorite": "%s을(를) 즐겨찾기에 추가",
+  "gui.narrate.cherishedworlds.unfavorite": "%s을(를) 즐겨찾기에서 제거"
+}

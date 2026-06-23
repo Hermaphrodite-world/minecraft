@@ -1,0 +1,13 @@
+name = "Transmog"
+filename = "transmog-fabric-1.8.0+26.1.jar"
+side = "both"
+
+[download]
+url = "https://cdn.modrinth.com/data/Th33t82F/versions/y7lIJ1rw/transmog-fabric-1.8.0%2B26.1.jar"
+hash-format = "sha512"
+hash = "fbcc2b0af0729460ee6bd9661474c18e47994d0565f592d678e94a4704dcf815d5f576745e1d25696a6e39033040f00f36632beaaea4dff7f3ede9ea5497f151"
+
+[update]
+[update.modrinth]
+mod-id = "Th33t82F"
+version = "y7lIJ1rw"

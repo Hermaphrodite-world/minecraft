@@ -1,0 +1,13 @@
+name = "Boss Checklist"
+filename = "boss_checklist-5.0.2.jar"
+side = "both"
+
+[download]
+url = "https://cdn.modrinth.com/data/z1Dv56jq/versions/XMSrOuDI/boss_checklist-5.0.2.jar"
+hash-format = "sha512"
+hash = "33b9afdfe1d14268b0876d2ce362db632bfb79703676ad46612a7c8c48d324296eadb60557f9c5c927204ecd1c14dac1897fef97111146235e2cf0757e6af4ee"
+
+[update]
+[update.modrinth]
+mod-id = "z1Dv56jq"
+version = "XMSrOuDI"
