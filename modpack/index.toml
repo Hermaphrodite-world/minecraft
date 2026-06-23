@@ -440,11 +440,6 @@ hash = "ce665d02a697e2df0134584d967690414b970c8997f0d0cd0c9195a3a90cf32d"
 metafile = true
 
 [[files]]
-file = "mods/just-potion-rings.pw.toml"
-hash = "6005a537ce01118982f4031c1a420b433a4e15d6aa5382a6752959c67cda84dd"
-metafile = true
-
-[[files]]
 file = "mods/katters-structures.pw.toml"
 hash = "1247cd5d0464f893281224397e12db1d9f296d8c88fa042706fbfae24fd21b8f"
 metafile = true
