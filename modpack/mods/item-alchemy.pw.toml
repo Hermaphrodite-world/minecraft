@@ -1,0 +1,13 @@
+name = "Item Alchemy"
+filename = "itemalchemy-1.3.3.jar"
+side = "both"
+
+[download]
+url = "https://cdn.modrinth.com/data/cfQx2fbQ/versions/JbioWxa3/itemalchemy-1.3.3.jar"
+hash-format = "sha512"
+hash = "e8017429438c19846b0f07c89a4efbcfbfa4a452da52d120aff52c273cde4cf2d655d0dec28d03eba6eb8d70876b99396349b505f36c8c58635167b6e8f5dd43"
+
+[update]
+[update.modrinth]
+mod-id = "cfQx2fbQ"
+version = "JbioWxa3"

@@ -1,0 +1,13 @@
+name = "Custom Portals"
+filename = "CustomPortals-4.0.0+26.1.2.jar"
+side = "both"
+
+[download]
+url = "https://cdn.modrinth.com/data/38pHU3u5/versions/TPlalLmt/CustomPortals-4.0.0%2B26.1.2.jar"
+hash-format = "sha512"
+hash = "f3269e0d6bff5c9dc1931e0ff401f558d541b7813581b876d40f229ea1760ee690e9072d95c5cef564ebe4cc54f458a5f417cb68eb1c11dfacc71cd1654f8362"
+
+[update]
+[update.modrinth]
+mod-id = "38pHU3u5"
+version = "TPlalLmt"

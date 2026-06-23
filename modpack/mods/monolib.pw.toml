@@ -1,0 +1,13 @@
+name = "MonoLib"
+filename = "monolib-fabric-26.1.2-4.0.2.jar"
+side = "both"
+
+[download]
+url = "https://cdn.modrinth.com/data/9leXt4A5/versions/hkYCNbeF/monolib-fabric-26.1.2-4.0.2.jar"
+hash-format = "sha512"
+hash = "f6d847c5b0f4ecc8eeb1d91a9792ce72a93a60a6930b11200437a0b306d8ad0cf0ca9f4a9bbd990dbc8c9f75314c69bb9fab456a7fdf68f38ff93b8d40b9b0d9"
+
+[update]
+[update.modrinth]
+mod-id = "9leXt4A5"
+version = "hkYCNbeF"

@@ -1,0 +1,13 @@
+name = "MCPitanLib"
+filename = "mcpitanlib-3.7.1-26.1-fabric.jar"
+side = "both"
+
+[download]
+url = "https://cdn.modrinth.com/data/uNRoUnGT/versions/682hEBJE/mcpitanlib-3.7.1-26.1-fabric.jar"
+hash-format = "sha512"
+hash = "2e349f0f89d45a8f237f4b3e96e2f28ccab33a555ec5f5c7b2da7059132b776ba9c02ceae429081556ad299f65634a3757617d3ab93047a4b6275f5b9bb933f2"
+
+[update]
+[update.modrinth]
+mod-id = "uNRoUnGT"
+version = "682hEBJE"
