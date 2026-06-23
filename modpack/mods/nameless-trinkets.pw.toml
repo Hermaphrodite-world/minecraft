@@ -1,0 +1,13 @@
+name = "Nameless Trinkets"
+filename = "Nameless Trinkets-fabric-26.1.2-1.2.5.jar"
+side = "both"
+
+[download]
+url = "https://cdn.modrinth.com/data/yGp7IenE/versions/F09vCdYj/Nameless%20Trinkets-fabric-26.1.2-1.2.5.jar"
+hash-format = "sha512"
+hash = "5b0c30f24782ac6ed86efa8a05d11b51a3e0e5a8dc282d63358a90e21e46cda63a000b24ae64d6f06f91465f13ed7239048d03e5b9197d99e4d8c0d6c5371e17"
+
+[update]
+[update.modrinth]
+mod-id = "yGp7IenE"
+version = "F09vCdYj"

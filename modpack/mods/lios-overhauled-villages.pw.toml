@@ -1,0 +1,13 @@
+name = "Lios Overhauled Villages"
+filename = "lios_overhauled_villages-0.1.1.jar"
+side = "server"
+
+[download]
+url = "https://cdn.modrinth.com/data/piqpXT8s/versions/x0cOROlt/lios_overhauled_villages-0.1.1.jar"
+hash-format = "sha512"
+hash = "b0e6b0175d42dd645274ba3d3ebc11a37e3704967477b8293788e2610ef01bdd4f1a23c6a47a0d3c3814438116d16933421b746457efa1f8a5075220b154b929"
+
+[update]
+[update.modrinth]
+mod-id = "piqpXT8s"
+version = "x0cOROlt"

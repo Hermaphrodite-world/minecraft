@@ -10,6 +10,11 @@ hash = "8c8f44ed74ea93a496ac1d476ab71b59b0b15a780d5ab60e5559ef637105ee6d"
 metafile = true
 
 [[files]]
+file = "mods/adorabuild-structures.pw.toml"
+hash = "e9476bdf0adf2b310652f7fd115807f836e61d4c00d27d548e2e46909302b1de"
+metafile = true
+
+[[files]]
 file = "mods/advanced-netherite.pw.toml"
 hash = "d2d8bff5842ba5ddea158a6974c62acb234c92ed3397ea924186db5c6b27a013"
 metafile = true
@@ -75,8 +80,23 @@ hash = "996ec8b8484c0709cc66e7eaa7a22535375fab7aed76e2ec4db34b5323aa382f"
 metafile = true
 
 [[files]]
+file = "mods/bookshelf-lib.pw.toml"
+hash = "ace55aadaf8628c9da5cd495b0a71fc3e08cf82b83b85524555235139f3d15d2"
+metafile = true
+
+[[files]]
+file = "mods/boss-checklist.pw.toml"
+hash = "bbd773380a85248fc2cf260320ffbf0cd3dbd5276edf19049c6b3a505fbdc17f"
+metafile = true
+
+[[files]]
 file = "mods/capes.pw.toml"
 hash = "5979da4f06033b5fd04d935c33e6bf3b6124dfcd23a413763fff9e37c7103e77"
+metafile = true
+
+[[files]]
+file = "mods/charged-charms.pw.toml"
+hash = "b3c3f7801382784dfd21caef102354d18702292467debd64820ec72050239bf4"
 metafile = true
 
 [[files]]
@@ -107,6 +127,11 @@ metafile = true
 [[files]]
 file = "mods/cobweb.pw.toml"
 hash = "b21938bfc71d238fdf80f01542a3bf4caceb1eaf11972165b5df2d4fc05ab5ef"
+metafile = true
+
+[[files]]
+file = "mods/coins-je.pw.toml"
+hash = "5061a410f437a379eecefac6e923298f1a161c62968e805854e8ab914dadfb10"
 metafile = true
 
 [[files]]
@@ -165,6 +190,36 @@ hash = "99412c4ff7729d39654a4214dd20e93dba9774c878f099c0310cb9d68c466894"
 metafile = true
 
 [[files]]
+file = "mods/dragon-drops-elytra.pw.toml"
+hash = "20419e1f44c045d49800ffa10c37ff5b9da7418d659222e6f29766d2f65b4120"
+metafile = true
+
+[[files]]
+file = "mods/dungeons-and-taverns-ancient-city-overhaul.pw.toml"
+hash = "dc70d618edbc3d67e29ff7bb0264faa6bc330a47f5a269f60a05c803bb9fb8c7"
+metafile = true
+
+[[files]]
+file = "mods/dungeons-and-taverns-nether-fortress-overhaul.pw.toml"
+hash = "165ea8db8aaac2414bee605e0ad43646797e54856e9215f39cb2708117208fa2"
+metafile = true
+
+[[files]]
+file = "mods/dungeons-and-taverns-ocean-monument-overhaul.pw.toml"
+hash = "3ab15b5692534ed29589bf26ccbe3d8a8f86a25eef1c4115226a8fa2e3ad6d1a"
+metafile = true
+
+[[files]]
+file = "mods/dungeons-and-taverns-pillager-outpost-overhaul.pw.toml"
+hash = "19ce920d3d6cf9d2f28cab369567fe605135769997c699fc20646116de0e2671"
+metafile = true
+
+[[files]]
+file = "mods/dungeons-and-taverns-woodland-mansion-overhaul.pw.toml"
+hash = "d2eaff6c7c090e99288189a98e522b6a02488158df6f158843bb93f85275d56a"
+metafile = true
+
+[[files]]
 file = "mods/dungeons-and-taverns.pw.toml"
 hash = "7897b302a81d821dfd3c2c431d97b2020f631d228effcd000374c73fae8f7c2d"
 metafile = true
@@ -190,6 +245,11 @@ hash = "1cb0e4851398369d643f3fa795c96a196a3d0aefc0d7963422691377c985b737"
 metafile = true
 
 [[files]]
+file = "mods/elytra-accessory.pw.toml"
+hash = "f82d3aa8997cd4af9b10cf0fff3844932f1115ee0d9389350e53206e02880c92"
+metafile = true
+
+[[files]]
 file = "mods/enchancement.pw.toml"
 hash = "cf7c3b597419463d92afb0d4e2e97a7c1c7a1c3ccb5937594b5056798635a9aa"
 metafile = true
@@ -205,6 +265,11 @@ hash = "7ededa42ae59092c56344c43b6ac8328b7e42658c54605c5b7f00b869cf34eef"
 metafile = true
 
 [[files]]
+file = "mods/endrem.pw.toml"
+hash = "349d78d681aefa3fa18f63f8c3a3555cba6b0824e84f8f35c6e53381d2a7a77a"
+metafile = true
+
+[[files]]
 file = "mods/entity-model-features.pw.toml"
 hash = "6c2f5d0b6229451159ab5d44c1b38954dc0236b94388b6e0ac174b5475cd2135"
 metafile = true
@@ -217,6 +282,11 @@ metafile = true
 [[files]]
 file = "mods/entitytexturefeatures.pw.toml"
 hash = "93be568ffd5908e1991054d273d0d008204afe55a53714bff471719d32dcbb5d"
+metafile = true
+
+[[files]]
+file = "mods/eternal-nether.pw.toml"
+hash = "fd86c7cc19752c93a419f6d51f1fd38bf379ca7eea8fcea55a781774e5c8bc44"
 metafile = true
 
 [[files]]
@@ -300,6 +370,21 @@ hash = "62b4398ba178efecba4aced610039b1003a8cc82ce5931e3fe0f6541f69a6870"
 metafile = true
 
 [[files]]
+file = "mods/hopo-better-mineshaft.pw.toml"
+hash = "f8cbfaee3a6174d7aaf21d30c69cb1970dc34aef9676da495b5d68d11baafdf0"
+metafile = true
+
+[[files]]
+file = "mods/hopo-better-ruined-portals.pw.toml"
+hash = "698ad1b118a12238d2cdeda0e06b971efa7f70940d53b993adbd5ca62ac1fa84"
+metafile = true
+
+[[files]]
+file = "mods/hopo-better-underwater-ruins.pw.toml"
+hash = "2a8b8c45b7e701f23a3c13ba30f6f56114841a23a1315f57d3fad7d20ec65fd5"
+metafile = true
+
+[[files]]
 file = "mods/illager-invasion.pw.toml"
 hash = "7a0224fd9a92b9338879c8eb3b9169b0f52dd9fc829190475ed8388a59818b20"
 metafile = true
@@ -330,6 +415,11 @@ hash = "51fa2c64e9cf2d5558a2f1e575960a0a9f9f27f73486d0d679c2bc695eb11026"
 metafile = true
 
 [[files]]
+file = "mods/item-tooltips.pw.toml"
+hash = "3b03cc285c65a14288599d09736075ce9475bc723c0948d6a00028e9c7748afe"
+metafile = true
+
+[[files]]
 file = "mods/jade.pw.toml"
 hash = "73838bd3377c35a6da4b6959dc77e6fa5aecbfc2922ca45c6a35f0febf8b7ae2"
 metafile = true
@@ -337,6 +427,16 @@ metafile = true
 [[files]]
 file = "mods/jamlib.pw.toml"
 hash = "ce665d02a697e2df0134584d967690414b970c8997f0d0cd0c9195a3a90cf32d"
+metafile = true
+
+[[files]]
+file = "mods/just-potion-rings.pw.toml"
+hash = "6005a537ce01118982f4031c1a420b433a4e15d6aa5382a6752959c67cda84dd"
+metafile = true
+
+[[files]]
+file = "mods/katters-structures.pw.toml"
+hash = "1247cd5d0464f893281224397e12db1d9f296d8c88fa042706fbfae24fd21b8f"
 metafile = true
 
 [[files]]
@@ -365,6 +465,11 @@ hash = "56ee67066d2a241ed4023f6742427384e3633053bbb9f6b4f59ffd14f038ce1c"
 metafile = true
 
 [[files]]
+file = "mods/lios-overhauled-villages.pw.toml"
+hash = "28c6ba4936c08c9250b175e6513c3a6d9981585b76f56526fb6ae37b27d6c308"
+metafile = true
+
+[[files]]
 file = "mods/litematica.pw.toml"
 hash = "c8b294d6eaab29151eb2884525b962ef5506e8fc83d31ea839dbc3d30bd99651"
 metafile = true
@@ -377,6 +482,11 @@ metafile = true
 [[files]]
 file = "mods/lithostitched.pw.toml"
 hash = "433133e68afa7e4a181a13f79ceab95a52ee572d4eb99523d3b4e96faa307bac"
+metafile = true
+
+[[files]]
+file = "mods/lost-relics.pw.toml"
+hash = "bdb413680be0d4e0ebd09a2681fc2927022474284cfb6525f861fb35d1bd4ae7"
 metafile = true
 
 [[files]]
@@ -400,8 +510,18 @@ hash = "9640bba78d66d61a683fb8ed2726c0da009cfd2868162e615a6904bacede885f"
 metafile = true
 
 [[files]]
+file = "mods/medieval-buildings.pw.toml"
+hash = "36912c51c49e9c1be0c84ffcb2633360621bbe45878f80eca136d14d2e25f248"
+metafile = true
+
+[[files]]
 file = "mods/mes-moogs-end-structures.pw.toml"
 hash = "1cb8c40a13f61da31fd0a038d94c5fc289765a88379940d39061411707dae1a2"
+metafile = true
+
+[[files]]
+file = "mods/mns-moogs-nether-structures.pw.toml"
+hash = "013bc1d1b6beb990e412e1c88a83c832e4f75c94c3c2e6dd6788a87835ba425d"
 metafile = true
 
 [[files]]
@@ -435,8 +555,23 @@ hash = "89fcae9fccf6aec59355405e1160ed15d523c34e08e555a0da6f46fb8a5087fe"
 metafile = true
 
 [[files]]
+file = "mods/mss-moogs-soaring-structures.pw.toml"
+hash = "32c4811fee2ac7211203518e1d059f4d95d4eff01691c9db5d9d471073126c9e"
+metafile = true
+
+[[files]]
+file = "mods/mtr-moogs-temples-reimagined.pw.toml"
+hash = "0447f1d5ed0fd959979ced2e255c8e507a91ab379325d2363ba359c42ebe12e2"
+metafile = true
+
+[[files]]
 file = "mods/mutant-monsters.pw.toml"
 hash = "8b4236f185ac033b71653ec6e8c962816df85323d67627e940eb34283c6ea74c"
+metafile = true
+
+[[files]]
+file = "mods/nameless-trinkets.pw.toml"
+hash = "36a2fc89fcc4b35f73efdf692bcd1a74d16ced08c69d51a13edb5d23c2e0c5c4"
 metafile = true
 
 [[files]]
@@ -467,6 +602,11 @@ metafile = true
 [[files]]
 file = "mods/offershud.pw.toml"
 hash = "7b05ce520036a6994fe42d404b8e2f706ff2566aee29906b7c50e852edab263f"
+metafile = true
+
+[[files]]
+file = "mods/ohmega.pw.toml"
+hash = "04446fbbc2675b0f71f1bccb8012e61d7fd073559c262cd06597749923789a4e"
 metafile = true
 
 [[files]]
@@ -532,6 +672,11 @@ metafile = true
 [[files]]
 file = "mods/rightclickharvest.pw.toml"
 hash = "e150f878c499420771611573124cb438b1b9d831bc86ef00c9e5e7afccbad5e9"
+metafile = true
+
+[[files]]
+file = "mods/roguelikedungeons.pw.toml"
+hash = "a7acc2b43a1563f29ee680f6b8a69fce85e63186ca68f1ed7f1b459a51cc42dd"
 metafile = true
 
 [[files]]
@@ -650,6 +795,11 @@ hash = "6801adb48ee85a21c7c4992625c34a751197382cb952dd25082d145a37de84fb"
 metafile = true
 
 [[files]]
+file = "mods/structurify.pw.toml"
+hash = "8bc700db2060694b4085aa56bfe494090e3ec008d9be49e87d18133c5a4a7fa8"
+metafile = true
+
+[[files]]
 file = "mods/styled-chat.pw.toml"
 hash = "7ebdb6a20d095943eee7346de94c6ba20a5eb2c5e9257c72331b0229862d866d"
 metafile = true
@@ -680,6 +830,11 @@ hash = "a596fb638624f92365785c013a8b3174a8018be7a30c11d5adc27bee846bc986"
 metafile = true
 
 [[files]]
+file = "mods/totem-accessory.pw.toml"
+hash = "1f6f623475fe13a55fb94197f386c17de5cb07aa05df891798e45e500ab3eeb8"
+metafile = true
+
+[[files]]
 file = "mods/towns-and-towers.pw.toml"
 hash = "0c96b5bd496fefece5503443a3c0801d751f644df0ec33854838cf48ac28138c"
 metafile = true
@@ -700,13 +855,38 @@ hash = "bd6ee49f8560398efdc65efffa3ddc5f872ff781a255e5654c294087de48e0e0"
 metafile = true
 
 [[files]]
+file = "mods/trek.pw.toml"
+hash = "856519bd5d0f0736c86a2ebbc833b8499075be4b1d6613988f4e5104ba2d9a32"
+metafile = true
+
+[[files]]
 file = "mods/trimseffects.pw.toml"
 hash = "dd7ce22f406380796a5387bb5a455c0a3f22442284b08f8b5e71b8e25c9a7a67"
 metafile = true
 
 [[files]]
+file = "mods/trinkets-updated.pw.toml"
+hash = "592c12675a19959c994b833c56c58885079db6b568db5e16b13f189c5ab6050b"
+metafile = true
+
+[[files]]
+file = "mods/true-ending.pw.toml"
+hash = "fcbfa39f9ced74807efe4ce8d200b6dcfc5f4258fcb69d1c67447b55c47d084a"
+metafile = true
+
+[[files]]
 file = "mods/ultimate_map_atlases.pw.toml"
 hash = "fcea36ce95b9afc2e5ae86d2b83487be535b6375aecf56eb395b3b91719d606b"
+metafile = true
+
+[[files]]
+file = "mods/underground-worlds.pw.toml"
+hash = "d34f988ca1ca145f1bea4fc12662e582c5ece310355f0d75e8b97411157c942e"
+metafile = true
+
+[[files]]
+file = "mods/unified-api.pw.toml"
+hash = "67f9514d1f745fb28550d542eeecdd347bc651f0b6d4e66df1f97a800f35e296"
 metafile = true
 
 [[files]]
@@ -755,6 +935,11 @@ hash = "6f9da9da1c6713f41d5044edc9221f6fbe1a358f9d86fc5b1024f4c6824fea3a"
 metafile = true
 
 [[files]]
+file = "mods/wits.pw.toml"
+hash = "660ef52a9f30cfc4b3592a6b42cbcf30461602801a993967ae8b27ec21273cd4"
+metafile = true
+
+[[files]]
 file = "mods/woodwalkers.pw.toml"
 hash = "b7906e6df1c8801ac49da3888b9e4af3df06c253d8be4fec1c0ba14109f7cb76"
 metafile = true
@@ -777,6 +962,11 @@ metafile = true
 [[files]]
 file = "mods/yacl.pw.toml"
 hash = "67866b7484801e784c42ecd443ebf6a29640fe796feec91c248def2642aec952"
+metafile = true
+
+[[files]]
+file = "mods/yggdrasil-structure.pw.toml"
+hash = "e6a0be73907b720998330015652468104aa71967db4678e9aed6d3a4d1477531"
 metafile = true
 
 [[files]]

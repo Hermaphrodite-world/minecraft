@@ -1,0 +1,13 @@
+name = "Hopo Better Ruined Portals"
+filename = "HopoBetterRuinedPortals-[26.1]-1.5.0.jar"
+side = "both"
+
+[download]
+url = "https://cdn.modrinth.com/data/hIpLSyga/versions/cGc1KFZs/HopoBetterRuinedPortals-%5B26.1%5D-1.5.0.jar"
+hash-format = "sha512"
+hash = "76a09730ef746b79c4b78e9d45ad13d9a28be9829f34948eeba91ef3d2fdf5815f36e2753c2719edd61107decd58cbd3a7cfe8b683d3c0ea1d6457717ad9023f"
+
+[update]
+[update.modrinth]
+mod-id = "hIpLSyga"
+version = "cGc1KFZs"
