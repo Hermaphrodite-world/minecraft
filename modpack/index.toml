@@ -45,6 +45,11 @@ hash = "705df421f6bba54380c8552b26b6346d942d15be735b77b662b3ee51ded19514"
 metafile = true
 
 [[files]]
+file = "mods/badoptimizations.pw.toml"
+hash = "8e6033c2642308835d119a073fdf24306394cdb6985c482a08e67b8087f6e90d"
+metafile = true
+
+[[files]]
 file = "mods/balm.pw.toml"
 hash = "3c0eb45c3a1d81142267955d472180fc86d082b3a23187ea20a7372f635584e8"
 metafile = true
@@ -87,6 +92,11 @@ metafile = true
 [[files]]
 file = "mods/boss-checklist.pw.toml"
 hash = "bbd773380a85248fc2cf260320ffbf0cd3dbd5276edf19049c6b3a505fbdc17f"
+metafile = true
+
+[[files]]
+file = "mods/c2me-fabric.pw.toml"
+hash = "d738fe51b20c8da621e36a0d65e15d7f4f9f8e2e8162670a2798610079790ee3"
 metafile = true
 
 [[files]]
@@ -445,6 +455,11 @@ hash = "d5060b22fa47d5d56e0f4617904731e9d397d1ba104320b7ec8e59f7ca0700a7"
 metafile = true
 
 [[files]]
+file = "mods/ksyxis.pw.toml"
+hash = "24108936876681291323c2ba37f0a8da6ae4a779411e360d480f21ab145c396b"
+metafile = true
+
+[[files]]
 file = "mods/lambdabettergrass.pw.toml"
 hash = "78d6b48a474a33a1a089b81ca847a5ee5ff98773e9ed434bad8f797e36eb59cc"
 metafile = true
@@ -547,6 +562,11 @@ metafile = true
 [[files]]
 file = "mods/more-delight.pw.toml"
 hash = "f8dae1c48694cad725893b26223272b1fbfddacbe522cddcee850cdec6a70a43"
+metafile = true
+
+[[files]]
+file = "mods/moreculling.pw.toml"
+hash = "3cc0488195b6c6b8069e8b998db711f75829dc5e2385c45be17083ce86214303"
 metafile = true
 
 [[files]]
