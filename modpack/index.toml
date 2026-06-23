@@ -285,6 +285,11 @@ hash = "0d9241267766be08d881ce1b20bfd74b0e1d7cb316a2eccf545bc960656ae7b9"
 metafile = true
 
 [[files]]
+file = "mods/glitchcore.pw.toml"
+hash = "53617f29fac13f3ef8cb25a6c6aeba6d080c28a306dccb71fe1f4da9d4a1c345"
+metafile = true
+
+[[files]]
 file = "mods/harvest-with-ease.pw.toml"
 hash = "fb9e8227c7a65b5ed787655053db002a12c9f71587e9b16f6f306fbe0f2b1a55"
 metafile = true
@@ -322,11 +327,6 @@ metafile = true
 [[files]]
 file = "mods/iris.pw.toml"
 hash = "51fa2c64e9cf2d5558a2f1e575960a0a9f9f27f73486d0d679c2bc695eb11026"
-metafile = true
-
-[[files]]
-file = "mods/item-alchemy.pw.toml"
-hash = "febb0b54908e46229183ae25287194aa8eb7d1de23129b2e88fc387245749d42"
 metafile = true
 
 [[files]]
