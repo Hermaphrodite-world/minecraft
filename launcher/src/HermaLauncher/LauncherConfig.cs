@@ -15,7 +15,9 @@ public static class LauncherConfig
 
     // packwiz 팩 URL — 정확히 pack.toml 로 끝나는 전체 URL (구현계획 Codex M3).
     // GitHub Pages(modpack-pages.yml 이 modpack/ 를 배포) 기준. Pages 활성화 필요(공개 레포 또는 유료).
-    public const string PackTomlUrl = "https://hermaphrodite-world.github.io/minecraft/pack.toml";
+    // 재빌드 없이 환경변수로 덮어쓰기 가능: HERMA_PACK_URL (로컬 미머지 팩 테스트=http://localhost:8088/pack.toml).
+    public static readonly string PackTomlUrl =
+        Environment.GetEnvironmentVariable("HERMA_PACK_URL") ?? "https://hermaphrodite-world.github.io/minecraft/pack.toml";
 
     // 서버 자동 접속 (모드구성: ServerIp 1차 경로).
     // 재빌드 없이 환경변수로 덮어쓰기 가능: HERMA_SERVER_IP (로컬 테스트=127.0.0.1).
