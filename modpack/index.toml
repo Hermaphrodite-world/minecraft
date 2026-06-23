@@ -470,11 +470,6 @@ hash = "cd2f33420bc3d06cbfc8cefb9d35c18291b64b0424fe0c689e5c772fc0b7441e"
 metafile = true
 
 [[files]]
-file = "mods/inventory-display.pw.toml"
-hash = "b3905cd4e5bde4c27556fa0dd48296a5be47e89b7bb101f3075e0af47af8ade8"
-metafile = true
-
-[[files]]
 file = "mods/inventory-profiles-next.pw.toml"
 hash = "788a6bcfb51522bb66bb2988a14216299789e82f401bc727e77aaa95251e9807"
 metafile = true
