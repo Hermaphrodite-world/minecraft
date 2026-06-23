@@ -66,6 +66,9 @@ public sealed class LaunchOrchestrator
             // (4b) 첫 실행 기본 쉐이더/리소스팩 적용 + 서버목록(endpoint 주소) 등록. 이미 설정돼 있으면 보존 — best-effort.
             ClientDefaults.ApplyAll(AppPaths.GameDir, endpoint, progress);
 
+            // (4c) 1회성 캐시 정리 — worldgen 모드 갱신 후 stale Bobby 청크 캐시 정리(토큰당 1회). best-effort.
+            CacheMaintenance.RunOnce(AppPaths.GameDir, progress);
+
             // (5.5) 세션 재검증 — 긴 설치 동안 토큰이 만료됐을 수 있어 proc.Start 직전 갱신(best-effort).
             session = await _auth.RevalidateAsync(session, progress, ct).ConfigureAwait(false);
             ct.ThrowIfCancellationRequested();
