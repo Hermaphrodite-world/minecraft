@@ -1,0 +1,13 @@
+name = "Universal Bone Meal"
+filename = "UniversalBoneMeal-v26.1.0-mc26.1.x-Fabric.jar"
+side = "both"
+
+[download]
+url = "https://cdn.modrinth.com/data/66VIiT1y/versions/wuGuZd3d/UniversalBoneMeal-v26.1.0-mc26.1.x-Fabric.jar"
+hash-format = "sha512"
+hash = "6aa6e20b2964bf4bb225d8d6899f824c3e3ed0717f2431fab9cf0402e6f6276a035a88e6b60810fea6b58244284b3286f1f4a2753ab7f4f217ed05842046bcdb"
+
+[update]
+[update.modrinth]
+mod-id = "66VIiT1y"
+version = "wuGuZd3d"

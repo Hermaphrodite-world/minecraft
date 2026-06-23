@@ -1,0 +1,13 @@
+name = "Respawnable Pets"
+filename = "respawnablepets-26.1-r1.jar"
+side = "both"
+
+[download]
+url = "https://cdn.modrinth.com/data/gbFe1FWa/versions/LvmgVDK6/respawnablepets-26.1-r1.jar"
+hash-format = "sha512"
+hash = "19c1d83a6d21038a20c9cc4c5e5fef91e9a8fbf506bc042767be8046d76e6eff29956790cf0ba478f83e5dfdf32fe5cc0535e148476e0f81161f6b104c030e92"
+
+[update]
+[update.modrinth]
+mod-id = "gbFe1FWa"
+version = "LvmgVDK6"

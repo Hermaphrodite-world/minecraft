@@ -1,0 +1,13 @@
+name = "Inventory Hud"
+filename = "inventory-hud-1.0.0.jar"
+side = "client"
+
+[download]
+url = "https://cdn.modrinth.com/data/Pjr8ogoZ/versions/4Q2tHTg5/inventory-hud-1.0.0.jar"
+hash-format = "sha512"
+hash = "0defe0fc9c5c2a1f319e372a4530f0f8f9d5c54b610606194e542b3e09256c1e29a7d3dd8bb595a49d4b7e8c8aee63034fe9204c2f160944b26b7b2a07d48c7a"
+
+[update]
+[update.modrinth]
+mod-id = "Pjr8ogoZ"
+version = "4Q2tHTg5"
